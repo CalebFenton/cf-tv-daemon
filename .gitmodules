@@ -1,0 +1,21 @@
+[submodule "tools/unixtract"]
+	path = tools/unixtract
+	url = https://github.com/theubusu/unixtract.git
+[submodule "tools/vdfs-tools"]
+	path = tools/vdfs-tools
+	url = https://github.com/HinTak/vdfs-tools.git
+[submodule "tools/vdfs-unpack"]
+	path = tools/vdfs-unpack
+	url = https://github.com/CalebFenton/vdfs-unpack.git
+[submodule "docs/reference/samsung-tizen-tv-debloat"]
+	path = docs/reference/samsung-tizen-tv-debloat
+	url = https://github.com/ardazeytin/samsung-tizen-tv-debloat.git
+[submodule "docs/reference/quiet-tizen"]
+	path = docs/reference/quiet-tizen
+	url = https://github.com/jss8649/quiet-tizen.git
+[submodule "vendor/samsung-tv-root-source"]
+	path = vendor/samsung-tv-root-source
+	url = https://github.com/chris-ritsen/samsung-tv-root.git
+[submodule "tools/samsung-q60t-exploit"]
+	path = tools/samsung-q60t-exploit
+	url = https://github.com/synacktiv/samsung-q60t-exploit.git

@@ -1,0 +1,38 @@
+NAME                                TYPE      SIGNATURE RESULT/VALUE FLAGS
+org.freedesktop.DBus.Introspectable interface -         -            -
+.Introspect                         method    -         s            -
+org.freedesktop.DBus.Peer           interface -         -            -
+.GetMachineId                       method    -         s            -
+.Ping                               method    -         -            -
+org.freedesktop.DBus.Properties     interface -         -            -
+.Get                                method    ss        v            -
+.GetAll                             method    s         a{sv}        -
+.Set                                method    ssv       -            -
+.PropertiesChanged                  signal    sa{sv}as  -            -
+rscmgr.resource                     interface -         -            -
+.FindDeviceId                       method    i         i            -
+.GetActiveAudioOut                  method    i         i            -
+.GetAppId                           method    i         is           -
+.GetResourceList                    method    i         a(iissi)     -
+.GetResourceState                   method    i         i            -
+.GetRscCollectionState              method    i         a(isiiis)    -
+.GetScalerHWID                      method    i         i            -
+.GetScalerState                     method    i         a(iiiiis)    -
+.NotifyAppZoneInfo                  method    si        i            -
+.NotifyResourcePolicy               method    i         i            -
+.RestoreResources                   method    i         i            -
+.SwapResources                      method    ii        i            -
+===
+iis 0 -1 ""
+a(is) 2 1 "" 2 ""
+i 0
+i 0
+i 0
+i -3
+i 1
+i -3
+i -3
+i -1
+===
+i 1
+

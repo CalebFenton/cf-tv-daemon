@@ -1,0 +1,5 @@
+#!/bin/sh
+# bt-reconnect - connect, disconnect or inspect the Bluetooth speaker (docs/04-system/bluetooth.md).
+# See tv/bt_reconnect.py for usage.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT/.venv/bin/python" "$ROOT/tv/bt_reconnect.py" "$@"

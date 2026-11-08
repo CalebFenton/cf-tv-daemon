@@ -1,0 +1,5 @@
+#!/bin/sh
+# stream - capture the TV screen as a burst of frames (docs/02-capture/screen-capture.md).
+# See tv/stream.py for usage.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT/.venv/bin/python" "$ROOT/tv/stream.py" "$@"

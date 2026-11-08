@@ -1,0 +1,5 @@
+#!/bin/sh
+# control - remote control: keys, volume, channels (docs/04-system/control.md).
+# See tv/control.py for usage.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT/.venv/bin/python" "$ROOT/tv/control.py" "$@"

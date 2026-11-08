@@ -1,0 +1,200 @@
+== /
+node / {
+  node Org {
+  };
+};
+== /Org
+node /Org {
+  node Tizen {
+  };
+};
+== /Org/Tizen
+node /Org/Tizen {
+  node TV {
+  };
+};
+== /Org/Tizen/TV
+node /Org/Tizen/TV {
+  node System {
+  };
+};
+== /Org/Tizen/TV/System
+node /Org/Tizen/TV/System {
+  node Resource {
+  };
+};
+== /Org/Tizen/TV/System/Resource
+node /Org/Tizen/TV/System/Resource {
+  interface org.freedesktop.DBus.Properties {
+    methods:
+      Get(in  s interface_name,
+          in  s property_name,
+          out v value);
+      GetAll(in  s interface_name,
+             out a{sv} properties);
+      Set(in  s interface_name,
+          in  s property_name,
+          in  v value);
+    signals:
+      PropertiesChanged(s interface_name,
+                        a{sv} changed_properties,
+                        as invalidated_properties);
+    properties:
+  };
+  interface org.freedesktop.DBus.Introspectable {
+    methods:
+      Introspect(out s xml_data);
+    signals:
+    properties:
+  };
+  interface org.freedesktop.DBus.Peer {
+    methods:
+      Ping();
+      GetMachineId(out s machine_uuid);
+    signals:
+    properties:
+  };
+  interface org.tizen.tv.system.resource {
+    methods:
+      SetResourcePolicy(in  i commandid,
+                        in  u policy,
+                        in  i sender_pid,
+                        out i reply);
+      GetCapableCatId(in  i commandid,
+                      in  s appid,
+                      in  i category,
+                      in  i pid,
+                      out i reply);
+      SetAppToZone(in  i commandid,
+                   in  s appid,
+                   in  i zoneid,
+                   out i reply);
+      SetPreAssignedAppToZone(in  i commandid,
+                              in  s appid,
+                              in  i zoneid,
+                              out i reply);
+      SetAudioFocus(in  i commandid,
+                    in  i zone_id,
+                    out i reply);
+      GetAudioFocus(in  i commandid,
+                    out i reply);
+      PlayerRegister(in  i commandid,
+                     in  i playerid,
+                     in  i resourceid,
+                     out i reply);
+      PlayerRequestPlay(in  i commandid,
+                        in  i playerid,
+                        out i reply);
+      PlayerRequestStop(in  i commandid,
+                        in  i playerid,
+                        out i reply);
+      PlayerAudioStartDone(in  i commandid,
+                           in  i playerid,
+                           out i reply);
+      PlayerAudioStopDone(in  i commandid,
+                          in  i playerid,
+                          out i reply);
+      PlayerUnregister(in  i commandid,
+                       in  i playerid,
+                       out i reply);
+      SetMultiviewSpeakerSelection(in  i commandid,
+                                   in  i zoneid,
+                                   in  i route,
+                                   out i reply);
+      SetMultiviewSubSpeakerSelection(in  i commandid,
+                                      in  i zoneid,
+                                      in  i route,
+                                      out i reply);
+      GetMaxVideo(in  i commandid,
+                  in  s appid,
+                  out i width,
+                  out i height,
+                  out i framerate);
+      GetMultiviewSpeakerSelection(in  i commandid,
+                                   in  i zoneid,
+                                   out i reply);
+      SetMultiviewVolumeBalance(in  i commandid,
+                                in  i zoneid,
+                                in  i volume,
+                                out i reply);
+      GetMultiviewVolumeBalance(in  i commandid,
+                                in  i zoneid,
+                                out i reply);
+      IsMultiviewSpeakerUsable(in  i commandid,
+                               in  i zoneid,
+                               in  i route,
+                               out i reply);
+      SetMultiviewMixingMode(in  i commandid,
+                             in  i onoff,
+                             out i reply);
+      SetMultiviewMixingModeWithZoneId(in  i commandid,
+                                       in  i zoneid1,
+                                       in  i zoneid2,
+                                       in  i onoff,
+                                       out i reply);
+      GetMultiviewMixingMode(in  i commandid,
+                             out i reply);
+      RegisterExtSpkInfo(in  i commandid,
+                         in  s info,
+                         in  i zoneid,
+                         out i reply);
+      UnregisterExtSpkInfo(in  i commandid,
+                           in  s info,
+                           in  i zoneid,
+                           out i reply);
+      GetExtSpkInfoAudioOut(in  i commandid,
+                            in  s info,
+                            out i reply);
+      GetMultiviewZoneIds(in  i commandid,
+                          out a(is) arg_1);
+      MaxVideoRegId(in  i commandid,
+                    in  s appid,
+                    in  u cbaddr,
+                    out i reply);
+      MaxVideoUnRegId(in  i commandid,
+                      in  s appid,
+                      in  u cbaddr,
+                      out i reply);
+      RscChangeRegId(in  i commandid,
+                     in  i pid,
+                     in  s appid,
+                     in  u cbaddr,
+                     out i reply);
+      RscChangeUnRegId(in  i commandid,
+                       in  i pid,
+                       in  s appid,
+                       in  u cbaddr,
+                       out i reply);
+      SwitchBestQaulityZone(in  i commandid,
+                            in  i cur_zoneid,
+                            in  i next_zoneid,
+                            out i reply);
+      GetResourcePolicy(in  i commandid,
+                        out i reply);
+      IsAudioFocused(in  i commandid,
+                     in  s appid,
+                     out i reply);
+      GetLastAudioFocus(in  i commandid,
+                        out i reply);
+      RestoreBestQualityZone(in  i commandid,
+                             out i reply);
+      GetFocusedZone(in  i commandid,
+                     out i id,
+                     out i scaler_id,
+                     out s app_id);
+      GetPlayerAudioOut(in  i commandid,
+                        in  i playerid,
+                        out i reply);
+      PlayerVideoStartDone(in  i commandid,
+                           in  i playerid,
+                           out i reply);
+      PlayerVideoStopDone(in  i commandid,
+                          in  i playerid,
+                          out i reply);
+      NotifyLayoutState(in  i commandid,
+                        in  i state,
+                        out i reply);
+    signals:
+    properties:
+  };
+};

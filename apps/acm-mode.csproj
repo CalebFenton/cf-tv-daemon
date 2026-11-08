@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>AcmMode</AssemblyName>
+    <RootNamespace>AcmMode</RootNamespace>
+    <UseAppHost>false</UseAppHost>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DebugType>none</DebugType>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="acm-mode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Private=false: never bundle Samsung's assemblies with our app. -->
+    <Reference Include="Tizen.NUI">
+      <HintPath>$(TV_FRAMEWORK_DIR)/Tizen.NUI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Tizen.Applications.Common">
+      <HintPath>$(TV_FRAMEWORK_DIR)/Tizen.Applications.Common.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Tizen.System">
+      <HintPath>$(TV_FRAMEWORK_DIR)/Tizen.System.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Tizen">
+      <HintPath>$(TV_FRAMEWORK_DIR)/Tizen.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

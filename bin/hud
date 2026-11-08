@@ -1,0 +1,5 @@
+#!/bin/sh
+# hud - find faces, hand gestures, objects and people in the TV picture.
+# See tv/hud.py for usage.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT/.venv/bin/python" "$ROOT/tv/hud.py" "$@"

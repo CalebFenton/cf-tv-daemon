@@ -1,0 +1,2416 @@
+Monitoring bus message stream.
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69301
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66923549375  Realtime=1794097736397700  SequenceNumber=487186
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0279649;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=28218
+  Sender=:1.52  Path=/Org/Tizen/Aul/AppStatus  Interface=org.tizen.aul.AppStatus  Member=AppResume
+  Monotonic=66924291672  Realtime=1794097737139997  SequenceNumber=487187
+  PID=917  TID=917  PPID=1
+  UID=301  EUID=301  SUID=301  FSUID=301  GID=301  EGID=301  SGID=301  FSGID=301  SupplementaryGIDs=29 44 201 301 1051 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=amd  TIDComm=amd  Exe=/usr/bin/amd
+  CommandLine=/usr/bin/amd  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/ac.service  Unit=ac.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.52  WellKnownNames=org.tizen.tv.webappservice.dbclient.obj917
+  EffectiveCapabilities=cap_dac_override cap_kill cap_sys_admin
+  PermittedCapabilities=cap_dac_override cap_kill cap_sys_admin
+  InheritableCapabilities=cap_dac_override cap_kill cap_setgid 
+          cap_setuid cap_sys_admin cap_mac_admin
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "isss" {
+          INT32 1363;
+          STRING "org.tizen.content-tiles-provider";
+          STRING "org.tizen.content-tiles-provider";
+          STRING "svcapp";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=21431
+  Sender=:1.2  Path=/org/freedesktop/systemd1/agent  Interface=org.freedesktop.systemd1.Agent  Member=Released
+  Monotonic=66924306014  Realtime=1794097737154338  SequenceNumber=487188
+  PID=1  TID=1  PPID=n/a
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=systemd  TIDComm=systemd  Exe=/usr/lib/systemd/systemd
+  CommandLine=/usr/lib/systemd/systemd  Label=System::Privileged  Description=bus_2dapi_2dsystem
+  CGroup=/init.scope  Unit=init.scope  Slice=-.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.2  WellKnownNames=org.freedesktop.systemd1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "/system.slice/org.tizen.content-tiles-provider.service";
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=8864
+  Sender=:1.72  Destination=net.netvdconfig  Path=/net/netvdconfig/network  Interface=net.netvdconfig.network  Member=CheckGateway
+  Monotonic=66924351388  Realtime=1794097737199712  SequenceNumber=487189
+  PID=890  TID=890  PPID=838
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=sp-kpi  TIDComm=sp-kpi  Exe=/usr/bin/sp-kpi
+  CommandLine=/usr/bin/sp-kpi  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/org.tizen.tv.sp-kpi.service  Unit=org.tizen.tv.sp-kpi.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.72  WellKnownNames=
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "192.168.0.1";
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=4004  ReplyCookie=8864
+  Sender=:1.24  Destination=:1.72
+  Monotonic=66924352084  Realtime=1794097737200408  SequenceNumber=487190
+  PID=723  TID=723  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=vd-net-config  TIDComm=vd-net-config  Exe=/usr/sbin/vd-net-config
+  CommandLine=/usr/sbin/vd-net-config  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/vd-net-config.service  Unit=vd-net-config.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.24  WellKnownNames=net.netvdconfig
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "b" {
+          BOOLEAN true;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69302
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66924357620  Realtime=1794097737205944  SequenceNumber=487191
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0386458;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69303
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66925151607  Realtime=1794097737999931  SequenceNumber=487192
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0386555;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69304
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66925952405  Realtime=1794097738800729  SequenceNumber=487193
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0386516;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=29
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=AudioMute
+  Monotonic=66926045150  Realtime=1794097738893474  SequenceNumber=487194
+  PID=1228  TID=14730  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=msg  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ii" {
+          INT32 127;
+          INT32 1;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25880  ReplyCookie=29
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926045729  Realtime=1794097738894053  SequenceNumber=487195
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=30
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=PlayerUnregister
+  Monotonic=66926053641  Realtime=1794097738901965  SequenceNumber=487196
+  PID=1228  TID=14730  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=msg  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 127;
+  };
+
+‣ Type=method_call  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25881
+  Sender=:1.15  Destination=org.tizen.tv.system.resource  Path=/Org/Tizen/TV/System/Resource  Interface=org.tizen.tv.system.resource  Member=PlayerUnregister
+  Monotonic=66926054232  Realtime=1794097738902556  SequenceNumber=487197
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ii" {
+          INT32 38797388;
+          INT32 127;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25882  ReplyCookie=30
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926054528  Realtime=1794097738902852  SequenceNumber=487198
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=252
+  Sender=:1.31  Path=/rscmgr/resource  Interface=rscmgr.resource  Member=RscStateChanged
+  Monotonic=66926056735  Realtime=1794097738905059  SequenceNumber=487199
+  PID=785  TID=785  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=rscmgr-service  TIDComm=rscmgr-service  Exe=/usr/bin/rscmgr-service
+  CommandLine=/usr/bin/rscmgr-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/rscmgr-service.service  Unit=rscmgr-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.31  WellKnownNames=rscmgr.resource
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iiiis" {
+          INT32 1;
+          INT32 9;
+          INT32 0;
+          INT32 127;
+          STRING "muse-server";
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=3
+  Sender=:1.8810  Destination=org.tizen.resourced  Path=/Org/Tizen/ResourceD/Process  Interface=org.tizen.resourced.process  Member=ProcMemoryUsage
+  Monotonic=66926068523  Realtime=1794097738916848  SequenceNumber=487200
+  PID=1228  TID=1570  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=diag_connection  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=libdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.8810  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ai" {
+          ARRAY "i" {
+                  INT32 1228;
+          };
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=26075  ReplyCookie=3
+  Sender=:1.419  Destination=:1.8810
+  Monotonic=66926109704  Realtime=1794097738958028  SequenceNumber=487201
+  PID=2492  TID=2492  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=resourced  TIDComm=resourced  Exe=/usr/bin/resourced
+  CommandLine=/usr/bin/resourced  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/resourced.service  Unit=resourced.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.419  WellKnownNames=org.vip.resourced org.tizen.resourced
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "a(iiiiiii)" {
+          ARRAY "(iiiiiii)" {
+                  STRUCT "iiiiiii" {
+                          INT32 234544;
+                          INT32 15140;
+                          INT32 3795;
+                          INT32 11752;
+                          INT32 8;
+                          INT32 1796;
+                          INT32 1584;
+                  };
+          };
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=31
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=PlayerRegisterM
+  Monotonic=66926254969  Realtime=1794097739103293  SequenceNumber=487202
+  PID=1228  TID=14752  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=multiqueue3-src  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iiii" {
+          INT32 0;
+          INT32 10;
+          INT32 0;
+          INT32 128;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=25883
+  Sender=:1.15  Destination=org.tizen.tv.system.resource  Path=/Org/Tizen/TV/System/Resource  Interface=org.tizen.tv.system.resource  Member=PlayerRegister
+  Monotonic=66926255622  Realtime=1794097739103945  SequenceNumber=487203
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iii" {
+          INT32 38797389;
+          INT32 128;
+          INT32 0;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=163  ReplyCookie=25883
+  Sender=:1.14  Destination=:1.15
+  Monotonic=66926256063  Realtime=1794097739104387  SequenceNumber=487204
+  PID=634  TID=707  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=resource-center  TIDComm=msg_thread  Exe=/usr/bin/resource-center
+  CommandLine=/usr/bin/resource-center  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/resource-center.service  Unit=resource-center.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.14  WellKnownNames=org.tizen.tv.system.resource
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 128;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25884  ReplyCookie=31
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926256491  Realtime=1794097739104815  SequenceNumber=487205
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=253
+  Sender=:1.31  Path=/rscmgr/resource  Interface=rscmgr.resource  Member=RscStateChanged
+  Monotonic=66926258198  Realtime=1794097739106523  SequenceNumber=487206
+  PID=785  TID=785  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=rscmgr-service  TIDComm=rscmgr-service  Exe=/usr/bin/rscmgr-service
+  CommandLine=/usr/bin/rscmgr-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/rscmgr-service.service  Unit=rscmgr-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.31  WellKnownNames=rscmgr.resource
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iiiis" {
+          INT32 1;
+          INT32 9;
+          INT32 3;
+          INT32 128;
+          STRING "muse-server";
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=32
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=PlayRequestM
+  Monotonic=66926261023  Realtime=1794097739109347  SequenceNumber=487207
+  PID=1228  TID=14752  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=multiqueue3-src  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iii" {
+          INT32 128;
+          INT32 7;
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=25886
+  Sender=:1.15  Destination=org.tizen.tv.system.resource  Path=/Org/Tizen/TV/System/Resource  Interface=org.tizen.tv.system.resource  Member=PlayerRequestPlay
+  Monotonic=66926261776  Realtime=1794097739110100  SequenceNumber=487208
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ii" {
+          INT32 38797390;
+          INT32 128;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=164
+  Sender=:1.14  Destination=rscmgr.resource  Path=/rscmgr/resource  Interface=rscmgr.resource  Member=GetActiveAudioOut
+  Monotonic=66926262505  Realtime=1794097739110829  SequenceNumber=487209
+  PID=634  TID=707  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=resource-center  TIDComm=msg_thread  Exe=/usr/bin/resource-center
+  CommandLine=/usr/bin/resource-center  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/resource-center.service  Unit=resource-center.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.14  WellKnownNames=org.tizen.tv.system.resource
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 128;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=254  ReplyCookie=164
+  Sender=:1.31  Destination=:1.14
+  Monotonic=66926263124  Realtime=1794097739111448  SequenceNumber=487210
+  PID=785  TID=846  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=rscmgr-service  TIDComm=rms_msg_thread  Exe=/usr/bin/rscmgr-service
+  CommandLine=/usr/bin/rscmgr-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/rscmgr-service.service  Unit=rscmgr-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.31  WellKnownNames=rscmgr.resource
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 1;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=165  ReplyCookie=25886
+  Sender=:1.14  Destination=:1.15
+  Monotonic=66926263465  Realtime=1794097739111789  SequenceNumber=487211
+  PID=634  TID=707  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=resource-center  TIDComm=msg_thread  Exe=/usr/bin/resource-center
+  CommandLine=/usr/bin/resource-center  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/resource-center.service  Unit=resource-center.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.14  WellKnownNames=org.tizen.tv.system.resource
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 1;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25887  ReplyCookie=32
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926266216  Realtime=1794097739114540  SequenceNumber=487212
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=33
+  Sender=:1.162  Destination=rscmgr.resource  Path=/rscmgr/resource  Interface=rscmgr.resource  Member=GetActiveAudioOut
+  Monotonic=66926268283  Realtime=1794097739116606  SequenceNumber=487213
+  PID=1228  TID=14752  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=multiqueue3-src  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 128;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=255  ReplyCookie=33
+  Sender=:1.31  Destination=:1.162
+  Monotonic=66926268665  Realtime=1794097739116989  SequenceNumber=487214
+  PID=785  TID=846  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=rscmgr-service  TIDComm=rms_msg_thread  Exe=/usr/bin/rscmgr-service
+  CommandLine=/usr/bin/rscmgr-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/rscmgr-service.service  Unit=rscmgr-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.31  WellKnownNames=rscmgr.resource
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 1;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=34
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=SetAudioInformation
+  Monotonic=66926278410  Realtime=1794097739126735  SequenceNumber=487215
+  PID=1228  TID=14752  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=multiqueue3-src  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ai" {
+          ARRAY "i" {
+                  INT32 0;
+                  INT32 7;
+                  INT32 0;
+                  INT32 9;
+                  INT32 -1;
+                  INT32 0;
+                  INT32 2;
+                  INT32 16;
+                  INT32 0;
+                  INT32 0;
+                  INT32 0;
+          };
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25888  ReplyCookie=34
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926280039  Realtime=1794097739128363  SequenceNumber=487216
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25889
+  Sender=:1.15  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=DigitalAudioFormatChanged
+  Monotonic=66926280255  Realtime=1794097739128579  SequenceNumber=487217
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 3;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=35
+  Sender=:1.162  Destination=org.tizen.tv.logger  Path=/org/tizen/tv/logger  Interface=org.tizen.tv.logger.interface  Member=logger_AddEventLog_Sync
+  Monotonic=66926300219  Realtime=1794097739148543  SequenceNumber=487218
+  PID=1228  TID=15699  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=msg  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ssssss" {
+          STRING "21_codec";
+          STRING "PLAYBACK";
+          STRING "2026-11-07T18:28:59-0600";
+          STRING "EV001";
+          STRING "{ptype=FILE;dtype=NONE;data_container=wav;v_decoder_type=HW;v_codec=NONE;v_tag=0x0;width=0;height=0;a_decoder_type=HW;a_codec=pcm_s16le;a_tag=0x1;app_id=NONE}";
+          STRING "|SS6529329153|66926299.87";
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=38300  ReplyCookie=35
+  Sender=:1.436  Destination=:1.162
+  Monotonic=66926301450  Realtime=1794097739149774  SequenceNumber=487219
+  PID=1507  TID=15730  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=data-service  TIDComm=HandleThread  Exe=/usr/bin/data-service
+  CommandLine=/usr/bin/data-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/data-service.service  Unit=data-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.436  WellKnownNames=org.tizen.tv.logger org.tizen.tv.ssoservice.ssoclient.obj1507_data-service org.tizen.tv.dataservice
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 1;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=36
+  Sender=:1.162  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=AudioMute
+  Monotonic=66926311549  Realtime=1794097739159873  SequenceNumber=487220
+  PID=1228  TID=15732  PPID=1
+  UID=451  EUID=451  SUID=451  FSUID=451  GID=451  EGID=451  SGID=451  FSGID=451  SupplementaryGIDs=29 44 201 451 1051 10001 10013 10501 10501 10502 10502 10503 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=muse-server  TIDComm=multiqueue3-src  Exe=/usr/bin/muse-server
+  CommandLine=/usr/bin/muse-server  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/muse-server.service  Unit=muse-server.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.162  WellKnownNames=
+  EffectiveCapabilities=cap_dac_override
+  PermittedCapabilities=cap_dac_override
+  InheritableCapabilities=cap_dac_override
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ii" {
+          INT32 128;
+          INT32 0;
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25890  ReplyCookie=36
+  Sender=:1.15  Destination=:1.162
+  Monotonic=66926313106  Realtime=1794097739161431  SequenceNumber=487221
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "i" {
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69305
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66926750322  Realtime=1794097739598646  SequenceNumber=487222
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0206289;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=28219
+  Sender=:1.52  Path=/Org/Tizen/Aul/AppStatus  Interface=org.tizen.aul.AppStatus  Member=AppResume
+  Monotonic=66927533904  Realtime=1794097740382228  SequenceNumber=487223
+  PID=917  TID=917  PPID=1
+  UID=301  EUID=301  SUID=301  FSUID=301  GID=301  EGID=301  SGID=301  FSGID=301  SupplementaryGIDs=29 44 201 301 1051 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=amd  TIDComm=amd  Exe=/usr/bin/amd
+  CommandLine=/usr/bin/amd  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/ac.service  Unit=ac.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.52  WellKnownNames=org.tizen.tv.webappservice.dbclient.obj917
+  EffectiveCapabilities=cap_dac_override cap_kill cap_sys_admin
+  PermittedCapabilities=cap_dac_override cap_kill cap_sys_admin
+  InheritableCapabilities=cap_dac_override cap_kill cap_setgid 
+          cap_setuid cap_sys_admin cap_mac_admin
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "isss" {
+          INT32 1363;
+          STRING "org.tizen.content-tiles-provider";
+          STRING "org.tizen.content-tiles-provider";
+          STRING "svcapp";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=21432
+  Sender=:1.2  Path=/org/freedesktop/systemd1/agent  Interface=org.freedesktop.systemd1.Agent  Member=Released
+  Monotonic=66927547152  Realtime=1794097740395476  SequenceNumber=487224
+  PID=1  TID=1  PPID=n/a
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=systemd  TIDComm=systemd  Exe=/usr/lib/systemd/systemd
+  CommandLine=/usr/lib/systemd/systemd  Label=System::Privileged  Description=bus_2dapi_2dsystem
+  CGroup=/init.scope  Unit=init.scope  Slice=-.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.2  WellKnownNames=org.freedesktop.systemd1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "/system.slice/org.tizen.content-tiles-provider.service";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69306
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66927551680  Realtime=1794097740400004  SequenceNumber=487225
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0204147;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=5361
+  Sender=:1.303  Destination=net.wifidirect  Path=/net/wifidirect  Interface=net.wifidirect.display  Member=GetConfig
+  Monotonic=66927714968  Realtime=1794097740563292  SequenceNumber=487226
+  PID=1852  TID=1852  PPID=443
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10503 10705
+  Comm=p2p-asm  TIDComm=p2p-asm
+  CommandLine=/usr/bin/p2p-asm  Label=User::Pkg::p2p-asm  Description=gdbus-kdbus
+  CGroup=/init.scope  Unit=init.scope  Slice=-.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.303  WellKnownNames=com.samsung.tizen.asm
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "" {
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=5669  ReplyCookie=5361
+  Sender=:1.310  Destination=:1.303
+  Monotonic=66927715690  Realtime=1794097740564014  SequenceNumber=487227
+  PID=1766  TID=1766  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=wfd-manager  TIDComm=wfd-manager  Exe=/usr/bin/wfd-manager
+  CommandLine=/usr/bin/wfd-manager  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/wfd-manager.service  Unit=wfd-manager.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.310  WellKnownNames=net.wifidirect
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "iiii" {
+          INT32 0;
+          INT32 3;
+          INT32 7236;
+          INT32 1;
+  };
+
+‣ Type=method_call  Endian=l  Flags=2  Version=2  Priority=0 Cookie=526
+  Sender=:1.8804  Destination=fi.w1.wpa_supplicant1  Path=/fi/w1/wpa_supplicant1/Interfaces/0  Interface=fi.w1.wpa_supplicant1.Interface  Member=SignalPoll
+  Monotonic=66928010775  Realtime=1794097740859099  SequenceNumber=487228
+  PID=31958  TID=31958  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=connmand  TIDComm=connmand  Exe=/usr/sbin/connmand
+  CommandLine=/usr/sbin/connmand  Label=System::Privileged  Description=libdbus-kdbus
+  CGroup=/system.slice/connman.service  Unit=connman.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.8804  WellKnownNames=net.connman
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "" {
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=22524  ReplyCookie=526
+  Sender=:1.26  Destination=:1.8804
+  Monotonic=66928037615  Realtime=1794097740885939  SequenceNumber=487229
+  PID=743  TID=743  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=wpa_supplicant  TIDComm=wpa_supplicant  Exe=/usr/sbin/wpa_supplicant
+  CommandLine=/usr/sbin/wpa_supplicant  Label=System::Privileged  Description=libdbus-kdbus
+  CGroup=/system.slice/wpa_supplicant.service  Unit=wpa_supplicant.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.26  WellKnownNames=fi.w1.wpa_supplicant1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "v" {
+          VARIANT "a{sv}" {
+                  ARRAY "{sv}" {
+                          DICT_ENTRY "sv" {
+                                  STRING "rssi";
+                                  VARIANT "i" {
+                                          INT32 -65;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "linkspeed";
+                                  VARIANT "i" {
+                                          INT32 117;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "noise";
+                                  VARIANT "i" {
+                                          INT32 -94;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "frequency";
+                                  VARIANT "u" {
+                                          UINT32 5240;
+                                  };
+                          };
+                  };
+          };
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69307
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66928352812  Realtime=1794097741201136  SequenceNumber=487230
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0235629;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=14107
+  Sender=:1.18  Destination=fi.w1.wpa_supplicant1  Path=/fi/w1/wpa_supplicant1  Interface=fi.w1.wpa_supplicant1  Member=GetInterface
+  Monotonic=66929003018  Realtime=1794097741851342  SequenceNumber=487231
+  PID=624  TID=624  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=net-config  TIDComm=net-config  Exe=/usr/sbin/net-config
+  CommandLine=/usr/sbin/net-config  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/net-config.service  Unit=net-config.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.18  WellKnownNames=net.netconfig
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=cap_dac_override cap_net_admin cap_net_raw
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "wlan0";
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=22525  ReplyCookie=14107
+  Sender=:1.26  Destination=:1.18
+  Monotonic=66929003332  Realtime=1794097741851656  SequenceNumber=487232
+  PID=743  TID=743  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=wpa_supplicant  TIDComm=wpa_supplicant  Exe=/usr/sbin/wpa_supplicant
+  CommandLine=/usr/sbin/wpa_supplicant  Label=System::Privileged  Description=libdbus-kdbus
+  CGroup=/system.slice/wpa_supplicant.service  Unit=wpa_supplicant.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.26  WellKnownNames=fi.w1.wpa_supplicant1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "o" {
+          OBJECT_PATH "/fi/w1/wpa_supplicant1/Interfaces/0";
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=14108
+  Sender=:1.18  Destination=fi.w1.wpa_supplicant1  Path=/fi/w1/wpa_supplicant1/Interfaces/0  Interface=fi.w1.wpa_supplicant1.Interface  Member=SignalPoll
+  Monotonic=66929003837  Realtime=1794097741852161  SequenceNumber=487233
+  PID=624  TID=624  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=net-config  TIDComm=net-config  Exe=/usr/sbin/net-config
+  CommandLine=/usr/sbin/net-config  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/net-config.service  Unit=net-config.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.18  WellKnownNames=net.netconfig
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=cap_dac_override cap_net_admin cap_net_raw
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "" {
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=22526  ReplyCookie=14108
+  Sender=:1.26  Destination=:1.18
+  Monotonic=66929031081  Realtime=1794097741879405  SequenceNumber=487234
+  PID=743  TID=743  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=wpa_supplicant  TIDComm=wpa_supplicant  Exe=/usr/sbin/wpa_supplicant
+  CommandLine=/usr/sbin/wpa_supplicant  Label=System::Privileged  Description=libdbus-kdbus
+  CGroup=/system.slice/wpa_supplicant.service  Unit=wpa_supplicant.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.26  WellKnownNames=fi.w1.wpa_supplicant1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "v" {
+          VARIANT "a{sv}" {
+                  ARRAY "{sv}" {
+                          DICT_ENTRY "sv" {
+                                  STRING "rssi";
+                                  VARIANT "i" {
+                                          INT32 -65;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "linkspeed";
+                                  VARIANT "i" {
+                                          INT32 117;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "noise";
+                                  VARIANT "i" {
+                                          INT32 -94;
+                                  };
+                          };
+                          DICT_ENTRY "sv" {
+                                  STRING "frequency";
+                                  VARIANT "u" {
+                                          UINT32 5240;
+                                  };
+                          };
+                  };
+          };
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69308
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66929150897  Realtime=1794097741999221  SequenceNumber=487235
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0235745;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=method_call  Endian=l  Flags=0  Version=2  Priority=0 Cookie=38301
+  Sender=:1.436  Destination=org.tizen.tv.avoc  Path=/org/tizen/tv/avoc  Interface=org.tizen.tv.avoc.AvOutputControl  Member=GetAiIllumination
+  Monotonic=66929182744  Realtime=1794097742031068  SequenceNumber=487236
+  PID=1507  TID=2943  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=data-service  TIDComm=data-service  Exe=/usr/bin/data-service
+  CommandLine=/usr/bin/data-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/data-service.service  Unit=data-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.436  WellKnownNames=org.tizen.tv.logger org.tizen.tv.ssoservice.ssoclient.obj1507_data-service org.tizen.tv.dataservice
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "" {
+  };
+
+‣ Type=method_return  Endian=l  Flags=1  Version=2  Priority=0 Cookie=25891  ReplyCookie=38301
+  Sender=:1.15  Destination=:1.436
+  Monotonic=66929183597  Realtime=1794097742031921  SequenceNumber=487237
+  PID=592  TID=592  PPID=1
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=avocd  TIDComm=avocd  Exe=/usr/bin/avocd
+  CommandLine=/usr/bin/avocd  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/avocd-launcher.service  Unit=avocd-launcher.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.15  WellKnownNames=org.tizen.tv.avoc
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "ii" {
+          INT32 0;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69309
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66929950626  Realtime=1794097742798951  SequenceNumber=487238
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0220486;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69310
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66930752742  Realtime=1794097743601066  SequenceNumber=487239
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0223302;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=28220
+  Sender=:1.52  Path=/Org/Tizen/Aul/AppStatus  Interface=org.tizen.aul.AppStatus  Member=AppResume
+  Monotonic=66930777849  Realtime=1794097743626173  SequenceNumber=487240
+  PID=917  TID=917  PPID=1
+  UID=301  EUID=301  SUID=301  FSUID=301  GID=301  EGID=301  SGID=301  FSGID=301  SupplementaryGIDs=29 44 201 301 1051 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=amd  TIDComm=amd  Exe=/usr/bin/amd
+  CommandLine=/usr/bin/amd  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/ac.service  Unit=ac.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.52  WellKnownNames=org.tizen.tv.webappservice.dbclient.obj917
+  EffectiveCapabilities=cap_dac_override cap_kill cap_sys_admin
+  PermittedCapabilities=cap_dac_override cap_kill cap_sys_admin
+  InheritableCapabilities=cap_dac_override cap_kill cap_setgid 
+          cap_setuid cap_sys_admin cap_mac_admin
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "isss" {
+          INT32 1363;
+          STRING "org.tizen.content-tiles-provider";
+          STRING "org.tizen.content-tiles-provider";
+          STRING "svcapp";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=21433
+  Sender=:1.2  Path=/org/freedesktop/systemd1/agent  Interface=org.freedesktop.systemd1.Agent  Member=Released
+  Monotonic=66930788031  Realtime=1794097743636355  SequenceNumber=487241
+  PID=1  TID=1  PPID=n/a
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=systemd  TIDComm=systemd  Exe=/usr/lib/systemd/systemd
+  CommandLine=/usr/lib/systemd/systemd  Label=System::Privileged  Description=bus_2dapi_2dsystem
+  CGroup=/init.scope  Unit=init.scope  Slice=-.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.2  WellKnownNames=org.freedesktop.systemd1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "/system.slice/org.tizen.content-tiles-provider.service";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69311
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66931553658  Realtime=1794097744401982  SequenceNumber=487242
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0239815;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69312
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66932351418  Realtime=1794097745199742  SequenceNumber=487243
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0239911;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69313
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66933154584  Realtime=1794097746002909  SequenceNumber=487244
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0239911;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69314
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66933952895  Realtime=1794097746801220  SequenceNumber=487245
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0218769;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=28221
+  Sender=:1.52  Path=/Org/Tizen/Aul/AppStatus  Interface=org.tizen.aul.AppStatus  Member=AppResume
+  Monotonic=66934027491  Realtime=1794097746875815  SequenceNumber=487246
+  PID=917  TID=917  PPID=1
+  UID=301  EUID=301  SUID=301  FSUID=301  GID=301  EGID=301  SGID=301  FSGID=301  SupplementaryGIDs=29 44 201 301 1051 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=amd  TIDComm=amd  Exe=/usr/bin/amd
+  CommandLine=/usr/bin/amd  Label=System  Description=gdbus-kdbus
+  CGroup=/system.slice/ac.service  Unit=ac.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.52  WellKnownNames=org.tizen.tv.webappservice.dbclient.obj917
+  EffectiveCapabilities=cap_dac_override cap_kill cap_sys_admin
+  PermittedCapabilities=cap_dac_override cap_kill cap_sys_admin
+  InheritableCapabilities=cap_dac_override cap_kill cap_setgid 
+          cap_setuid cap_sys_admin cap_mac_admin
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "isss" {
+          INT32 1363;
+          STRING "org.tizen.content-tiles-provider";
+          STRING "org.tizen.content-tiles-provider";
+          STRING "svcapp";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=21434
+  Sender=:1.2  Path=/org/freedesktop/systemd1/agent  Interface=org.freedesktop.systemd1.Agent  Member=Released
+  Monotonic=66934037432  Realtime=1794097746885756  SequenceNumber=487247
+  PID=1  TID=1  PPID=n/a
+  UID=0  EUID=0  SUID=0  FSUID=0  GID=0  EGID=0  SGID=0  FSGID=0  SupplementaryGIDs=
+  Comm=systemd  TIDComm=systemd  Exe=/usr/lib/systemd/systemd
+  CommandLine=/usr/lib/systemd/systemd  Label=System::Privileged  Description=bus_2dapi_2dsystem
+  CGroup=/init.scope  Unit=init.scope  Slice=-.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.2  WellKnownNames=org.freedesktop.systemd1
+  EffectiveCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  PermittedCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "s" {
+          STRING "/system.slice/org.tizen.content-tiles-provider.service";
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69315
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66934753517  Realtime=1794097747601842  SequenceNumber=487248
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.0218769;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69316
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66935550745  Realtime=1794097748399069  SequenceNumber=487249
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.036603;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+
+‣ Type=signal  Endian=l  Flags=1  Version=2  Priority=0 Cookie=69317
+  Sender=:1.437  Path=/samsung/tizen/CrsApi  Interface=samsung.tizen.CrsApi  Member=BlackScreenInfo
+  Monotonic=66936351224  Realtime=1794097749199548  SequenceNumber=487250
+  PID=1677  TID=17916  PPID=1
+  UID=5001  EUID=5001  SUID=5001  FSUID=5001  GID=100  EGID=100  SGID=100  FSGID=100  SupplementaryGIDs=29 44 100 201 1901 6509 10001 10013 10501 10502 10503 10704 10705 10711 10901 10903 11103 11201
+  Comm=contents-recogn  TIDComm=CRSThread  Exe=/usr/bin/contents-recognition-service
+  CommandLine=/usr/bin/contents-recognition-service  Label=System::Privileged  Description=gdbus-kdbus
+  CGroup=/system.slice/contents-recognition-service.service  Unit=contents-recognition-service.service  Slice=system.slice  UserUnit=n/a  Session=n/a
+  UniqueName=:1.437  WellKnownNames=samsung.tizen.CrsApi
+  EffectiveCapabilities=
+  PermittedCapabilities=
+  InheritableCapabilities=
+  BoundingCapabilities=cap_chown cap_dac_override cap_dac_read_search 
+          cap_fowner cap_fsetid cap_kill cap_setgid 
+          cap_setuid cap_setpcap cap_linux_immutable cap_net_bind_service 
+          cap_net_broadcast cap_net_admin cap_net_raw cap_ipc_lock 
+          cap_ipc_owner cap_sys_module cap_sys_rawio cap_sys_chroot 
+          cap_sys_ptrace cap_sys_pacct cap_sys_admin cap_sys_boot 
+          cap_sys_nice cap_sys_resource cap_sys_time cap_sys_tty_config 
+          cap_mknod cap_lease cap_audit_write cap_audit_control 
+          cap_setfcap cap_mac_override cap_mac_admin cap_syslog 
+          cap_wake_alarm cap_block_suspend cap_audit_read
+  MESSAGE "idiiii" {
+          INT32 0;
+          DOUBLE 0.036603;
+          INT32 16;
+          INT32 16;
+          INT32 16;
+          INT32 0;
+  };
+

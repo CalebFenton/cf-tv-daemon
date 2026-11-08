@@ -1,0 +1,13 @@
+# Host tools for this repo, pinned. `mise install` sets them up; `mise trust`
+# once on a new checkout. Python packages live in pyproject.toml / uv.lock.
+[tools]
+python = "3.13.15"
+uv = "0.13.7"
+ruff = "0.17.3"
+prek = "0.5.10"
+
+[env]
+# uv uses mise's Python above instead of downloading its own.
+UV_PYTHON_DOWNLOADS = "never"
+# Shells in the repo get the project environment (`uv sync` creates it).
+_.python.venv = ".venv"

@@ -1,0 +1,62 @@
+#!/bin/sh
+# snap.sh - capture the TV screen to a local file, fast.
+#
+# Uses the persistent root channel (tvchan.py serve) instead of re-running the
+# root exploit per command. One call captures AND transfers, so the whole loop
+# is a single channel round trip.
+#
+# Usage:  snap.sh [output.jpg]
+#
+# The probe lives in /opt/cap, on the persistent /opt partition. /tmp is tmpfs
+# and is wiped on reboot, which is what made capture appear to "just stop
+# working" after a power cycle: the DLL was gone. Do not move it back.
+
+set -u
+cd "$(dirname "$0")/.." 2>/dev/null || exit 98
+
+OUT=${1:-/tmp/snap.jpg}
+PY=.venv/bin/python
+PROBE=/opt/cap/CaptureProbe.dll
+REMOTE=/opt/cap/.snap.jpg
+
+snap_once() {
+    "$PY" tv/chan.py run \
+        "/usr/bin/dotnet $PROBE $REMOTE 2>&1; base64 -w0 $REMOTE" \
+        > /tmp/.snap.b64 2>/tmp/.snap.err
+}
+
+snap_once
+rc=$?
+
+# channel_down means the agent died (standby/reboot). Bring it back and retry.
+if [ $rc -ne 0 ] || [ ! -s /tmp/.snap.b64 ]; then
+    if grep -qi 'channel_down\|refused\|ConnectionRefused' /tmp/.snap.err /tmp/.snap.b64 2>/dev/null; then
+        echo "snap: channel down, restarting..." >&2
+        nohup "$PY" tv/chan.py serve >/tmp/tvchan.log 2>&1 &
+        i=0
+        while [ $i -lt 60 ]; do
+            sleep 1
+            i=$((i + 1))
+            grep -q 'channel ready' /tmp/tvchan.log 2>/dev/null && break
+        done
+        snap_once
+        rc=$?
+    fi
+fi
+
+if [ $rc -ne 0 ] || [ ! -s /tmp/.snap.b64 ]; then
+    cat /tmp/.snap.err >&2
+    echo "snap: channel failed" >&2
+    exit 1
+fi
+
+# If the probe failed it prints its error before the payload; an empty payload
+# means no file was written. Take the last line only: it is the base64 blob.
+tail -n 1 /tmp/.snap.b64 | base64 -d > "$OUT" 2>/dev/null
+if [ ! -s "$OUT" ]; then
+    echo "snap: empty output; probe said:" >&2
+    grep -v '^[A-Za-z0-9+/=]\{80,\}$' /tmp/.snap.b64 | head -5 >&2
+    exit 1
+fi
+
+echo "$OUT $(stat -c%s "$OUT") bytes"

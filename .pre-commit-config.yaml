@@ -1,0 +1,56 @@
+# Run by prek (mise.toml): `prek install` once per checkout, then on every
+# commit; `prek run --all-files` by hand.
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Same version as ruff in mise.toml; change both together.
+    rev: v0.17.3
+    hooks:
+      - id: ruff-check
+        name: Ruff (lint + fix)
+        types_or: [python, pyi]
+        args: [--fix, --show-fixes, --exit-non-zero-on-fix]
+      - id: ruff-format
+        name: Ruff Format
+        types_or: [python, pyi]
+
+  # The boot payload runs as root on the TV; a syntax error there costs root
+  # until the next deploy. All of it is shell text or awk.
+  - repo: local
+    hooks:
+      - id: shell-syntax
+        name: Shell syntax (bash -n)
+        language: system
+        entry: bash -n
+        types: [shell]
+      - id: hook-syntax
+        name: Boot/wake hook syntax (bash -n)
+        language: system
+        entry: bash -n
+        files: ^payload/on-(boot|wake)\.d/
+      - id: awk-syntax
+        name: awk syntax (gawk)
+        language: system
+        entry: bash -c 'for f; do gawk --pretty-print=/dev/null -f "$f" || exit 1; done' --
+        files: \.awk$
+
+  # Compiled output, files pulled from the TV and screenshots belong in
+  # ignored directories (build/, vendor/, .local/), not in git. The font is
+  # the one binary source file.
+  - repo: local
+    hooks:
+      - id: no-binaries
+        name: No binary files
+        language: fail
+        entry: binary files go in build/, vendor/ or .local/, not in git
+        types: [binary]
+        exclude: ^apps/assets/fonts/.*\.ttf$

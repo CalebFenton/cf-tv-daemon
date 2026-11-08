@@ -1,0 +1,65 @@
+scaler0
+a(iiiiis) 2 7 11 3 124 -1 "org.tizen.tv-viewer" 16 18 0 -1 -1 ""
+scaler1
+a(iiiiis) 2 7 11 3 124 -1 "org.tizen.tv-viewer" 16 18 0 -1 -1 ""
+scaler2
+a(iiiiis) 2 7 11 3 124 -1 "org.tizen.tv-viewer" 16 18 0 -1 -1 ""
+coll0
+a(isiiis) 5 1 "alsa_control_main_out" 3 9 124 "org.tizen.tv-viewer" 11 "/dev/dri/card0" 3 7 124 "org.tizen.tv-viewer" 19 "/dev/dvb/adapter1/audio0" 3 1 124 "org.tizen.tv-viewer" 22 "/dev/video10" 0 1010 -1 "" 52 "/dev/video60" 0 1090 -1 ""
+coll1
+a(isiiis) 5 1 "alsa_control_main_out" 3 9 124 "org.tizen.tv-viewer" 11 "/dev/dri/card0" 3 7 124 "org.tizen.tv-viewer" 19 "/dev/dvb/adapter1/audio0" 3 1 124 "org.tizen.tv-viewer" 22 "/dev/video10" 0 1010 -1 "" 52 "/dev/video60" 0 1090 -1 ""
+coll2
+a(isiiis) 0
+coll3
+a(isiiis) 5 1 "alsa_control_main_out" 3 9 124 "org.tizen.tv-viewer" 11 "/dev/dri/card0" 3 7 124 "org.tizen.tv-viewer" 19 "/dev/dvb/adapter1/audio0" 3 1 124 "org.tizen.tv-viewer" 22 "/dev/video10" 0 1010 -1 "" 52 "/dev/video60" 0 1090 -1 ""
+app124
+is 0 "org.tizen.tv-viewer"
+i 1
+app128
+is -1 ""
+i 0
+app127
+is -1 ""
+i 0
+list0
+a(iissi) 0
+list1
+a(iissi) 1 19 3 "/dev/dvb/adapter1/audio0" "org.tizen.tv-viewer" 124
+list2
+a(iissi) 0
+list3
+a(iissi) 2 22 0 "/dev/video10" "" 0 23 0 "/dev/video11" "" 0
+list4
+a(iissi) 6 6 0 "/dev/dvb/adapter0/demux0" "" 0 7 0 "/dev/dvb/adapter0/demux1" "" 0 8 0 "/dev/dvb/adapter0/demux2" "" 0 34 0 "/dev/dvb/adapter0/demux3" "" 0 55 0 "/dev/dvb/adapter0/demux4" "" 0 56 0 "/dev/dvb/adapter0/demux5" "" 0
+list5
+a(iissi) 1 9 0 "/dev/snd/comprC2D8" "" 0
+list6
+a(iissi) 1 10 0 "/dev/video30" "" 0
+list7
+a(iissi) 1 11 3 "/dev/dri/card0" "org.tizen.tv-viewer" 124
+list8
+a(iissi) 1 16 0 "/dev/dvb/adapter0/frontend0" "" 0
+list9
+a(iissi) 1 1 3 "alsa_control_main_out" "org.tizen.tv-viewer" 124
+list10
+a(iissi) 1 2 0 "alsa_control_remote_out" "" 0
+list11
+a(iissi) 1 3 0 "alsa_control_scart_out" "" 0
+
+list12 a(iissi) 1 4 0 "/dev/snd/pcmC0D0p" "" 0
+list14 a(iissi) 1 20 0 "/dev/dvb/adapter1/audio1" "" 0
+list15 a(iissi) 1 5 0 "/dev/video40" "" 0
+list16 a(iissi) 1 18 0 "/dev/dri/card0" "" 0
+list17 a(iissi) 1 12 0 "N/A" "" 0
+list18 a(iissi) 1 13 0 "N/A" "" 0
+list19 a(iissi) 1 14 3 "N/A" "org.tizen.tv-viewer" 124
+list20 a(iissi) 1 23 0 "/dev/video11" "" 0
+list21 a(iissi) 1 15 0 "N/A" "" 0
+list31 a(iissi) 1 27 0 "N/A" "" 0
+list32 a(iissi) 1 28 0 "N/A" "" 0
+list33 a(iissi) 1 29 0 "N/A" "" 0
+list34 a(iissi) 1 33 0 "N/A" "" 0
+list51 a(iissi) 1 63 0 "alsa_control_sub_out" "" 0
+list52 a(iissi) 1 65 0 "N/A" "" 0
+list53 a(iissi) 3 11 3 "/dev/dri/card0" "org.tizen.tv-viewer" 124 18 0 "/dev/dri/card0" "" 0 65 0 "N/A" "" 0
+

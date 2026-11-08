@@ -1,0 +1,233 @@
+# 50-btconnect - reconnect the Bluetooth speaker named in
+# /opt/cf_tv_daemon/btconnect.addr (one line AA:BB:CC:DD:EE:FF; absent = do nothing).
+# Hook text, run by cf_tv_hooks.sh on boot and on wake (on-wake.d has a copy).
+#
+# Why the speaker does not come back after a power loss (bt-service's own log,
+# dlog with plog=1, 2026-10-24): if it was connected when the TV went down,
+# the speaker reconnects by itself ~15 s after boot and the TV must authorize
+# it (AuthorizationRequest, service 3). bt.connectionmanager, which would
+# accept a known speaker ("saved spk address is same with auth requested
+# device address"), is D-Bus-activated and only gets the request at ~30 s.
+# Meanwhile, at ~20.6 s, bt-service starts its own A2DP connect, which waits
+# on that authorization ("btm_sec_l2cap_access_req - busy - PSM:25 delayed");
+# when the authorization is finally granted, the speaker's incoming A2DP
+# channel is refused ("outgoing conn in progress: Reject incoming conn") and
+# the TV's outgoing one stays stuck. The UI prompt then times out and rejects
+# (bt_product 4178 at ~70 s); the speaker drops its AVRCP-only link (mask 0x08)
+# at ~137 s and is not reachable for minutes. Any connect sent in that state
+# hangs for 60 s.
+#
+# Phase 1 answers the authorization ourselves, before the collision:
+# bt_product 4177 (accept; args addr and service id 3) every ~0.3 s until
+# uptime 30 s (boot) or for 5 s after a wake. An accept with nothing pending
+# is ignored ("BTM_DeviceAuthorized ... State:0", 2026-10-24).
+# Speed matters: under boot load every program start costs ~0.5 s. The first
+# version started 2 accepts in 9 s (uptime 21-30 s, too late; 2026-10-25), so
+# the setup below starts no programs. Each accept is a normal call that waits
+# for its reply, started in the background so a slow reply (up to ~3 s while
+# bt-service boots; 2026-10-25 10:11 lost with 6 serial accepts in 17 s) does
+# not hold up the next one. Never `busctl --expect-reply=no`: bt-service drops
+# such calls without a trace (its permission check needs the caller still on
+# the bus; 2026-10-25: 13 of them in a lost boot, none reached
+# device_reply_auth_request; a 91 sent that way changed nothing). The mask is
+# read only every ~2 s.
+#
+# No recovery once the race is lost: disconnecting the whole device
+# (function 100) during the AVRCP-only link returns -36 and changes nothing
+# (2026-10-25). The hook waits for the link to drop (~140 s) and scans.
+#
+# Phase 2 (speaker was not connected before, or the above failed): send a
+# connect only right after a discovery scan has seen the speaker. Scans are
+# passive (the Sound Output menu runs one every time it opens); connects are
+# not:
+#   - A connect to a speaker that is not answering pages blocks in bt-service
+#     for 30-60 s, and every connect in that time gets -29 IN_PROGRESS, also
+#     the menu's (capture 2026-10-24 13:28).
+#   - Retrying connects every 30 s for 10 min (2026-10-23 20:19-20:32) left
+#     bt-service stuck until the TV was power-cycled.
+#   - Failed connects make the TV show "play TV sound through this device?".
+# So: at most 3 connects per event, each right after the speaker was seen,
+# never while the AVRCP-only link is up.
+#
+# Requests (the same as tv/bt.py; docs/04-system/bluetooth.md):
+#   audio up?   bt_product 4180(addr) -> (0, <[byte 0x00, 0x00, 0x0c, 0x00]>).
+#               Third byte: 0x04 = audio (A2DP), 0x08 = AVRCP. Do not use
+#               db/btapp/lastSoundRoute: it is persisted, not live.
+#   scan        service_request 14 ([0,0], [30,0], [0,0,0,0]) starts discovery,
+#               16 stops it; results are DeviceFound signals.
+#   connect     the menu's sequence: queries 19, 25, 4176, 88; bt_product
+#               4248, 4247(2), 4247(16); service_request 4/180, 482, 484, 493;
+#               180(addr). On -9 the menu repeats 4/180 ... 180 once.
+#               busctl prints the reply code as "iv <code>".
+
+# Setup without starting programs (bash builtins only).
+read -r addr < /opt/cf_tv_daemon/btconnect.addr 2>/dev/null
+case $addr in
+  [0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]:[0-9A-Fa-f][0-9A-Fa-f]) ;;
+  *) say "no speaker configured"; exit 0 ;;
+esac
+IFS=: read -r o1 o2 o3 o4 o5 o6 <<EOF
+$addr
+EOF
+hex="0x$o1,0x$o2,0x$o3,0x$o4,0x$o5,0x$o6"
+dec="$((0x$o1)) $((0x$o2)) $((0x$o3)) $((0x$o4)) $((0x$o5)) $((0x$o6))"
+work=/opt/cf_tv_daemon/state/locks
+BT="org.projectx.bt /org/projectx/bt_service org.projectx.bt service_request"
+PRODUCT="org.projectx.bt_product /org/projectx/bt_service_product org.projectx.bt_product service_request_product"
+
+# Uptime in whole seconds, into $U (no subshell).
+now() { read -r U _ < /proc/uptime; U=${U%.*}; }
+up() { now; echo $U; }
+
+# Third byte of the 4180 bitmask, e.g. 0x0c; "?" if the query failed.
+# One program (gdbus); the parsing is bash.
+mask() {
+  reply=$(gdbus call --system --dest org.projectx.bt_product \
+    --object-path /org/projectx/bt_service_product \
+    --method org.projectx.bt_product.service_request_product 1 4180 0 \
+    "[byte $hex]" '@ay []' '@ay []' '@ay []' '@ay []' 2>&1)
+  case $reply in
+    "(0, <[byte"*) r=${reply#*\[byte }; r=${r#*, }; r=${r#*, }; echo "${r%%[],]*}" ;;
+    *) echo "?" ;;
+  esac
+}
+audio() { case $1 in 0x*) [ $(( $1 & 4 )) -ne 0 ] ;; *) return 1 ;; esac; }
+avrcp_only() { case $1 in 0x*) [ $(( $1 & 12 )) -eq 8 ] ;; *) return 1 ;; esac; }
+
+# rc of one call: bt|product, service_type, function, request_type, then all
+# five byte arrays, each as length followed by bytes.
+call() {
+  if [ "$1" = product ]; then target=$PRODUCT; else target=$BT; fi
+  shift
+  busctl --system --timeout=60 call $target iiiayayayayay "$@" 2>&1 |
+    grep -o 'iv -*[0-9]*' | sed 's/^iv //'
+}
+
+# Accepts every 0.25 s until uptime $1 or audio, each in the background; the
+# mask (waits for a reply) every 8th round. Sets $m, $accepts, $first_accept.
+accept_until() {
+  now
+  while [ $U -lt $1 ]; do
+    busctl --system --timeout=10 call $PRODUCT iiiayayayayay 1 4177 0 6 $dec 4 3 0 0 0 0 0 0 >/dev/null 2>&1 &
+    accepts=$((accepts + 1)); [ -z "$first_accept" ] && first_accept=$U
+    if [ $((accepts % 8)) = 0 ]; then m=$(mask); audio "$m" && return 0; fi
+    sleep 0.25
+    now
+  done
+  m=$(mask); audio "$m"
+}
+
+# After a boot-time connect, bt.connectionmanager still receives the speaker's
+# (already answered) authorization request at ~30 s and shows the "play TV
+# sound through this device?" prompt (btappui) anyway (2026-10-25: audio up at
+# 18-21 s, prompt at ~31 s). Kill that stale prompt before it draws, until
+# uptime 75 s. SIGKILL: it ignored SIGTERM for ~5 s (2026-10-25), long enough
+# to be seen. app_launcher -k is avoided (it pops the Smart Hub bar). Audio is
+# re-checked every ~5 s; if it drops, the prompt is left alone.
+close_stale_prompt() {
+  now; n=0
+  while [ $U -lt 75 ]; do
+    p=$(pidof btappui)
+    if [ -n "$p" ]; then kill -9 $p 2>/dev/null; say "up=$U killed the stale prompt (btappui $p)"; fi
+    n=$((n + 1))
+    if [ $((n % 25)) = 0 ]; then m=$(mask); audio "$m" || return; fi
+    sleep 0.2; now
+  done
+}
+
+# Trust the speaker again after every connect. Bluedroid stores a per-device
+# authorization in /opt/usr/apps/bluetooth-config/data/bt_config.xml
+# ("Authorize": 2 = ask, 3 = trusted; 2026-10-25). bt.connectionmanager writes
+# 2 right after every connect (service_request 91, authorized false). With 3
+# the speaker's own reconnect after a power loss needs no authorization, so
+# there is no race and no prompt. 91 with true, 5 s after the connect, once
+# the vendor's reset is done. Runs in the background (the prompt watch must
+# start at once).
+trust_speaker() {
+  sleep 5
+  rc=$(call bt 0 91 0 6 $dec 4 1 0 0 0 0 0 0)
+  a=$(grep -i -A12 "Tag=\"$addr\"" /opt/usr/apps/bluetooth-config/data/bt_config.xml | grep -o 'Authorize" Type="int">[0-9]*' | grep -o '[0-9]*$')
+  say "up=$(up) trusted the speaker (91 rc $rc, stored Authorize=$a)"
+}
+
+# Phase 1: accept the speaker's own reconnect.
+accepts=0 first_accept=""
+if [ "$CF_EVENT" = boot ]; then now; until_up=30; limit=600; else now; until_up=$((U + 5)); limit=180; fi
+if accept_until $until_up; then
+  say "up=$(up) connected (mask $m); $accepts accepts, first at up=$first_accept"
+  trust_speaker &
+  [ "$CF_EVENT" = boot ] && close_stale_prompt
+  wait
+  exit 0
+fi
+say "up=$(up) not connected after $accepts accepts, first at up=$first_accept (mask $m)"
+
+# Phase 2 needs the address in capitals (busctl prints it so).
+ADDR=$(echo "$addr" | tr a-f A-F)
+
+# One discovery round of up to 10 s; succeeds as soon as a DeviceFound signal
+# names the speaker. busctl ignores --match on this bus, so the full stream is
+# read through a pipe and never stored.
+scan() {
+  rm -f $work/scan.fifo $work/scan.found
+  mkfifo $work/scan.fifo
+  busctl --system monitor > $work/scan.fifo 2>/dev/null & bp=$!
+  awk -v a="$ADDR" '/^‣/ { df = 0 } /Member=DeviceFound/ { df = 1 }
+    df && index($0, a) { f = 1; exit } END { exit !f }' < $work/scan.fifo &&
+    touch $work/scan.found &
+  sleep 0.3
+  call bt 0 14 0 2 0 0 2 30 0 4 0 0 0 0 0 0 >/dev/null
+  i=0
+  while [ $i -lt 20 ] && [ ! -e $work/scan.found ]; do sleep 0.5; i=$((i + 1)); done
+  call bt 0 16 0 0 0 0 0 0 >/dev/null
+  kill $bp 2>/dev/null
+  wait 2>/dev/null
+  rm -f $work/scan.fifo
+  [ -e $work/scan.found ]
+}
+
+connect_try() {
+  pre="4/180:$(call bt 4 180 0 0 0 0 0 0)"
+  pre="$pre 482:$(call bt 0 482 0 0 0 0 0 0) 484:$(call bt 0 484 0 0 0 0 0 0) 493:$(call bt 0 493 0 0 0 0 0 0)"
+  rc=$(call bt 0 180 1 6 $dec 0 0 0 0)
+  say "up=$(up) $1: $pre; 180 rc $rc"
+}
+menu_connect() {
+  q="19:$(call bt 0 19 0 0 0 0 0 0) 25:$(call bt 0 25 0 0 0 0 0 0)"
+  q="$q 4176:$(call product 1 4176 0 6 $dec 0 0 0 0) 88:$(call bt 0 88 0 6 $dec 0 0 0 0)"
+  q="$q 4248:$(call product 1 4248 0 0 0 0 0 0)"
+  q="$q 4247/2:$(call product 1 4247 0 4 2 0 0 0 0 0 0 0)"
+  q="$q 4247/16:$(call product 1 4247 0 4 16 0 0 0 0 0 0 0)"
+  say "up=$(up) queries and prelude rc $q"
+  connect_try connect
+  connects=$((connects + 1))
+  if [ "$rc" = -9 ] && [ $connects -lt 3 ]; then
+    connect_try "repeat after -9 (as the menu does)"
+    connects=$((connects + 1))
+  fi
+}
+
+# Phase 2: scan, connect when seen.
+deadline=$(( $(up) + limit ))
+connects=0 rounds=0 partial=0
+while [ $(up) -lt $deadline ]; do
+  m=$(mask)
+  if audio "$m"; then say "up=$(up) connected (mask $m)"; trust_speaker; exit 0; fi
+  if avrcp_only "$m"; then
+    [ $partial = 0 ] && say "up=$(up) speaker holds an AVRCP-only link (mask $m); waiting for it to drop"
+    partial=1; sleep 3; continue
+  fi
+  [ $partial = 1 ] && say "up=$(up) AVRCP-only link gone (mask $m)"
+  partial=0
+  if [ $connects -ge 3 ]; then break; fi
+  rounds=$((rounds + 1))
+  if scan; then
+    say "up=$(up) speaker seen in scan $rounds"
+    menu_connect
+    sleep 4
+  else
+    [ $((rounds % 6)) = 1 ] && say "up=$(up) scan $rounds: speaker not seen"
+    sleep 5
+  fi
+done
+say "up=$(up) giving up: not connected after $rounds scans and $connects connects (mask $(mask))"

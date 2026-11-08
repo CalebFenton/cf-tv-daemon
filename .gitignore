@@ -1,0 +1,57 @@
+# Build outputs and generated artefacts. Everything here is reproducible.
+
+# --- Third-party, extracted firmware, downloaded SDKs --------------------
+# Third-party git projects are submodules (.gitmodules): vendor/samsung-tv-root-source,
+# tools/unixtract, tools/vdfs-tools, tools/vdfs-unpack, docs/reference/*. Other
+# third-party files (SDB binary, models) and the extracted firmware are not
+# git projects: restore per VENDOR.md; never commit.
+/vendor/*
+!/vendor/.gitkeep
+!/vendor/samsung-tv-root-source
+/livefs/
+/live/
+/firmware/
+/work/
+# Rust build output of the tools/ submodules.
+/tools/*/target/
+
+# --- Toolchains ---------------------------------------------------------
+/.dotnet8/
+/.dotnet31/
+/.venv*/
+/build/
+# Local scratch and private evidence: intermediate build dirs, pulled bus
+# captures, screenshots, binaries pulled from the TV, the pre-publication history.
+/.local/
+
+# --- Compiled output ----------------------------------------------------
+# bin/ is NOT ignored: it holds the entry-point scripts.
+obj/
+*.dll
+*.so
+*.o
+*.a
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+*.runtimeconfig.dev.json
+
+# --- Python -------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.ruff_cache/
+
+# --- Transient ----------------------------------------------------------
+*.log
+*.b64
+*.jpg
+*.jpeg
+.DS_Store
+*.swp
+
+# --- Local configuration (templates: .env.example, payload/btconnect.addr.example)
+/.env
+/payload/btconnect.addr
+
+# Untracked local leftover.
+/payloads/

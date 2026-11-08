@@ -1,0 +1,14 @@
+avocd/muse calls during the run: 16 Member=MethodCall
+     14 Member=BlackScreenInfo
+      3 Member=Released
+      3 Member=AppResume
+      2 Member=SignalPoll
+      2 Member=DeviceRunningChanged
+      1 Member=SuspendHint
+      1 Member=ProcStatus
+      1 Member=GetInterface
+      1 Member=GetConfig
+      1 Member=GetAiIllumination
+640x360 @ 30: sent 241 in 8.0s (30.1/s, 4.5 Mbit/s, 18 KB/frame), late 0
+agent: {"ok":true,"seconds":8.03,"received":241,"shown":241,"dropped":0,"kbytes_per_frame":18.4,"decode_ms":2.12,"upload_ms":0.95,"audio_played":241,"audio_dropped":0}
+agent CPU: 25% of one core (4 cores)

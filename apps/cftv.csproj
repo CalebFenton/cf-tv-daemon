@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>Cftv</AssemblyName>
+    <UseAppHost>false</UseAppHost>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DebugType>none</DebugType>
+    <Nullable>disable</Nullable>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="cftv.cs" />
+    <Compile Include="cftv-hud.cs" />
+    <Compile Include="cftv-frames.cs" />
+    <Compile Include="cftv-esplayer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Private=false: never bundle Samsung's assemblies with our app. -->
+    <Reference Include="Tizen.NUI"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.NUI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.Applications.Common"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.Applications.Common.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.Multimedia"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.Multimedia.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.Multimedia.AudioIO"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.Multimedia.AudioIO.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.Multimedia.MediaPlayer"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.Multimedia.MediaPlayer.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.System"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.System.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen.TV.Multimedia.ESPlayer"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.TV.Multimedia.ESPlayer.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ElmSharp"><HintPath>$(TV_FRAMEWORK_DIR)/ElmSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Tizen"><HintPath>$(TV_FRAMEWORK_DIR)/Tizen.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

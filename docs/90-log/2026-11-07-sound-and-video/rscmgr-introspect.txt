@@ -1,0 +1,29 @@
+== /
+== /rscmgr
+== /rscmgr/resource
+/run/rsc_mng_ready
+/tmp/aub_abnormal_user_behavior_1708.log
+/tmp/fb_drm_insmod_done
+/tmp/init_mode_normal
+/tmp/normal_mode
+/tmp/preview-updater-normal
+
+/run/rsc_mng:
+2263.102.s2c.cb
+3757.103.s2c.cb
+709.124.s2c.cb
+alarmmgr_add_periodic_alarm_withcb
+alarmmgr_add_reference_periodic_alarm_withcb
+alarm_session_agent
+avocd
+drm_tizen_initialize
+dt-resource
+gen_rm_msgq
+gresource
+muse-server
+resource-center
+resource_center_test
+resourced
+rscmdemon
+rscmgr-service
+rsc-slice

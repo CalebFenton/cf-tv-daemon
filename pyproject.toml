@@ -1,0 +1,21 @@
+[project]
+name = "cf-tv-daemon"
+version = "0"
+description = "Caleb Fenton's root daemon and host tooling for a Samsung QN85D TV: boot/wake hooks, root commands, overlays, notifications, capture, Bluetooth"
+license = "Unlicense"
+requires-python = ">=3.13"
+dependencies = [
+    # Image sizes for bin/cftv (tv/cftv.py).
+    "pillow>=12",
+    # The vendored root exploit, SDB client and root agent (VENDOR.md).
+    "samsung-tv-root",
+    # The HUD's client of the cf-vision service (tv/hud.py).
+    "websockets>=15",
+]
+
+[tool.uv]
+# Scripts in tv/ and bin/, not an installable package.
+package = false
+
+[tool.uv.sources]
+samsung-tv-root = { path = "vendor/samsung-tv-root-source", editable = true }

@@ -1,0 +1,386 @@
+  PID COMMAND
+    1 systemd
+    2 kthreadd
+    3 ksoftirqd/0
+    5 kworker/0:0H
+    7 rcu_preempt
+    8 rcu_sched
+    9 rcu_bh
+   10 migration/0
+   11 migration/1
+   12 ksoftirqd/1
+   14 kworker/1:0H
+   15 migration/2
+   16 ksoftirqd/2
+   18 kworker/2:0H
+   19 migration/3
+   20 ksoftirqd/3
+   22 kworker/3:0H
+   23 khelper
+   24 kdevtmpfs
+   25 netns
+   26 ag_migrated
+   27 irq/39-9c0400.m
+   28 irq/40-9c0500.m
+   29 printk
+   30 writeback
+   31 ksmd
+   32 crypto
+   33 bioset
+   34 kblockd
+   35 kworker/u8:1
+   40 cfinteractive
+   49 kdtvlogd
+   50 kswapd0
+   51 vmstat
+   52 fsnotify_mark
+   53 sim_watchdog
+   65 rc0
+   67 z4fold_compactd
+   68 zram0
+  134 mmcqd/0
+  135 mmcqd/0boot0
+  136 mmcqd/0boot1
+  137 mmcqd/0rpmb
+  138 ipv6_addrconf
+  139 deferwq
+  140 f520c0.thermal
+  142 kworker/1:1H
+  144 kworker/3:1H
+  171 kworker/0:1H
+  174 kworker/2:1H
+  190 cynara-launcher
+  191 cynara
+  199 vlog_task
+  214 boot-helper-dyb
+  256 tztv_mc_debug_p
+  272 kthread_watchdo
+  273 boot-perfmon-tv
+  277 buxton2d
+  283 enlightenment
+  297 buxton2d
+  322 fconfigd
+  344 tzdev-event
+  351 securestorage-p
+  352 security-manage
+  353 kfactoryd
+  355 smack-logger
+  356 security-manage
+  369 nsrpc:0
+  371 nsrpc:1
+  375 nsrpc:2
+  376 nsrpcwatchdog
+  380 tzlogd
+  388 irq/55-frc_msgb
+  390 frctcon_wq
+  392 irq/56-FRC_VA
+  393 irq/57-FRC_PRET
+  394 irq/58-FRC_FMT_
+  431 thread_extin
+  432 mfc_wq
+  435 sdp_mfc_watchdo
+  437 sdp_mfc_defect_
+  438 sdp_mfc_get_def
+  445 launchpad-proce
+  458 dlogutil
+  467 dotnet-hydra-lo
+  485 thread_hdmi_rx
+  486 aioCbTask
+  487 aeMsgTaskMP0
+  488 aePcmDumpTask
+  489 aeOutBufMonTask
+  490 aeCbTask
+  491 DSP_WATCHDOG
+  492 SpdRxMonTask
+  493 frc_pqe_va_wq
+  496 DN_sung.tv.csfs
+  497 tv-viewer
+  505 dvde_watchdog
+  507 eArcTask
+  520 SIF-MTS
+  522 SIF-BTSC
+  523 SIF-CARRIER
+  539 bt.connectionsh
+  541 dotnet-memory-r
+  546 ld_capture
+  548 dvb_core_wq
+  552 alpd_watchdog
+  555 pqe_dp
+  565 sdp_dvfs_workqu
+  566 kbase_job_fault
+  572 user_port_threa
+  573 resume_thread_u
+  574 dpm_usb_resume 
+  575 sdp_ehci_wq
+  589 adagent-service
+  597 avocd
+  599 bt-service
+  600 sdp_ehci_wq
+  601 bms-service
+  605 connman-logger
+  607 kbase_event
+  608 connmand
+  610 deviced
+  618 sdp_ehci_wq
+  625 hdmicec-service
+  627 sdp_ehci_wq
+  659 net-config
+  660 resource-center
+  662 screend
+  680 cfg80211
+  687 sdp_ohci_wq
+  693 slive-provider-
+  700 sdp_ohci_wq
+  709 smdl_daemon
+  721 instant thread
+  725 tvs-daemon
+  726 instant thread
+  727 tvs-lite
+  731 vd-net-config
+  734 sdp_ohci_wq
+  736 wpa_supplicant
+  748 sdp_ohci_wq
+  788 rscmgr-service
+  811 tzdaemon
+  816 tvctx-manager
+  829 TIFSDaemon
+  830 sh
+  838 systemd-udevd
+  853 sp-kpi
+  912 securestorage-s
+  923 amd
+  924 pulseaudio
+  953 kbase_event
+ 1006 main_thread
+ 1007 hif_thread
+ 1008 rx_thread
+ 1061 zone-init
+ 1080 stability-monit
+ 1213 focus_server
+ 1214 TIFADaemon_L
+ 1229 ambient-ua-agen
+ 1231 data-service
+ 1232 dta-agent
+ 1233 license-manager
+ 1237 npumgr_server
+ 1239 ps_agent
+ 1241 isf-panel-efl
+ 1242 ssc-service
+ 1243 systemd
+ 1246 wifi-monitor
+ 1251 muse-server
+ 1263 litewebappservi
+ 1282 kbase_event
+ 1313 wait-default-ta
+ 1337 wait-target-don
+ 1338 sboard-app
+ 1376 allshare-svc
+ 1379 app-control-ser
+ 1382 bt-monitor
+ 1384 btapp-lite
+ 1392 nfc-daemon
+ 1393 content-db-prov
+ 1398 coreapp-service
+ 1438 aisctrlmgr_serv
+ 1444 ghdaemon
+ 1453 qdinfo-daemon
+ 1456 mbr-daemon
+ 1459 sealayer
+ 1465 register-device
+ 1466 remote-server
+ 1478 bt-settings-ext
+ 1485 settings-servic
+ 1486 content-tiles-p
+ 1489 source-service
+ 1491 storaged
+ 1495 ecryptfs-kthrea
+ 1497 vddebugmenu
+ 1500 ContentServiceM
+ 1533 sensord
+ 1561 mvpd_native
+ 1611 kbase_event
+ 1623 loop0
+ 1633 loop1
+ 1645 voice-app
+ 1652 org.tizen.multi
+ 1882 DN_n.ambientapp
+ 1953 comss
+ 2012 ssoservice
+ 2051 kbase_event
+ 2103 bixby-prov
+ 2126 voice-client
+ 2161 kbase_event
+ 2198 bixbycapsulevie
+ 2203 ondevice-voice
+ 2231 welcome-mode
+ 2283 tts-engine-vd-i
+ 2299 tts-engine-vd-s
+ 2335 NW-Daemon
+ 2336 QSysHDMIErrorHi
+ 2338 alarm-server
+ 2340 bam_service
+ 2341 bleapp
+ 2342 canalysis-daemo
+ 2343 key-manager
+ 2348 context-aware-s
+ 2352 ffv-service
+ 2353 CISAPIAppManage
+ 2357 app_launcher
+ 2359 preview-updater
+ 2361 contents-recogn
+ 2363 contents-ui-det
+ 2367 esd
+ 2369 eventd
+ 2379 issue_report_ag
+ 2381 abnormal_user_b
+ 2382 devicetracker
+ 2383 kpi-logging
+ 2384 media-server
+ 2385 mediacontroller
+ 2386 mirroring-recog
+ 2390 homedatacontrol
+ 2397 waapp-contents-
+ 2399 pisa-service
+ 2402 psa-init
+ 2404 pushd
+ 2408 reclaimd
+ 2410 ics-service
+ 2411 registertv
+ 2414 registerav
+ 2416 SCSAgent
+ 2419 sesd
+ 2420 sfpmd
+ 2423 socite_service
+ 2432 tvtimer-manager
+ 2435 wfd-manager
+ 2436 com.samsung.tv.
+ 2457 DN_.multiscreen
+ 2461 org.tizen.easys
+ 2468 hbbtv_service
+ 2481 p2p-asm
+ 2486 utterance-recom
+ 2487 app_launcher
+ 2654 tztv-tagpro-dae
+ 2659 DN_view-updater
+ 2685 kbase_event
+ 2686 hbbtv_app
+ 2706 screeneffectora
+ 2707 smartthings-thi
+ 2712 ScreenMirroring
+ 2772 resourced
+ 2776 kbase_event
+ 2806 was_background_
+ 2915 targeted-ad-ser
+ 2931 efl_webprocess
+ 2963 kbase_event
+ 2999 color-pick
+ 3003 global-notif-se
+ 3004 msf-server
+ 3005 webserver
+ 3006 product-operati
+ 3013 SDDP
+ 3015 sc_init_instanc
+ 3018 usb-launcher-se
+ 3097 gamepad-service
+ 3138 efl_webprocess
+ 3245 audio-share
+ 3269 tpp.tvpluspeppe
+ 3328 bwake
+ 3376 tpp.productinfo
+ 3411 tpp.systeminfo
+ 3522 emergencyLogTra
+ 3523 usdmanagerlaunc
+ 3524 acm-service
+ 3555 dmr
+ 3558 screen_sharing
+ 3583 awm-app
+ 3585 context-aware-a
+ 3592 wifi-motion-mgr
+ 3630 tvs-ht-service
+ 3646 tpp.appcommon
+ 3673 tpp.logging
+ 3690 device-assistan
+ 3691 tpp.sso
+ 3709 menu
+ 3711 data-provider-m
+ 3729 tpp.was
+ 3778 browser
+ 3792 device-policy-m
+ 3904 kbase_event
+ 3982 kbase_event
+ 4080 hitcomp
+ 4088 pvodservice
+ 4112 dlogutil
+ 4189 GIBBON_MAIN
+ 4230 efl_webprocess
+ 4280 smartthings-cli
+ 4349 autofilld
+ 4358 samsung-pass-ag
+ 4371 efl_webprocessR
+ 4519 loop2
+ 4542 sdbd
+ 4566 cobalt_launcher
+ 4592 crashpad_handle
+ 4634 kbase_event
+ 4806 mdnsd
+ 4839 fuzzy-search-en
+ 4861 mde-framework
+ 4893 voice-interacti
+ 4936 action-planner-
+ 4952 CheckProgramCha
+ 4967 digitalbutler-d
+ 4991 ACRService
+ 5013 com.samsung.tv.
+ 5084 spotifyd
+ 5226 primevideo
+ 5322 kbase_event
+ 5793 NRi6kdBYJ0.AirP
+ 5796 efl_webprocess
+ 5812 kbase_event
+ 5844 aria-engine
+ 5976 dotnet-hydra-lo
+ 6119 kbase_event
+ 6349 SWUAutoUpgrade
+ 6485 launchpad-loade
+ 7884 kworker/1:2
+12499 kworker/2:1
+15831 kworker/u8:0
+15897 bt.connectionma
+16038 kworker/u9:0
+16187 IBIZA_THREAD0
+17020 launchpad-loade
+17028 kbase_event
+17061 kworker/u8:2
+17099 kworker/0:1
+17443 DN_v.quickpanel
+18389 DN_-aot-manager
+19849 airplay-service
+19936 loop3
+20400 wrt-loader
+20446 efl_webprocess
+20476 kbase_event
+20558 kworker/0:0
+21252 kworker/u9:2
+21482 kworker/3:1
+22157 kbase_event
+22266 kworker/2:2
+24912 DN_msung-health
+24968 kworker/0:2
+25354 kworker/3:2
+27390 kbase_event
+27588 kworker/u9:3
+27869 kworker/3:0
+28416 kworker/1:1
+30754 kbase_event
+31508 kworker/2:0
+31525 kworker/u8:3
+31847 sh
+31848 sh
+31851 bash
+31853 SamsungTvArchiv
+31861 sdbd-tarlaunche
+31868 tar
+31869 gzip <defunct>
+31870 SamsungTvRootAg
+31882 sh
+31883 ps

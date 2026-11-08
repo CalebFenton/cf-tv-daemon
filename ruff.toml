@@ -1,0 +1,87 @@
+# Differences from ruff's defaults: the excludes below, target py313
+# (mise.toml), and the selected and ignored rules.
+extend-exclude = [
+    "vendor",    # third-party submodules and downloads (VENDOR.md)
+    "tools",     # firmware/ELF analysis scripts kept as written, plus third-party submodules
+    "docs/reference",
+    "archive",
+]
+target-version = "py313"
+line-length = 120
+
+[lint]
+preview = true
+select = [
+    "A",       # flake8-builtins
+    "F",       # pyflakes
+    "E",       # pycodestyle
+    "D",       # pydocstyle
+    "I",       # isort
+    "W",       # pycodestyle
+    "Q",       # flake8-quotes
+    "B",       # flake8-bugbear
+    "UP",      # pyupgrade
+    "RUF",     # ruff
+    "C4",      # flake8-comprehensions
+    "PLC2701", # import-private-name
+    "PLC0415", # import-outside-toplevel
+    "TID",     # flake8-tidy-imports
+    "TRY400",  # error-instead-of-exception
+]
+ignore = [
+    "F403",
+    "E402",   # tv/ scripts put tv/ on sys.path before importing siblings
+    "E501",
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002", # the rules above conflict with ruff format
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "D106",
+    "D107",
+    "D415",
+    # Preview rules that want rule names instead of codes in configs and
+    # comments. This repo uses codes and `noqa`.
+    "RUF105",
+    "RUF201",
+]
+unfixable = ["RUF100"]
+
+[lint.per-file-ignores]
+# The exploit bring-up reuses archive-root's private staging steps.
+"tv/chan.py" = ["PLC2701"]
+
+[lint.isort]
+combine-as-imports = true
+force-wrap-aliases = true
+split-on-trailing-comma = false
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[lint.flake8-quotes]
+docstring-quotes = "double"
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true

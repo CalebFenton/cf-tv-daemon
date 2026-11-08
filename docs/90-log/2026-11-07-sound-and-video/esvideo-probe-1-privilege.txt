@@ -1,0 +1,30 @@
+clip .local/esvideo/clip.h264 -> /opt/usr/home/owner/apps_rw/com.samsung.tv.social-chat-app/cftv/media/3005bbe777f67859.h264, 640x360 @ 30, resource 1
+== before
+resource 7: a(iissi) 1 11 3 "/dev/dri/card0" "org.tizen.tv-viewer" 124
+resource 16: a(iissi) 1 18 0 "/dev/dri/card0" "" 0
+resource 9: a(iissi) 1 1 3 "alsa_control_main_out" "org.tizen.tv-viewer" 124
+player 124 audio out: i 1
+ No   Win_ID    Hwc_win    zpos  ST   AC_ST  ACTI TRANSI  tsurface  src_size        src_pos       FMT       dst_pos        TRANSF DP_tsurface   Queue    vis_skip restriction
+  3 0x00a95ba8 0x00b22db0    0   VD    VD     A   NOtoNO 0x0103fca0 4096x179166 3840x2160+0000+0000 XR24 1920x1080+0000+0000     0  0x0103fca0  0x00000000  FALSE   viewport
+  4 0x00000000 0x003e5c58 -999   DV    DV     A   NOtoNO 0x003e3b10 1920x1080 1920x1080+0000+0000 AR24 1920x1080+0000+0000     0  0x0040f148  0x0040f0d8  FALSE   none
+reply {'ok': False, 'error': 'MethodAccessException: http://developer.samsung.com/privilege/esplay'}
+== during
+resource 7: a(iissi) 1 11 3 "/dev/dri/card0" "org.tizen.tv-viewer" 124
+resource 16: a(iissi) 1 18 0 "/dev/dri/card0" "" 0
+resource 9: a(iissi) 1 1 3 "alsa_control_main_out" "org.tizen.tv-viewer" 124
+player 124 audio out: i 1
+ No   Win_ID    Hwc_win    zpos  ST   AC_ST  ACTI TRANSI  tsurface  src_size        src_pos       FMT       dst_pos        TRANSF DP_tsurface   Queue    vis_skip restriction
+  3 0x00a95ba8 0x00b22db0    0   VD    VD     A   NOtoNO 0x0103fca0 4096x179166 3840x2160+0000+0000 XR24 1920x1080+0000+0000     0  0x0103fca0  0x00000000  FALSE   viewport
+  4 0x00000000 0x003e5c58 -999   DV    DV     A   NOtoNO 0x0040f148 1920x1080 1920x1080+0000+0000 AR24 1920x1080+0000+0000     0  0x0040f148  0x0040f0d8  FALSE   none
+== after
+resource 7: a(iissi) 1 11 3 "/dev/dri/card0" "org.tizen.tv-viewer" 124
+resource 16: a(iissi) 1 18 0 "/dev/dri/card0" "" 0
+resource 9: a(iissi) 1 1 3 "alsa_control_main_out" "org.tizen.tv-viewer" 124
+player 124 audio out: i 1
+ No   Win_ID    Hwc_win    zpos  ST   AC_ST  ACTI TRANSI  tsurface  src_size        src_pos       FMT       dst_pos        TRANSF DP_tsurface   Queue    vis_skip restriction
+  3 0x00a95ba8 0x00b22db0    0   VD    VD     A   NOtoNO 0x0103fca0 4096x179166 3840x2160+0000+0000 XR24 1920x1080+0000+0000     0  0x0103fca0  0x00000000  FALSE   viewport
+  4 0x00000000 0x003e5c58 -999   DV    DV     A   NOtoNO 0x0040f148 1920x1080 1920x1080+0000+0000 AR24 1920x1080+0000+0000     0  0x0040f148  0x0040f0d8  FALSE   none
+== agent log
+20:10:51.662 esvideo -> {"ok":false,"error":"MethodAccessException: http://developer.samsung.com/privilege/esplay"}
+== avocd / resource calls on the bus
+

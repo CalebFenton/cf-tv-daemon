@@ -1,0 +1,5 @@
+#!/bin/sh
+# cftv - put images, text, video, streams, sound and speech on the TV.
+# See tv/cftv.py for usage. Requires tv/chan.py serve.
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+exec "$ROOT/.venv/bin/python" "$ROOT/tv/cftv.py" "$@"
