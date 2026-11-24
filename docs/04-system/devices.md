@@ -103,6 +103,11 @@ with different `--tv`.
   disables and preference values the `40-debloat` hook keeps applied on this
   TV. `boot install` deploys it as `/opt/cf_tv_daemon/debloat.list`, or
   removes that file from a TV with no `debloat`.
+- `hello`: names a render in `build/overmind/` (`tools/overmind_anim.py`,
+  e.g. `wake-96`) that the `30-hello` hook plays top right for 3 s when the TV
+  comes on. `boot install` deploys it as `/opt/cf_tv_daemon/hello.webp`, or
+  removes that file from a TV with no `hello`. The hook's position and size
+  fit `wake-96`.
 
 ## What is still single-TV
 

@@ -94,7 +94,8 @@ PAYLOAD_BACKUP = f"{KIT}/parseinfo.ORIGINAL.sh"
 HOOK_RUNNER = f"{KIT}/cf_tv_hooks.sh"
 CHATTR = f"/usr/bin/dotnet {KIT}/chattr/Chattr.dll"
 DEBLOAT_LIST = f"{KIT}/debloat.list"  # read by the 40-debloat hook
-PER_TV_FILES = (bt.TARGET_FILE, DEBLOAT_LIST)
+HELLO = f"{KIT}/hello.webp"  # played by the 30-hello hook
+PER_TV_FILES = (bt.TARGET_FILE, DEBLOAT_LIST, HELLO)
 # /opt/cmdq is still read by parseinfo.sh at boot (each line runs as root):
 # a manual recovery path that needs only uid 901 and a reboot. There is no
 # "run it now" boot path any more: restarting AT-HUB as uid 901 is refused
@@ -588,6 +589,11 @@ def payload_files() -> list[tuple[Path, str, str]]:
         if not listed.is_file():
             sys.exit(f"devices.toml: debloat = {debloat!r}, but {listed} does not exist")
         files.append((listed, DEBLOAT_LIST, "644"))
+    if hello := settings.get("hello"):  # what 30-hello plays at power-on
+        render = ROOT / "build" / "overmind" / f"{hello}.webp"
+        if not render.is_file():
+            sys.exit(f"devices.toml: hello = {hello!r}, but {render} is missing: run tools/overmind_anim.py {hello}")
+        files.append((render, HELLO, "644"))
     files += [
         # Screen capture for bin/snap, bin/stream (docs/02-capture/screen-capture.md).
         (CAPTURE_BUILD / "CaptureProbe.dll", "/opt/cap/CaptureProbe.dll", "755"),
@@ -639,17 +645,19 @@ def build_apps() -> None:
 
 
 # One command may carry at most 65,536 bytes on the channel (root agent
-# limit); the file payload is split well below that. The full install was
-# 66,618 bytes once the capture probe joined it (2026-10-25).
+# limit). Files go in pieces of at most INSTALL_CHUNK base64 bytes, so a file
+# larger than one command (the 30-hello animation, ~0.7 MB) spans several.
 INSTALL_CHUNK = 40_000
 
 
 def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
     """Write every file atomically as uid 0, then apply LOCKDOWN.
 
-    Several commands, run in order on one path: a setup, groups of files under
+    Several commands, run in order on one path: a setup, groups under
     INSTALL_CHUNK bytes each, and the lockdown, which prints INSTALLED. A
-    failed group shows as `[exit N]` in the output (cmd_boot checks).
+    failed group shows as `[exit N]` in the output (cmd_boot checks). Each
+    file is written to `<dest>.new` (a literal path, so its pieces may land in
+    different commands), then moved into place.
 
     parseinfo.sh lives in the world-writable /opt/etc, so a file mode alone
     does not protect it: anyone can rename a file over it. The immutable flag
@@ -665,25 +673,35 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         if all(dest != per_tv for _, dest, _ in files):
             commands[0] += f" && rm -f {per_tv}"
     group: list[str] = []
+
+    def add(lines: list[str]) -> None:
+        nonlocal group
+        if group and sum(map(len, group)) + sum(map(len, lines)) > INSTALL_CHUNK:
+            commands.append("\n".join(["set -e", *group]))
+            group = []
+        group += lines
+
     for source, dest, mode in files:
         encoded = base64.b64encode(source.read_bytes()).decode()
+        for start in range(0, max(len(encoded), 1), INSTALL_CHUNK):
+            add(
+                [
+                    f"printf %s {encoded[start : start + INSTALL_CHUNK]} | base64 -d {'>' if start == 0 else '>>'} {dest}.new"
+                ]
+            )
         # A hook disabled on the TV (tv/root.py hooks disable) is updated
         # where it is and stays disabled.
         disabled = disabled_path(dest)
         lines = [
             f"if [ -e {disabled} ]; then d={disabled}; else d={dest}; fi" if disabled else f"d={dest}",
-            f"printf %s {encoded} | base64 -d > $d.new",
-            f"chown 0:0 $d.new && chmod {mode} $d.new",
+            f"chown 0:0 {dest}.new && chmod {mode} {dest}.new",
         ]
         if dest == PAYLOAD:
             lines.append(f"{CHATTR} -i {dest} 2>/dev/null || true")
-        lines.append("mv -f $d.new $d")
+        lines.append(f"mv -f {dest}.new $d")
         if dest == PAYLOAD:
             lines.append(f"{CHATTR} +i {dest}")
-        if group and sum(map(len, group)) + sum(map(len, lines)) > INSTALL_CHUNK:
-            commands.append("\n".join(["set -e", *group]))
-            group = []
-        group += lines
+        add(lines)
     if group:
         commands.append("\n".join(["set -e", *group]))
     commands.append(

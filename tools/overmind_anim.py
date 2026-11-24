@@ -88,6 +88,7 @@ VARIATIONS = {
     # Brackets fly in from loose and overshoot (the brand's `wake`), settle, fade.
     "wake-160": Variation(160, 3.0, "dormant", [(0.15, "wake"), (1.2, "idle")], 0.2, (2.2, 2.8)),
     "wake-112": Variation(112, 3.0, "dormant", [(0.15, "wake"), (1.2, "idle")], 0.2, (2.2, 2.8)),
+    "wake-96": Variation(96, 3.0, "dormant", [(0.15, "wake"), (1.2, "idle")], 0.2, (2.2, 2.8)),
     # Fades in already idle, then the brand's `done`: two ripples and a bump.
     "done-128": Variation(128, 3.0, "idle", [(0.35, "done")], fade_in=0.25, fade_out=(2.2, 2.8)),
     # Wake, then the wordmark appears to the left of the mark.

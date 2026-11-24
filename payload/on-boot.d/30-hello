@@ -1,0 +1,57 @@
+# 30-hello - show the Overmind mark top right for 3 s when the TV comes on, so
+# you can see the daemon is up: /opt/cf_tv_daemon/hello.webp (absent = do
+# nothing; rendered by tools/overmind_anim.py, chosen by `hello` in
+# devices.toml). Hook text, run by cf_tv_hooks.sh on boot and on wake
+# (on-wake.d has a copy).
+#
+# Played by the cftv agent (apps/cftv.cs), started here when it is not
+# running, over its TCP port on the TV itself. The geometry fits the
+# `wake-96` render: a 172x172 frame whose mark sits 48 px from the top and
+# right edges. One loop: the animation ends on a transparent frame, so a late
+# remove (or this hook being killed) leaves nothing on screen.
+
+hello=/opt/cf_tv_daemon/hello.webp
+[ -f "$hello" ] || exit 0
+# The agent's directory names its app slot (tv/cftv.py SLOTS); cftv creates it
+# on first use.
+q=$(ls -d /opt/usr/home/owner/apps_rw/*/cftv 2>/dev/null | head -1)
+[ -n "$q" ] || { say "no cftv agent directory yet; run bin/cftv once"; exit 0; }
+app=${q%/cftv}; app=${app##*/}
+media=$q/media/hello.webp
+
+# Boot: wait for the picture, i.e. for a focused window (the O in Foc).
+if [ "$CF_EVENT" = boot ]; then
+  i=0
+  until enlightenment_info -topvwins 2>/dev/null | awk '$9 == "O" {f=1} END {exit !f}'; do
+    i=$((i + 1)); [ $i -gt 90 ] && { say "no focused window after 90 s"; exit 0; }
+    sleep 1
+  done
+fi
+sleep 2
+
+if ! cmp -s "$hello" "$media"; then
+  mkdir -p "$q/media" && cp "$hello" "$media" &&
+    chown 5001:5001 "$media" && chmod 644 "$media" && chsmack -a "User::Pkg::$app" "$media"
+fi
+
+pid=$(cat "$q/ready" 2>/dev/null)
+if ! { [ -n "$pid" ] && [ -d "/proc/$pid" ] && app_launcher -r "$app" >/dev/null 2>&1; }; then
+  # Same preparation as tv/cftv.py ensure(): the app (uid 5001) writes here.
+  rm -f "$q/ready" "$q/token"
+  chown -R 5001:5001 "$q" && chsmack -a "User::Pkg::$app" "$q" "$q/media"
+  app_launcher -u 5001 -s "$app" >/dev/null 2>&1
+  i=0
+  while [ ! -s "$q/ready" ] && [ $i -lt 100 ]; do sleep 0.1; i=$((i + 1)); done
+  [ -s "$q/ready" ] || { say "agent did not start"; exit 0; }
+  sleep 0.5  # it starts listening ~0.1 s after writing ready
+fi
+
+exec 3<> /dev/tcp/127.0.0.1/7741 || { say "agent not listening on 7741"; exit 0; }
+printf '%s\n' "$(< "$q/token")" >&3
+printf '{"op":"image","id":"overmind-hello","src":"%s","x":1738,"y":10,"w":172,"h":172,"opacity":0.6,"loops":1}\n' "$media" >&3
+read -r -t 5 reply <&3
+sleep 3.2
+printf '{"op":"remove","id":"overmind-hello"}\n' >&3
+read -r -t 5 _ <&3
+exec 3>&-
+say "shown: $reply"
