@@ -1,0 +1,56 @@
+# 40-debloat - keep this TV's debloat in place: the stop-markers, app disables
+# and vconf values in /opt/cf_tv_daemon/debloat.list (absent = do nothing;
+# format in payload/debloat/*.list). Hook text, run by cf_tv_hooks.sh on boot
+# and on wake (on-wake.d has a copy).
+#
+# Samsung's updates undo the debloat (docs/04-system/debloat-cu7000.md §B): a
+# package update re-enables its apps and deletes its stop-marker, and built-in
+# apps come back enabled. So every event re-applies whatever drifted, and a
+# boot applies once more at uptime 300 s: after the boot of 2026-11-24 Samsung
+# reinstalled 12 built-in apps ~2 min in, after a first pass would have run.
+
+list=/opt/cf_tv_daemon/debloat.list
+[ -f "$list" ] || exit 0
+markers=/opt/usr/share/systemd/system
+db=/opt/dbspace/.pkgmgr_parser.db
+
+apply() {
+  # Not `name`: say() reads the runner's $name (the hook's file name).
+  local kind arg rest unit ids q id cur
+  ids=
+  while read -r kind arg rest; do
+    case $kind in
+      marker)
+        [ -e "$markers/$arg" ] && continue
+        touch "$markers/$arg"
+        for unit in $rest; do systemctl stop --no-block "$unit.service"; done
+        say "marker $arg re-created; stopped $rest"
+        ;;
+      app) ids="$ids '$arg',";;
+      vconf)
+        set -- $rest   # KEY VALUE; $arg is the type
+        cur=$(vconftool get "$1" 2>/dev/null); cur=${cur#*= }; cur=${cur% (*}
+        case $cur in True) cur=1;; False) cur=0;; esac
+        [ "$cur" = "$2" ] && continue
+        vconftool set -t "$arg" -f "$1" "$2" && say "vconf $1 $cur -> $2"
+        ;;
+    esac
+  done < "$list"
+  [ -n "$ids" ] || return
+  q=${ids%,}
+  for id in $(sqlite3 "$db" "select app_id from package_app_info
+      where app_disable = 'false' and (app_id in ($q) or package in ($q));"); do
+    if pkgcmd -D -t app -n "$id" --global 2>&1 | grep -q 'key\[end\] val\[ok\]'; then
+      say "app $id disabled"
+    else
+      say "app $id: pkgcmd -D failed"
+    fi
+  done
+}
+
+apply
+[ "$CF_EVENT" = boot ] || exit 0
+read -r up _ < /proc/uptime
+up=${up%.*}
+[ "$up" -lt 300 ] && sleep $((300 - up))
+apply

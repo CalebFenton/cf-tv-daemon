@@ -93,6 +93,8 @@ DAEMON_START = f"/usr/bin/awk -f {KIT}/cf_tv_daemon_start.awk"
 PAYLOAD_BACKUP = f"{KIT}/parseinfo.ORIGINAL.sh"
 HOOK_RUNNER = f"{KIT}/cf_tv_hooks.sh"
 CHATTR = f"/usr/bin/dotnet {KIT}/chattr/Chattr.dll"
+DEBLOAT_LIST = f"{KIT}/debloat.list"  # read by the 40-debloat hook
+PER_TV_FILES = (bt.TARGET_FILE, DEBLOAT_LIST)
 # /opt/cmdq is still read by parseinfo.sh at boot (each line runs as root):
 # a manual recovery path that needs only uid 901 and a reboot. There is no
 # "run it now" boot path any more: restarting AT-HUB as uid 901 is refused
@@ -574,12 +576,18 @@ def payload_files() -> list[tuple[Path, str, str]]:
         (PAYLOAD_DIR / "cf_tv_daemon.awk", f"{KIT}/cf_tv_daemon.awk", "644"),
         (PAYLOAD_DIR / "cf_tv_hooks.sh", HOOK_RUNNER, "644"),
     ]
-    # The speaker 50-btconnect reconnects (tv/bt.py TARGET_FILE): `speaker` in
-    # this TV's devices.toml entry. Without one, install removes the file.
-    if speaker := project_env.tv_settings().get("speaker"):
+    # Per TV, from this TV's devices.toml entry; install removes the device
+    # file when the setting is absent (PER_TV_FILES).
+    settings = project_env.tv_settings()
+    if speaker := settings.get("speaker"):  # the speaker 50-btconnect reconnects
         addr = project_env.tv_dir() / "btconnect.addr"
         addr.write_text(speaker + "\n")
         files.append((addr, bt.TARGET_FILE, "644"))
+    if debloat := settings.get("debloat"):  # what 40-debloat keeps disabled
+        listed = PAYLOAD_DIR / "debloat" / f"{debloat}.list"
+        if not listed.is_file():
+            sys.exit(f"devices.toml: debloat = {debloat!r}, but {listed} does not exist")
+        files.append((listed, DEBLOAT_LIST, "644"))
     files += [
         # Screen capture for bin/snap, bin/stream (docs/02-capture/screen-capture.md).
         (CAPTURE_BUILD / "CaptureProbe.dll", "/opt/cap/CaptureProbe.dll", "755"),
@@ -653,8 +661,9 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         f"{DISABLED}/on-boot.d {DISABLED}/on-wake.d && "
         f"{{ test -f {PAYLOAD_BACKUP} || cp {PAYLOAD} {PAYLOAD_BACKUP}; }}"
     ]
-    if all(dest != bt.TARGET_FILE for _, dest, _ in files):
-        commands[0] += f" && rm -f {bt.TARGET_FILE}"  # this TV has no speaker configured
+    for per_tv in PER_TV_FILES:
+        if all(dest != per_tv for _, dest, _ in files):
+            commands[0] += f" && rm -f {per_tv}"
     group: list[str] = []
     for source, dest, mode in files:
         encoded = base64.b64encode(source.read_bytes()).decode()

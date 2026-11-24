@@ -1,0 +1,113 @@
+# What payload/on-boot.d/40-debloat keeps disabled on the CU7000
+# (docs/04-system/debloat-cu7000.md). Selected per TV by `debloat = "cu7000"` in
+# devices.toml; deployed as /opt/cf_tv_daemon/debloat.list.
+#
+#   marker NAME UNIT...    /opt/usr/share/systemd/system/NAME, the vendor stop-file
+#                          the units check; they are stopped when it is re-created
+#   app ID                 pkgcmd -D for this app id, or every app of this package
+#   vconf TYPE KEY VALUE   vconftool set -t TYPE -f KEY VALUE (bool: 0/1)
+#
+# Never list sdbd, msf-server, launcher/home, tv-viewer, adplatform.ADPlayer,
+# com.samsung.tv.samsungdex (the cftv agent slot), YouTube or Netflix.
+
+# Ads, viewing information (ACR), analytics
+marker pisa-service pisa-service adagent-service
+marker canalysis-daemon canalysis-service
+app com.samsung.tv.pisa-service
+app org.tizen.pisa-control-service
+app com.samsung.tv.adplayer
+app com.samsung.tv.coba.adagent
+app com.samsung.tv.targeted-ad-service
+app com.samsung.tv.acr-service-app
+app com.samsung.tv.iacr
+app com.samsung.tv.contents-recognition-dbmgr
+app content-grab-service
+app com.samsung.tv.canalysis-service
+app com.samsung.tizen.samsung-analytics
+
+# Context suggestions
+marker com.samsung.tv.context-aware-agent com.samsung.tv.context-aware-agent
+marker com.samsung.tv.context-aware-service com.samsung.tv.context-aware-service
+app com.samsung.tv.context-aware-agent
+app com.samsung.tv.context-aware-service
+
+# Voice: Bixby, Alexa, wake words, suggestions
+marker org.tizen.voice-app org.tizen.voice-app
+marker org.tizen.voice-client org.tizen.voice-client
+marker com.samsung.tv.bixby-prov com.samsung.tv.bixby-prov
+marker com.samsung.tv.ondevice-voice com.samsung.tv.ondevice-voice
+marker com.samsung.tv.ghdaemon com.samsung.tv.ghdaemon
+app org.tizen.voice-app
+app org.tizen.voice-client
+app org.tizen.voice-onboarding
+app com.samsung.tv.vif
+app com.samsung.tv.bixby-prov
+app com.samsung.tv.bixby-context-client
+app com.samsung.tv.bixbycapsuleviewer
+app com.samsung.tv.mybixby
+app com.samsung.tv.ondevice-voice
+app com.samsung.tv.ghdaemon
+app com.samsung.tv.ghservice
+app com.samsung.tv.farfieldvoice
+app com.samsung.tv.alexa-client
+app com.samsung.tv.wakeup-engine-alexa
+app com.samsung.tv.wakeup-engine-bixby
+app com.samsung.tv.utterance-recommender-service
+app com.samsung.tv.voiceassistant-music
+app com.samsung.tv.voice-instant-app
+vconf bool db/si_service/voice_recog_enable 0
+vconf bool db/multi-assistant/prelaunch_mode 0
+vconf bool db/menu/voice/voice_activated 0
+vconf int db/menu/voice/wakeupless_status 0
+
+# Samsung Health
+marker samsunghealth-service-tv samsunghealth-service-tv samsunghealth-service-tv-eventd samsunghealth-service-tv-path-activation
+app samsunghealth-service-tv
+app com.samsung.tv.samsung-health
+app com.samsung.tv.health-mde-service
+app com.samsung.tv.health-mde-setting
+app com.samsung.tv.health-mde-workout-tracker
+app com.samsung.tv.coba.healthview
+
+# Samsung TV Plus
+marker bms bms
+marker slive-provider-daemon slive-provider-daemon
+app HEPsqFNie0
+app com.samsung.tv.tvplus
+app com.samsung.tv.tvPlusDeeplinker
+app com.samsung.tv.slive-daemon
+app com.samsung.tv.bms-manager
+vconf bool db/menu/autorun_tv_plus 0
+
+# Other unused Samsung extras
+app com.samsung.tv.aov-dashboard
+app com.samsung.tv.lightweight-node-service
+
+# Store apps the user does not use. Built-in ones come back after an uninstall
+# (Samsung reinstalled 12 of 23 within 2 min of the next boot), so they are
+# disabled instead; ids that are not installed are skipped.
+app LBUAQX1exg
+app MCmYXNxgcu
+app gzcc4LRFBF
+app ZmmGjO6VKO
+app PvWgqxV3Xa
+app zigzSWa1hy
+app HupEmjIB4I
+app 3KA0pm7a7V
+app jAfAs7yVDX
+app 4j8Nf2XKwh
+app 9TYrsHWbaB
+app CmeyUlnhYY
+app GHI3a0zMSx
+app KMZlIHL7Pp
+app LImG0QPABV
+app Ob3XhAVMu6
+app Rk72oKFsRS
+app XtU8fQk2gN
+app rJeHak5zRg
+app w0wZu3xkQq
+app org.tizen.primevideo
+app com.samsung.tv.aria-video
+
+# Automatic store app updates off (Settings > Apps > Auto update)
+vconf bool db/apps/auto_update 0

@@ -6,72 +6,76 @@ baseline. All probes ran as root through `tv/root.py exec`.
 
 ## A. Applied (2026-11-24)
 
-The user watches YouTube and the HDMI box, nothing else. Backups and lists on
-the TV: `/opt/usr/share/tv-backups/cu7000-debloat-01/` (`vconf.orig`,
-`uninstalled-apps.txt`, `markers.txt`).
+The user watches YouTube and the HDMI box, nothing else. The whole debloat is
+one list in git, `payload/debloat/cu7000.list`, selected by
+`debloat = "cu7000"` in this TV's `devices.toml` entry and deployed by
+`tv/root.py boot install` to `/opt/cf_tv_daemon/debloat.list`. The boot/wake
+hook `payload/on-boot.d/40-debloat` re-applies anything in it that drifted:
 
-| change | what | undo |
+- at every boot, and again at uptime 300 s;
+- at every wake ("TV off" on the remote is kernel suspend, `db/boot/instant_on = 1`);
+- logging each repair to `/opt/cf_tv_hooks.log` as `boot/40-debloat: ...`.
+
+| kind | what | how |
 |---|---|---|
-| TV Plus no longer starts at power-on | `vconftool set -t bool -f db/menu/autorun_tv_plus 0` (the Settings switch "Autorun Samsung TV Plus"). With it off the TV powers on to the last source | set it back to `1` |
-| voice off | `db/si_service/voice_recog_enable 0`, `db/multi-assistant/prelaunch_mode 0`, `db/menu/voice/voice_activated 0` (bool), `db/menu/voice/wakeupless_status 0` (int) | values in `vconf.orig`: all `1` |
-| 23 store apps uninstalled | `pkgcmd -u -n <id> --global`: Tubi, Angel Studios, klyq, Amazon Luna, Xbox, Samsung TV Plus (`HEPsqFNie0`), Glance, Blacknut, Hulu, QVC+, Disney+, AMC+, YouTube TV, PBS Kids, ESPN, Sling, Peacock, GameBreaks, Spotify, GeForce NOW, Instagram, Prime Video, Apple TV. Kept: YouTube (`9Ur5IzDKqV`), Netflix, every Samsung component | reinstall from the Apps store |
-| 12 stop-markers | `touch /opt/usr/share/systemd/system/<m>` for `pisa-service` (also blocks `adagent-service`), `canalysis-daemon`, `com.samsung.tv.context-aware-agent`, `com.samsung.tv.context-aware-service`, `org.tizen.voice-app`, `org.tizen.voice-client`, `com.samsung.tv.bixby-prov`, `com.samsung.tv.ondevice-voice`, `com.samsung.tv.ghdaemon`, `samsunghealth-service-tv` (three units), `bms` and `slive-provider-daemon` (TV Plus), then `systemctl stop` of each unit | `rm` the marker, `systemctl start <unit>` |
+| TV Plus | no autorun at power-on (the Settings switch "Autorun Samsung TV Plus"; with it off the TV powers on to the last source); app, `tvplus`, deeplinker and `slive-daemon`/`bms` apps disabled; `bms` and `slive-provider-daemon` stop-markers | `vconf`, `app`, `marker` lines |
+| ads, ACR, analytics | `pisa-service` (also gates `adagent-service`) and `canalysis-daemon` markers; ad, targeted-ad, ACR, content-grab and analytics apps disabled | `marker`, `app` |
+| context suggestions | both `context-aware` markers and packages | `marker`, `app` |
+| voice | 5 markers (voice app/client, Bixby provisioning, on-device voice, `ghdaemon`); Bixby, Alexa, wake-word, utterance and voice apps disabled; voice recognition, prelaunch, voice-activated and wake-up preferences `0` | `marker`, `app`, `vconf` |
+| Samsung Health | marker (three units) and six apps | `marker`, `app` |
+| unused store apps | disabled: Hulu, Disney+, Peacock, Sling, YouTube TV, Instagram, Glance, Tubi, GameBreaks, Prime Video, Apple TV; uninstalled earlier and not reinstalled by Samsung: Angel Studios, klyq, Amazon Luna, Xbox, Blacknut, QVC+, AMC+, PBS Kids, ESPN, Spotify, GeForce NOW (listed too, so they stay off if they come back) | `app` |
+| store auto-update | `db/apps/auto_update 0` (Settings > Apps > Auto update) | `vconf` |
 
-Not changed on purpose: `db/was/preload_by_country` stays `true`. It makes the
-TV start YouTube in the background at boot, so YouTube opens instantly; the
-other preloaded apps (Prime Video, TV Plus) are uninstalled. Markers left off:
-`googlecast-service` (casting to YouTube from a phone), `airplay-service-2`,
-`passthru-service`, `tts-download-service` (Voice Guide).
+Kept on purpose: YouTube (`9Ur5IzDKqV`, `com.samsung.tv.cobalt-yt`), Netflix,
+`googlecast-service` (casting from a phone), `airplay-service-2`,
+`passthru-service`, Voice Guide's `tts-download-service`,
+`adplatform.ADPlayer` (other projects found that removing it breaks things),
+and `db/was/preload_by_country = true`, which starts YouTube in the
+background at boot so it opens instantly. Samsung's built-in upgrader
+(`db/built-in-app-upgrader/server_upgrade`) stays on, so YouTube keeps getting
+updates.
 
-Verified after one reboot (uptime 95 s): source `SOURCE_TYPE_HDMI3`, as before
-the reboot; all 13 marked units `inactive`; no `bms-service`, TV Plus or Prime
-process; root back through the daemon at 62 s; `doctor` all ok;
-`9Ur5IzDKqV.TizenYouTube` launched to the profile picker with the accounts
-signed in. Not verified: the power-on path after "TV off" on the remote, which
-is kernel suspend (`db/boot/instant_on = 1`) rather than a boot.
+**Uninstalling built-in apps does not stick.** 23 store apps were uninstalled
+with `pkgcmd -u -n <id> --global` (`end ok`, directories gone). About 2 min
+into the next boot, `installation-history.log` showed Samsung reinstalling the
+12 that are region built-ins (Hulu, TV Plus, Prime Video, Disney+, Apple TV,
+Peacock, Sling, YouTube TV, Instagram, Glance, Tubi, GameBreaks), and TV Plus
+was running again. Those are now disabled instead.
 
-Systemd units are covered; the matching apps that amd launches (voice,
-Bixby, ad targeting, ACR, SmartThings) are not yet: see §B.
+**App disables use the vendor API.** `pkgcmd -D -t app -n <app> --global`
+sets `app_disable=true`, drops the app from `app_launcher -l`, stops it if it
+runs, and makes launches fail ("not available for the user"), at once and
+without a reboot; `pkgcmd -A` restores it exactly (tested on
+`com.samsung.tv.iacr`). Not `tools/plan_cleanup.py`, which edits the live
+database by hand while `amd` and `pkgmgr-server` cache it.
 
-## B. App disables and Samsung updates (investigated 2026-11-24, not applied)
+**Why a hook.** Samsung updates undo app disables and stop-markers. Another
+CU-era set documents a preload update of `com.samsung.tv.pisa-service` that
+reset its `app_disable` rows and deleted the `pisa-service` marker; its
+`pisa-service.path` (`PathChanged=` on the marker, present here too) then
+started the service ([commit-regrets/samsung_tizen_tv_root,
+SAMSUNG-UPDATES.md](https://github.com/commit-regrets/samsung_tizen_tv_root/blob/main/docs/SAMSUNG-UPDATES.md)).
+This TV received preload updates on 11-13 (`coba.adagent`) and 11-18
+(`samsung-analytics`).
 
-**The vendor API works here.** `pkgcmd -D -t app -n com.samsung.tv.iacr
---global` set `app_disable=true` in `package_app_info`, removed the app from
-`app_launcher -l`, and made `app_launcher -u 5001 -s` refuse it ("not
-available for the user 5001"), at once and without a reboot.
-`pkgcmd -A -t app -n com.samsung.tv.iacr --global` restored the row exactly.
-So app disables go through `pkgcmd -D`/`-A`, not through hand-written SQL
-against the live database (`tools/plan_cleanup.py`, M4), which `amd` and
-`pkgmgr-server` cache until a reboot. Persistence of `-D` across a reboot is
-not yet observed here.
+**Undo.** One item: delete its line from the list, `boot install`, then undo it
+on the TV: `rm /opt/usr/share/systemd/system/<marker>` and
+`systemctl start <unit>`, `pkgcmd -A -t app -n <app> --global`, or
+`vconftool set` back. Everything: delete `debloat` from `devices.toml` and
+`boot install` (the list is removed; the hook then does nothing), then undo
+each item. Original preference values:
+`/opt/usr/share/tv-backups/cu7000-debloat-01/vconf.orig`.
 
-**Samsung updates undo both app disables and stop-markers.** Another CU-era
-set documents it ([commit-regrets/samsung_tizen_tv_root,
-SAMSUNG-UPDATES.md](https://github.com/commit-regrets/samsung_tizen_tv_root/blob/main/docs/SAMSUNG-UPDATES.md)):
-a preload update of `com.samsung.tv.pisa-service` rewrote its
-`package_app_info` rows (`app_disable` back to `false`) and deleted the
-`pisa-service` marker 4 s later; `pisa-service.path` then started the
-service. This TV has the same exposure [O]:
+Verified 2026-11-24:
 
-- `db/built-in-app-upgrader/server_upgrade = True` (preload upgrades, no UI)
-  and `db/apps/auto_update = True` (store apps). Firmware auto-update is
-  already `0`.
-- `/var/log/appfw/app-installers/installation-history.log` shows preload
-  updates on 11-13 (`com.samsung.tv.coba.adagent`) and 11-18
-  (`com.samsung.tizen.samsung-analytics`).
-- `pisa-service.path` has `PathChanged=/opt/usr/share/systemd/system/pisa-service`.
+- After the reboot that preceded the hook: source stayed `SOURCE_TYPE_HDMI3`,
+  the marked units stayed inactive, root came back in 62 s, `doctor` was all
+  ok, and `9Ur5IzDKqV.TizenYouTube` opened to the signed-in profile picker.
+- First hook run: 74 apps `app_disable=true`, `auto_update` 1 → 0.
+- Drift test: re-enabled `iacr`, deleted the `ghdaemon` marker and set
+  `autorun_tv_plus` to 1; one wake run restored all three and logged each.
 
-Two ways to make the debloat hold:
-
-1. Turn the two update switches off (`buxton2ctl set-bool system
-   db/apps/auto_update 0`, same for `db/built-in-app-upgrader/server_upgrade`).
-   Simple, but YouTube and Netflix then update only by hand, and YouTube
-   periodically stops working on old clients.
-2. A boot/wake hook (`payload/on-boot.d/`, runs at every power-on, also from
-   "TV off") that re-creates missing markers, stops their units, re-runs
-   `pkgcmd -D` for rows that are not disabled, and re-sets the vconf values in
-   §A. Updates stay on; an update can undo the debloat only until the next
-   power-on. Recommended.
+Not verified: the remote's power-off/on path end to end.
 
 ## Survey (before §A)
 

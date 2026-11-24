@@ -99,6 +99,10 @@ with different `--tv`.
   reconnects. `tv/root.py boot install` deploys it to
   `/opt/cf_tv_daemon/btconnect.addr`, and removes that file from a TV with no
   `speaker`. `bin/bt-reconnect` uses it as its default `--addr`.
+- `debloat`: names `payload/debloat/<name>.list`, the stop-markers, app
+  disables and preference values the `40-debloat` hook keeps applied on this
+  TV. `boot install` deploys it as `/opt/cf_tv_daemon/debloat.list`, or
+  removes that file from a TV with no `debloat`.
 
 ## What is still single-TV
 

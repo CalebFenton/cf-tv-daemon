@@ -10,10 +10,13 @@ Owners and modes on the TV: `docs/06-security/threat-model.md` §2.
 | `cf_tv_daemon_start.awk` | `cb7c6afb4349f26c851236bf4f94f79b` | `/opt/cf_tv_daemon/` | launcher: stops, resets and `systemd-run`s the unit `cf_tv_daemon` (`Restart=on-failure`). Run by `parseinfo.sh` at boot and by `tv/root.py boot install` |
 | `cf_tv_daemon.awk` | `a49bb68835323485fdd94d5214dddee9` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
 | `cf_tv_hooks.sh` | `0808839fcb2a1bc078a96be4a36b8d69` | `/opt/cf_tv_daemon/` | hook runner: shell text the daemon `eval`s on each event ([Hooks](#boot-and-wake-hooks)) |
+| `on-boot.d/40-debloat` | `af25d920210df12638f090a2e026259f` | `/opt/cf_tv_daemon/on-boot.d/` | re-applies `debloat.list` (stop-markers, `pkgcmd -D`, vconf) at boot, again at uptime 300 s, and on wake (`docs/04-system/debloat-cu7000.md`) |
+| `on-wake.d/40-debloat` | same (git symlink to `../on-boot.d/40-debloat`) | `/opt/cf_tv_daemon/on-wake.d/` | same hook on wake |
 | `on-boot.d/50-btconnect` | `1a39b358eb2654b6ef0a18a5cec05a0f` | `/opt/cf_tv_daemon/on-boot.d/` | reconnects the Bluetooth speaker (`docs/04-system/bluetooth.md`) |
 | `on-wake.d/50-btconnect` | same (git symlink to `../on-boot.d/50-btconnect`) | `/opt/cf_tv_daemon/on-wake.d/` (a regular file on the TV) | same hook on wake |
 | `../apps/chattr.cs` → `build/chattr/Chattr.dll` | `bfcd98547fbcfd1c141347ced28e0503` | `/opt/cf_tv_daemon/chattr/` (with `Chattr.runtimeconfig.json`) | sets and clears the immutable flag on `parseinfo.sh` |
 | `btconnect.addr` | written from `speaker` in the TV's `devices.toml` entry (`docs/04-system/devices.md`) | `/opt/cf_tv_daemon/btconnect.addr` | the speaker `50-btconnect` reconnects; removed from a TV without a `speaker` |
+| `debloat/<name>.list` | per TV, picked by `debloat = "<name>"` in its `devices.toml` entry | `/opt/cf_tv_daemon/debloat.list` | what `40-debloat` keeps disabled; removed from a TV without `debloat` |
 | `../apps/capture-probe.cs` → `build/capture/CaptureProbe.dll` | built locally | `/opt/cap/` (with `CaptureProbe.runtimeconfig.json`) | screen capture for `bin/snap`, `bin/stream` |
 | `masklist` | empty | `/opt/masklist` | unit names masked by `parseinfo` **at every boot**: a mask persists until the line is removed (`docs/04-system/masking-daemons.md`) |
 
