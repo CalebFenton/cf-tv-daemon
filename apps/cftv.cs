@@ -331,9 +331,18 @@ public sealed partial class Cftv : NUIApplication
         string src = Str(c, "src", "");
         if (src.Length == 0) throw new ArgumentException("src required");
         string lower = src.ToLowerInvariant();
-        ImageView view = lower.EndsWith(".gif") || lower.EndsWith(".webp")
-            ? new AnimatedImageView { ResourceUrl = src, LoopCount = 0 }
-            : new ImageView { ResourceUrl = src };
+        ImageView view;
+        if (lower.EndsWith(".gif") || lower.EndsWith(".webp"))
+        {
+            // DALi: a negative LoopCount loops forever, N plays N times and then
+            // holds the last frame. 0 plays nothing and leaves frame 0 on screen
+            // (CU7000, Tizen 9).
+            view = new AnimatedImageView { ResourceUrl = src, LoopCount = Int(c, "loops", -1) };
+        }
+        else
+        {
+            view = new ImageView { ResourceUrl = src };
+        }
         // Alpha PNG/GIF/WebP frames carry straight alpha; premultiply to blend.
         view.PreMultipliedAlpha = true;
         return view;

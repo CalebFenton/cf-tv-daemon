@@ -596,7 +596,8 @@ def main() -> int:
         p.add_argument("--opacity", type=float)
         return p
 
-    visual("image", "src")
+    p = visual("image", "src")
+    p.add_argument("--loops", type=int, help="GIF/WebP: play N times, then hold the last frame (default: forever)")
     p = visual("text", "text")
     p.add_argument("--color", default="#FFFFFFFF")
     p.add_argument("--bg", default="#00000000")
@@ -639,6 +640,8 @@ def main() -> int:
             natural = None if "://" in args.src else image_size(Path(args.src))
             command.update(id=args.id or Path(args.src).stem, src=media(args.src))
             geometry(args, command, natural)
+            if args.loops is not None:
+                command["loops"] = args.loops
         elif args.op == "text":
             command.update(id=args.id or "text", text=args.text, color=args.color, bg=args.bg, size=args.font)
             geometry(args, command)

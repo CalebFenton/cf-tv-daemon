@@ -45,6 +45,7 @@ bin/hud live | off                                  # the recognition HUD draws 
 | `--font PX` | text | 48 |
 | `--radius PX` | rect | 0 |
 | `--loop` | video, sound | off |
+| `--loops N` | image (GIF/WebP) | forever; N plays N times and holds the last frame |
 | `--volume F` | sound, notify (with a sound file) | the file's own level; scales the samples on this computer |
 
 `notify` takes the text as its optional positional argument (a title, the
@@ -116,10 +117,12 @@ tv/cftv.py send()   ──TCP $CF_TV_IP:7741──> agent: token line, then one 
   channel's `put` (WRITEFILE) in 4 MiB chunks to the agent staging directory,
   then `cat` into place. Anything containing `://` (http, https, rtsp, HLS)
   goes straight to the player.
-- **Items:** `.gif`/`.webp` play in an `AnimatedImageView` that loops
-  forever. Other images use `ImageView`. Text is a `TextLabel`. Rect is a
-  `View` with `CornerRadius`. Video is a `VideoView`. Each visual item gets its
-  own window.
+- **Items:** `.gif`/`.webp` play in an `AnimatedImageView`, `LoopCount` from
+  `loops` (default −1, forever). Until 2026-11-24 the agent set `LoopCount = 0`;
+  on the CU7000 (Tizen 9) that plays nothing and leaves frame 0 on screen, so a
+  WebP whose first frame is transparent showed nothing. Other images use
+  `ImageView`. Text is a `TextLabel`. Rect is a `View` with `CornerRadius`.
+  Video is a `VideoView`. Each visual item gets its own window.
 - **Sound:** `WavPlayer` with a `Notification` stream policy, which mixes
   the sound into whatever the TV is playing. It plays local WAV and OGG files
   only and has no volume, so `tv/cftv.py` (`sound_media`) converts every
@@ -197,7 +200,7 @@ investigated.
 | item | status |
 |---|---|
 | image (PNG with alpha), animated GIF, text, rect, move, remove, clear | render on screen; focus stays on `tv-viewer`; no launch screen or Smart Hub bar (screenshots 2026-11-05) |
-| JPEG, animated WebP | no record of a cftv test (`cftv/media/` holds only PNG, GIF, MP3 and MP4 uploads); WebP in `AnimatedImageView` worked in the 2026-10-23 ball demo (unverified via cftv) |
+| animated WebP with alpha | renders on the CU7000 with `loops` set: four 3 s Overmind animations (`tools/overmind_anim.py`) over HDMI, read back with `bin/snap` (2026-11-24). JPEG: no record of a test |
 | video | plays; the input is restored automatically afterwards (verified 2026-10-24) |
 | sound | through `WavPlayer`: the user heard the chime over a show on HDMI and the show's sound kept playing (2026-11-07); the bus showed PulseAudio `SoundPlay` and no `avocd` player call, and `tv-viewer`'s player 124 kept the main output |
 | say | audible: the user heard it (verified 2026-10-24) |
