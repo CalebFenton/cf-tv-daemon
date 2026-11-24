@@ -40,8 +40,8 @@ Usage
     tv/root.py hooks wake      # run the on-wake.d hooks now (or: boot)
     tv/root.py hooks list | enable NAME | disable NAME
 
-Probe results are cached in /tmp/rootctl.probe for 30 s, tied to the sdb link
-state.
+Probe results are cached in the TV's runtime directory (project_env.tv_dir)
+for 30 s, tied to the sdb link state.
 """
 
 from __future__ import annotations
@@ -59,6 +59,7 @@ import sys
 import time
 from pathlib import Path
 
+import bt
 import project_env
 
 project_env.ensure()
@@ -71,11 +72,16 @@ if _LOCAL_SDB.is_file():
     os.environ["SDB"] = str(_LOCAL_SDB)  # authoritative; a stale
     # exported SDB must not win
 SDB = ROOT / "vendor" / "sdb" / "data" / "tools" / "sdb"
-TV = project_env.tv_ip()
-SERIAL = f"{TV}:26101"
-PROBE_CACHE = Path(f"/tmp/rootctl.probe-{TV}")
-CHANNEL_SOCKET, CHANNEL_LOG = project_env.channel_paths(TV)
 PROBE_TTL = 30.0
+
+
+def serial() -> str:
+    return f"{project_env.tv()}:26101"
+
+
+def probe_cache() -> Path:
+    return project_env.tv_dir() / "probe"
+
 
 CMD_QUEUE = "/opt/cmdq"
 CMD_OUT = "/opt/cmdout"
@@ -101,13 +107,15 @@ def sdb_available() -> bool:
     if not SDB.is_file():
         return False
     try:
-        with socket.create_connection((TV, 26101), timeout=2):
+        with socket.create_connection((project_env.tv(), 26101), timeout=2):
             return True
     except OSError:
         return False
 
 
-SDB_LOCK = Path("/tmp/tv-sdb.lock")
+# One host sdb server serves every TV, so the lock is per user, not per TV.
+def sdb_lock() -> Path:
+    return project_env.runtime_dir() / "sdb.lock"
 
 
 def sdb_ensure(attempts: int = 4) -> str | None:
@@ -118,21 +126,21 @@ def sdb_ensure(attempts: int = 4) -> str | None:
     server is restarted (seen after every reboot on 2026-10-25). So on failure:
     `sdb kill-server`, wait, try again. Returns the last error otherwise.
 
-    One process at a time (flock on SDB_LOCK): two repairers restart the
+    One process at a time (flock on sdb_lock()): two repairers restart the
     server under each other. tv/chan.py's keepalive and `tv/root.py reboot`
     did, and sdb took 59 s instead of ~24 s to come back (2026-10-25).
     """
-    with SDB_LOCK.open("a") as lock:
+    with sdb_lock().open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         last = ""
         for attempt in range(attempts):
-            result = subprocess.run((str(SDB), "connect", SERIAL), capture_output=True, text=True, timeout=20)
+            result = subprocess.run((str(SDB), "connect", serial()), capture_output=True, text=True, timeout=20)
             out = result.stdout + result.stderr
             if "connected to" in out or "already connected" in out:
                 return None
             last = out.strip().splitlines()[-1] if out.strip() else f"exit {result.returncode}"
             if not sdb_available():
-                return f"TV not reachable on {TV}:26101 (off, rebooting, or network down)"
+                return f"TV not reachable on {serial()} (off, rebooting, or network down)"
             subprocess.run((str(SDB), "kill-server"), capture_output=True, timeout=20)
             time.sleep(2 + attempt)
         return f"sdb connect failed after {attempts} tries with server restarts: {last}"
@@ -156,7 +164,7 @@ def inject(command: str, timeout: float = 25.0) -> tuple[bool, str]:
     # most callers of this module never need.
     from samsung_tv_root.sdb import SdbClient, find_sdb  # noqa: PLC0415
 
-    client = SdbClient(find_sdb(), TV, timeout=timeout)
+    client = SdbClient(find_sdb(), project_env.tv(), timeout=timeout)
     try:
         client.connect()
         result = client.capture(command, timeout=timeout)
@@ -309,12 +317,12 @@ def field(lines: list[str], key: str) -> str:
 
 
 def channel_available() -> bool:
-    if not CHANNEL_SOCKET.exists():
+    if not project_env.channel_socket().exists():
         return False
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(5)
-            sock.connect(str(CHANNEL_SOCKET))
+            sock.connect(str(project_env.channel_socket()))
             sock.sendall(b'{"op":"status"}\n')
             data = b""
             while True:
@@ -332,7 +340,7 @@ def channel_exec(commands: list[str]) -> tuple[bool, str]:
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(60)
-            sock.connect(str(CHANNEL_SOCKET))
+            sock.connect(str(project_env.channel_socket()))
             sock.sendall((json.dumps({"op": "exec", "commands": commands}) + "\n").encode())
             data = b""
             while True:
@@ -359,7 +367,7 @@ def channel_start() -> bool:
     file under a running server would garble its log.
     """
     env = dict(os.environ, SDB=str(SDB))
-    log = open(CHANNEL_LOG, "a")
+    log = open(project_env.channel_log(), "a")
     subprocess.Popen(
         [str(ROOT / ".venv" / "bin" / "python"), str(ROOT / "tv" / "chan.py"), "serve"],
         cwd=str(ROOT),
@@ -391,7 +399,7 @@ def exploit_exec(commands: list[str]) -> tuple[bool, str]:
         "json",
         "archive-root",
         "root",
-        TV,
+        project_env.tv(),
         "--payload-directory",
         str(ROOT / "build" / "payloads-netcoreapp3.1"),
     ]
@@ -426,9 +434,9 @@ def probe(force: bool = False) -> dict:
     must not send commands down a dead path.
     """
     reachable = sdb_available()
-    if not force and PROBE_CACHE.exists():
+    if not force and probe_cache().exists():
         try:
-            cached = json.loads(PROBE_CACHE.read_text())
+            cached = json.loads(probe_cache().read_text())
             fresh = time.time() - cached.get("at", 0) < PROBE_TTL
             if fresh and bool(cached.get("sdb")) == reachable:
                 return cached
@@ -443,7 +451,7 @@ def probe(force: bool = False) -> dict:
             result["daemon_heartbeat_age"] = age
             result["daemon_detail"] = detail
             result["daemon"] = age is not None and age < DAEMON_FRESH
-    PROBE_CACHE.write_text(json.dumps(result, indent=1))
+    probe_cache().write_text(json.dumps(result, indent=1))
     return result
 
 
@@ -465,7 +473,7 @@ def pick(result: dict, wanted: str | None) -> str | None:
 def explain(result: dict) -> str:
     """Why no root path is usable, and what to do."""
     if not result.get("sdb"):
-        return f"TV not reachable on {TV}:26101: off, still booting, or network down."
+        return f"TV not reachable on {serial()}: off, still booting, or network down."
     if result.get("sdb_error"):
         return result["sdb_error"]
     age = result.get("daemon_heartbeat_age")
@@ -510,7 +518,7 @@ def cmd_exec(args) -> int:
             return code if 0 < code < 255 else 1
         return 0
     # No retry on another path: the command may already have run.
-    PROBE_CACHE.unlink(missing_ok=True)
+    probe_cache().unlink(missing_ok=True)
     print(f"{via} path failed: {output.strip()}", file=sys.stderr)
     return 255
 
@@ -566,10 +574,12 @@ def payload_files() -> list[tuple[Path, str, str]]:
         (PAYLOAD_DIR / "cf_tv_daemon.awk", f"{KIT}/cf_tv_daemon.awk", "644"),
         (PAYLOAD_DIR / "cf_tv_hooks.sh", HOOK_RUNNER, "644"),
     ]
-    # The speaker 50-btconnect reconnects (tv/bt.py TARGET_FILE); not in git,
-    # template payload/btconnect.addr.example.
-    if (PAYLOAD_DIR / "btconnect.addr").is_file():
-        files.append((PAYLOAD_DIR / "btconnect.addr", f"{KIT}/btconnect.addr", "644"))
+    # The speaker 50-btconnect reconnects (tv/bt.py TARGET_FILE): `speaker` in
+    # this TV's devices.toml entry. Without one, install removes the file.
+    if speaker := project_env.tv_settings().get("speaker"):
+        addr = project_env.tv_dir() / "btconnect.addr"
+        addr.write_text(speaker + "\n")
+        files.append((addr, bt.TARGET_FILE, "644"))
     files += [
         # Screen capture for bin/snap, bin/stream (docs/02-capture/screen-capture.md).
         (CAPTURE_BUILD / "CaptureProbe.dll", "/opt/cap/CaptureProbe.dll", "755"),
@@ -643,6 +653,8 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         f"{DISABLED}/on-boot.d {DISABLED}/on-wake.d && "
         f"{{ test -f {PAYLOAD_BACKUP} || cp {PAYLOAD} {PAYLOAD_BACKUP}; }}"
     ]
+    if all(dest != bt.TARGET_FILE for _, dest, _ in files):
+        commands[0] += f" && rm -f {bt.TARGET_FILE}"  # this TV has no speaker configured
     group: list[str] = []
     for source, dest, mode in files:
         encoded = base64.b64encode(source.read_bytes()).decode()
@@ -747,7 +759,7 @@ def restart_daemon(via: str | None = None) -> bool:
         pid, beat, uptime = current()
         if pid and pid != old_pid and uptime - beat < 5:
             print(f"cf_tv_daemon restarted: pid {old_pid or '?'} -> {pid}")
-            PROBE_CACHE.unlink(missing_ok=True)
+            probe_cache().unlink(missing_ok=True)
             return True
     print("cf_tv_daemon did not come back within 40 s; recover with tv/root.py exec --via exploit", file=sys.stderr)
     return False
@@ -915,7 +927,7 @@ def cmd_reboot(args) -> int:
     if not ok:
         print(f"reboot request failed ({path}): {output.strip()}", file=sys.stderr)
         return 1
-    PROBE_CACHE.unlink(missing_ok=True)
+    probe_cache().unlink(missing_ok=True)
     print(f"{stamp()}  reboot requested ({path})")
     if not wait_for(lambda: not sdb_available(), 60, 1):
         print("the TV did not go down within 60 s", file=sys.stderr)
@@ -930,11 +942,11 @@ def cmd_reboot(args) -> int:
         return 1
     print(f"{stamp()}  sdb connected")
     if not wait_for(daemon_available, 120, 3):
-        PROBE_CACHE.unlink(missing_ok=True)
+        probe_cache().unlink(missing_ok=True)
         print(explain(probe(force=True)), file=sys.stderr)
         return 1
     print(f"{stamp()}  root daemon responding")
-    PROBE_CACHE.unlink(missing_ok=True)
+    probe_cache().unlink(missing_ok=True)
     if not args.report:
         return 0
     args.lines = 0  # a fresh boot: show everything
@@ -951,14 +963,14 @@ def cmd_doctor(args) -> int:
         print(f"{state:5} {what:16} {detail}".rstrip())
 
     if not sdb_available():
-        line("FAIL", "TV", f"not reachable on {TV}:26101 (off, asleep, or still booting)")
+        line("FAIL", "TV", f"not reachable on {serial()} (off, asleep, or still booting)")
         return 1
     error = sdb_ensure()
     line("FAIL" if error else "ok", "sdb", error or "connected")
     if error:
         return 1
 
-    PROBE_CACHE.unlink(missing_ok=True)
+    probe_cache().unlink(missing_ok=True)
     state = probe(force=True)
     age = state.get("daemon_heartbeat_age")
     line(
@@ -1034,8 +1046,6 @@ def cmd_doctor(args) -> int:
 
 def cmd_report(args) -> int:
     """The current boot on one uptime timeline: daemon, hooks, logging, speaker."""
-    import bt  # noqa: PLC0415  (tv/bt.py)
-
     script = (
         'read up idle < /proc/uptime; echo "UPTIME $up"; '
         'echo "BOOTID $(cat /proc/sys/kernel/random/boot_id)"; '
@@ -1158,7 +1168,7 @@ def cmd_dlog(args) -> int:
     target = ROOT / ".local" / "dlog" / time.strftime("dlog-%Y%m%d-%H%M%S.txt")
     target.parent.mkdir(parents=True, exist_ok=True)
     result = subprocess.run(
-        (str(SDB), "-s", SERIAL, "pull", DLOG_OUT, str(target)), capture_output=True, text=True, timeout=120
+        (str(SDB), "-s", serial(), "pull", DLOG_OUT, str(target)), capture_output=True, text=True, timeout=120
     )
     if result.returncode != 0 or not target.exists():
         print(f"pull failed: {(result.stdout + result.stderr).strip()}", file=sys.stderr)
@@ -1219,6 +1229,7 @@ def main() -> int:
     dlog.set_defaults(handler=cmd_dlog)
 
     args = parser.parse_args()
+    project_env.select(args)
     return args.handler(args)
 
 

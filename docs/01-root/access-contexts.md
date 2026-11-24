@@ -27,7 +27,7 @@ not override it. Root with `CAP_MAC_ADMIN` may relabel itself, which is what
 
 | path | mechanism | speed | needs exploit |
 |---|---|---|---|
-| **channel** | `tv/chan.py serve`: the daemon starts the root agent as transient unit `cf_tv_agent`; it calls back to the host, which serves `/tmp/tvchan.sock` | **1.3 s bring-up, ~10 ms/command**, 14.6 MiB/s up, 9.7 MiB/s down | no (daemon only; down when the daemon is) |
+| **channel** | `tv/chan.py serve`: the daemon starts the root agent as transient unit `cf_tv_agent`; it calls back to the host, which serves `$XDG_RUNTIME_DIR/cf-tv/<ip>/chan.sock` | **1.3 s bring-up, ~10 ms/command**, 14.6 MiB/s up, 9.7 MiB/s down | no (daemon only; down when the daemon is) |
 | **daemon** | `cf_tv_daemon`, directory queue in `/opt/cf_tv_daemon/state`, reached by sdb injection (uid 901) | ~0.75 s/command | no |
 | boot queue | `/opt/cmdq`: each line runs as root at the **next** boot (`persistent-root.md`); manual recovery only, there is no "run now" | one shot | no |
 | exploit | archive-root through sdb: the public SVE-2025-50109 SDB package-name injection gives uid 901, then archive-root gives uid 0 (`vendor/samsung-tv-root-source/README.md`) | ~7 s/call | yes |

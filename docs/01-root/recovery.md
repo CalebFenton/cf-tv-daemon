@@ -42,7 +42,7 @@ and the command to run.
 - **Channel down** (`channel_down`, `root-agent disconnected`): since
   2026-10-25 the serve process reconnects by itself (before each request and
   every 15 s), through the daemon only; `channel_down` means that bring-up
-  failed (see `/tmp/tvchan.log`), so fix the daemon first (above). The
+  failed (see `$XDG_RUNTIME_DIR/cf-tv/<ip>/chan.log`), so fix the daemon first (above). The
   channel never runs the exploit itself: an automatic exploit bring-up once
   left a hung `sdbd-tarlauncher … archive-root` process that blocked every
   later sdb injection, the daemon's queue included (2026-11-05). If one is

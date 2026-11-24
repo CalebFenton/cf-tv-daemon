@@ -116,7 +116,7 @@ root's write also fails until the flag is cleared. Tool and update procedure:
   host. The sdb appinstall injection gives uid 901 commands, and uid 901 can
   write the daemon queue, so sdb access means root. Whether `sdbd` refuses
   connections from other source IPs is unverified.
-- **Host side:** `/tmp/tvchan.sock` is mode 0600 (`tv/chan.py` chmods it).
+- **Host side:** the channel socket (`$XDG_RUNTIME_DIR/cf-tv/<ip>/chan.sock`, in a 0700 per-user directory) is mode 0600 (`tv/chan.py` chmods it).
   Any process of the owning user gets root on the TV through it. The agent's
   callback listener on the host takes a fresh single-use secret per bring-up.
 
@@ -165,7 +165,7 @@ Open, not changed:
 
 - `sdbd` on `:26101` = uid 901 = root, by design while developer mode is on
   (§3).
-- Host socket `/tmp/tvchan.sock`, mode 0600: any process of the owning user
+- Host channel socket (`$XDG_RUNTIME_DIR/cf-tv/<ip>/chan.sock`), mode 0600: any process of the owning user
   gets root on the TV (§3).
 - Root processes and vendor daemons with `CAP_DAC_OVERRIDE` can write the
   queue (§2).

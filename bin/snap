@@ -1,11 +1,10 @@
 #!/bin/sh
-# snap.sh - capture the TV screen to a local file, fast.
+# snap - capture the TV screen to a local file, fast.
 #
-# Uses the persistent root channel (tvchan.py serve) instead of re-running the
-# root exploit per command. One call captures AND transfers, so the whole loop
-# is a single channel round trip.
+# One channel command (tv/chan.py) captures and transfers, so the whole loop is
+# a single round trip.
 #
-# Usage:  snap.sh [output.jpg]
+# Usage:  bin/snap [--tv NAME] [output.jpg]
 #
 # The probe lives in /opt/cap, on the persistent /opt partition. /tmp is tmpfs
 # and is wiped on reboot, which is what made capture appear to "just stop
@@ -14,50 +13,47 @@
 set -u
 cd "$(dirname "$0")/.." 2>/dev/null || exit 98
 
+if [ "${1:-}" = "--tv" ]; then
+    export CF_TV_NAME="${2:?--tv needs a name}"  # what --tv sets in the Python tools
+    shift 2
+fi
 OUT=${1:-/tmp/snap.jpg}
 PY=.venv/bin/python
 PROBE=/opt/cap/CaptureProbe.dll
-# Per TV: tv/chan.py names its socket and log after the address it serves.
-CHANLOG=$("$PY" -c 'import sys; sys.path.insert(0, "tv"); import project_env; print(project_env.channel_paths(project_env.tv_ip())[1])')
 REMOTE=/opt/cap/.snap.jpg
+TMP=$(mktemp -d) || exit 1
+trap 'rm -rf "$TMP"' EXIT
 
 snap_once() {
-    "$PY" tv/chan.py run \
-        "/usr/bin/dotnet $PROBE $REMOTE 2>&1; base64 -w0 $REMOTE" \
-        > /tmp/.snap.b64 2>/tmp/.snap.err
+    "$PY" tv/chan.py run "/usr/bin/dotnet $PROBE $REMOTE 2>&1; base64 -w0 $REMOTE" \
+        > "$TMP/b64" 2> "$TMP/err"
 }
 
 snap_once
 rc=$?
 
 # channel_down means the agent died (standby/reboot). Bring it back and retry.
-if [ $rc -ne 0 ] || [ ! -s /tmp/.snap.b64 ]; then
-    if grep -qi 'channel_down\|refused\|ConnectionRefused' /tmp/.snap.err /tmp/.snap.b64 2>/dev/null; then
+if [ $rc -ne 0 ] || [ ! -s "$TMP/b64" ]; then
+    if grep -qi 'channel_down\|no_daemon\|refused' "$TMP/err" "$TMP/b64" 2>/dev/null; then
         echo "snap: channel down, restarting..." >&2
-        nohup "$PY" tv/chan.py serve >"$CHANLOG" 2>&1 &
-        i=0
-        while [ $i -lt 60 ]; do
-            sleep 1
-            i=$((i + 1))
-            grep -q 'channel ready' "$CHANLOG" 2>/dev/null && break
-        done
-        snap_once
+        "$PY" -c 'import sys; sys.path.insert(0, "tv"); import root; sys.exit(0 if root.channel_start() else 1)' \
+            && snap_once
         rc=$?
     fi
 fi
 
-if [ $rc -ne 0 ] || [ ! -s /tmp/.snap.b64 ]; then
-    cat /tmp/.snap.err >&2
+if [ $rc -ne 0 ] || [ ! -s "$TMP/b64" ]; then
+    cat "$TMP/err" >&2
     echo "snap: channel failed" >&2
     exit 1
 fi
 
 # If the probe failed it prints its error before the payload; an empty payload
 # means no file was written. Take the last line only: it is the base64 blob.
-tail -n 1 /tmp/.snap.b64 | base64 -d > "$OUT" 2>/dev/null
+tail -n 1 "$TMP/b64" | base64 -d > "$OUT" 2>/dev/null
 if [ ! -s "$OUT" ]; then
     echo "snap: empty output; probe said:" >&2
-    grep -v '^[A-Za-z0-9+/=]\{80,\}$' /tmp/.snap.b64 | head -5 >&2
+    grep -v '^[A-Za-z0-9+/=]\{80,\}$' "$TMP/b64" | head -5 >&2
     exit 1
 fi
 

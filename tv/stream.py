@@ -29,17 +29,17 @@ import project_env
 
 project_env.ensure()
 
-SOCKET_PATH = project_env.channel_paths(project_env.tv_ip())[0]
 PROBE = "/opt/cap/CaptureProbe.dll"
 
 
 def request(payload: dict, timeout: float = 180.0) -> dict:
-    if not SOCKET_PATH.exists():
+    socket_path = project_env.channel_socket()
+    if not socket_path.exists():
         return {"ok": False, "error": "no_daemon"}
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(timeout)
-            sock.connect(str(SOCKET_PATH))
+            sock.connect(str(socket_path))
             sock.sendall((json.dumps(payload) + "\n").encode())
             chunks = []
             while True:
@@ -110,7 +110,9 @@ def main() -> int:
     parser.add_argument("--seconds", type=float, default=0, help="repeat capture/pull bursts for this long")
     parser.add_argument("--batch", type=int, default=8, help="frames per READFILE round trip (default 8)")
     parser.add_argument("--outdir", default="/tmp/stream")
+    project_env.add_tv_argument(parser)
     args = parser.parse_args()
+    project_env.select(args)
 
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)

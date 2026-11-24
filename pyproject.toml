@@ -19,3 +19,6 @@ package = false
 
 [tool.uv.sources]
 samsung-tv-root = { path = "vendor/samsung-tv-root-source", editable = true }
+
+[dependency-groups]
+dev = ["pytest>=8"]

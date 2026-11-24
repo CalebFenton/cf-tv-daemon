@@ -23,18 +23,19 @@ project_env.ensure()
 import bt
 import root
 
-# The speaker `boot install` deploys for the 50-btconnect hook; not in git
-# (template payload/btconnect.addr.example).
-ADDR_FILE = root.PAYLOAD_DIR / "btconnect.addr"
-ADDR = ADDR_FILE.read_text().split()[0] if ADDR_FILE.is_file() else None
 ROUTE = "buxton2ctl get system db/btapp/lastSoundRoute | awk '{print \"saved route:\", $NF}'"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("action", choices=("status", "connect", "disconnect"))
-    parser.add_argument("--addr", default=ADDR, required=ADDR is None, help=f"default: {ADDR_FILE}")
+    parser.add_argument("--addr", help="default: `speaker` in this TV's devices.toml entry")
+    project_env.add_tv_argument(parser)
     args = parser.parse_args()
+    project_env.select(args)
+    args.addr = args.addr or project_env.tv_settings().get("speaker")
+    if not args.addr:
+        parser.error("no speaker: pass --addr, or set `speaker` in this TV's devices.toml entry")
 
     connected = bt.connected_query(args.addr)
     commands = {

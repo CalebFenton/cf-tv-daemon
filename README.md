@@ -102,7 +102,7 @@ this computer.
 git clone --recurse-submodules https://github.com/CalebFenton/cf-tv-daemon.git
 cd cf-tv-daemon
 cp .env.example .env                # optional single-TV fallback: CF_TV_IP
-cp payload/btconnect.addr.example payload/btconnect.addr  # optional: the speaker for the reconnect hook
+tv/devices.py scan                  # name the TVs on the LAN (devices.toml); add `speaker = "AA:BB:..."` per TV for the reconnect hook
 # restore vendor/sdb and build/tv-framework per VENDOR.md (not in git)
 mise trust && mise install python uv ruff prek
 uv sync                             # .venv, including the samsung_tv_root submodule

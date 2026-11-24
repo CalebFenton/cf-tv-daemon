@@ -49,9 +49,8 @@ __pycache__/
 .DS_Store
 *.swp
 
-# --- Local configuration (templates: .env.example, payload/btconnect.addr.example)
+# --- Local configuration (template: .env.example)
 /.env
-/payload/btconnect.addr
 
 # Untracked local leftover.
 /payloads/

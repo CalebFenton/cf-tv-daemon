@@ -134,7 +134,7 @@ def main() -> None:
             f"sleep {seconds + 6}; kill $p ) >/dev/null 2>&1 &"
         )
     total = 0
-    sock = socket.create_connection((cftv.TV, 7743), timeout=10)
+    sock = socket.create_connection((cftv.project_env.tv(), 7743), timeout=10)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 4 << 20)
     sock.sendall(cftv._token.encode() + b"\n")
     sock.sendall(

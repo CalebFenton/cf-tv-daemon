@@ -3,8 +3,9 @@
 
 The TV-side root agent (`SamsungTvRootAgent.cs`, vendored) keeps one
 authenticated TCP connection to the host and runs commands on it. This server
-starts that agent once, then serves local clients over the UNIX socket
-/tmp/tvchan.sock: ~10 ms per command, raw file transfer both ways.
+starts that agent once, then serves local clients over a UNIX socket in the
+TV's runtime directory (project_env.channel_socket): ~10 ms per command, raw
+file transfer both ways.
 
 Bring-up (1.3 s): the boot-installed root daemon (cf_tv_daemon) launches the
 agent as the transient unit cf_tv_agent with a fresh single-use token; the
@@ -60,10 +61,11 @@ if TYPE_CHECKING:  # asyncio costs ~1 s to import; only `serve` needs it
     import asyncio
 
 ROOT = Path(__file__).resolve().parent.parent
-TV = project_env.tv_ip()
-# Per TV, so two `serve` processes never share a socket.
-SOCKET_PATH, CHANNEL_LOG = project_env.channel_paths(TV)
-STATE_PATH = Path(f"/tmp/tvchan-{TV}.state")
+
+
+def state_path() -> Path:
+    return project_env.tv_dir() / "chan.state"
+
 
 # The root-agent/crypto stack is heavy (~1.6 s of CPU just to import). CLI
 # callers only need a UNIX socket, so these are imported lazily inside
@@ -144,17 +146,17 @@ async def bring_up_daemon() -> tuple[object, object, dict]:
     import root as rootctl  # noqa: PLC0415  (tv/root.py)
 
     started = time.monotonic()
-    callback = route_callback_host(TV)
+    callback = route_callback_host(project_env.tv())
     error = await asyncio.to_thread(rootctl.sdb_ensure)
     if error:
         raise RuntimeError(error)
-    client = SdbClient(find_sdb(), TV, timeout=15.0)
+    client = SdbClient(find_sdb(), project_env.tv(), timeout=15.0)
     await asyncio.to_thread(client.connect)
 
     package = "cf-agent-" + secrets.token_hex(8)
     staging = STAGING_ROOT / package
     secret = generate_secret()
-    server = RootAgentServer(callback, 0, TV, secret, require_root=True)
+    server = RootAgentServer(callback, 0, project_env.tv(), secret, require_root=True)
     await server.start()
     port = server.listening_port
     log(f"listener {callback}:{port}")
@@ -198,7 +200,7 @@ async def bring_up_daemon() -> tuple[object, object, dict]:
             connection,
             closing,
             {
-                "tv": TV,
+                "tv": project_env.tv(),
                 "uid": identity.uid,
                 "smack": identity.smack_label.strip(),
                 "package": package,
@@ -223,7 +225,7 @@ def cleanup_package(package: str) -> None:
     """
     if not package:
         return
-    client = SdbClient(find_sdb(), TV, timeout=15.0)
+    client = SdbClient(find_sdb(), project_env.tv(), timeout=15.0)
     try:
         client.connect()
         client.capture(f"/bin/rm -rf {STAGING_ROOT / package}", timeout=20)
@@ -233,15 +235,16 @@ def cleanup_package(package: str) -> None:
 
 async def serve_forever() -> int:
     _load_heavy_deps()
-    if SOCKET_PATH.exists():
+    socket_path = project_env.channel_socket()
+    if socket_path.exists():
         # One server per socket: unlinking a live server's socket orphans it
         # and leaves two agents fighting (seen 2026-11-05). Only a socket
         # nobody answers on is stale.
         try:
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as probe:
-                probe.connect(str(SOCKET_PATH))
+                probe.connect(str(socket_path))
         except OSError:
-            SOCKET_PATH.unlink()
+            socket_path.unlink()
         else:
             log("another chan.py serve already answers on this socket; exiting")
             return 1
@@ -301,7 +304,7 @@ async def serve_forever() -> int:
             connection = None
             return str(error)
         last_ok = time.monotonic()
-        STATE_PATH.write_text(json.dumps(state, indent=1))
+        state_path().write_text(json.dumps(state, indent=1))
         log(f"channel ready in {state['bringup_seconds']}s")
         return ""
 
@@ -449,9 +452,10 @@ async def serve_forever() -> int:
     await ensure()
     keeper = asyncio.create_task(keepalive())
 
-    server = await asyncio.start_unix_server(handle, str(SOCKET_PATH), limit=64 * 1024 * 1024)
-    os.chmod(SOCKET_PATH, 0o600)
-    log(f"daemon listening on {SOCKET_PATH}")
+    socket_path = project_env.channel_socket()
+    server = await asyncio.start_unix_server(handle, str(socket_path), limit=64 * 1024 * 1024)
+    os.chmod(socket_path, 0o600)
+    log(f"daemon listening on {socket_path}")
 
     try:
         async with server:
@@ -467,12 +471,13 @@ async def serve_forever() -> int:
 
 
 def client_request(request: dict) -> dict:
-    if not SOCKET_PATH.exists():
+    socket_path = project_env.channel_socket()
+    if not socket_path.exists():
         return {"ok": False, "error": "no_daemon"}
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(60)
-            sock.connect(str(SOCKET_PATH))
+            sock.connect(str(socket_path))
             sock.sendall((json.dumps(request) + "\n").encode())
             chunks = []
             while True:
@@ -504,6 +509,7 @@ def main() -> int:
     pull.add_argument("--outdir", default=".")
 
     args = parser.parse_args()
+    project_env.select(args)
 
     if args.command == "serve":
         # asyncio is imported lazily (see _load_heavy_deps); `serve` is the only

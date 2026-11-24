@@ -7,8 +7,8 @@ TV answers `GET http://<ip>:8001/api/v2/` without a login, and that JSON
 carries a fixed `id` (`uuid:...`, the same value as `duid`/`udn`).
 
 So the registry stores, per TV, a name and that fixed id, never the address as
-the key. When a name is used, the stored address is tried first, then the /24
-is scanned for the id. The scanned address is written back, so the scan pays
+the key. When a name is used, the stored address is tried first, then the LAN
+is searched for the id (SSDP, confirmed over REST). The found address is written back, so the scan pays
 once per move.
 
 `devices.toml` (not in git: `.env` holds no secrets but the layout is a local
@@ -52,7 +52,11 @@ DEFAULT_PATH = REPO / "devices.toml"
 API_PORT = 8001
 SDB_PORT = 26101
 PROBE_TIMEOUT = 1.2
-SCAN_WORKERS = 128
+SSDP_GROUP = ("239.255.255.250", 1900)
+# Samsung TVs answer the DIAL search; so do other casting devices, so a reply
+# is only a candidate until identity() confirms it.
+SSDP_ST = "urn:dial-multiscreen-org:service:dial:1"
+SSDP_WAIT = 3.0
 # After a reboot sdbd answers ~10 s before the REST API that proves identity.
 BOOT_API_WAIT = 30.0
 
@@ -139,18 +143,58 @@ def local_address() -> str:
         return str(sock.getsockname()[0])
 
 
-def subnet() -> str:
-    """The /24 this computer is on."""
-    return local_address().rsplit(".", 1)[0]
+def ssdp_search(wait: float = SSDP_WAIT) -> list[tuple[str, str]]:
+    """(source address, raw reply) for every SSDP answer to the DIAL search.
+
+    The multicast interface is set explicitly: with docker bridges present the
+    kernel's default choice may not be the LAN.
+    """
+    local = local_address()
+    request = (
+        "M-SEARCH * HTTP/1.1\r\n"
+        f"HOST: {SSDP_GROUP[0]}:{SSDP_GROUP[1]}\r\n"
+        'MAN: "ssdp:discover"\r\n'
+        f"MX: {max(1, int(wait) - 1)}\r\n"
+        f"ST: {SSDP_ST}\r\n\r\n"
+    ).encode()
+    replies = []
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_IF, socket.inet_aton(local))
+        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 2)
+        sock.bind((local, 0))
+        sock.sendto(request, SSDP_GROUP)
+        deadline = time.monotonic() + wait
+        while (left := deadline - time.monotonic()) > 0:
+            sock.settimeout(left)
+            try:
+                data, (source, _) = sock.recvfrom(4096)
+            except TimeoutError:
+                break
+            replies.append((source, data.decode(errors="replace")))
+    return replies
 
 
-def scan(hosts: str | None = None, workers: int = SCAN_WORKERS) -> list[dict]:
-    """Every Samsung TV answering on API_PORT in the /24 (or a prefix like 192.168.19)."""
-    prefix = hosts or subnet()
-    addresses = [f"{prefix}.{n}" for n in range(1, 255)]
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        found = [f for f in pool.map(lambda a: identity(a, PROBE_TIMEOUT), addresses) if f]
-    return sorted(found, key=lambda f: f["address"])
+def usn_uuid(reply: str) -> str | None:
+    """The `uuid:...` of an SSDP reply's USN header (equals the REST id on Samsung TVs)."""
+    match = re.search(r"^usn:\s*(uuid:[^:\s]+)", reply, re.IGNORECASE | re.MULTILINE)
+    return match.group(1) if match else None
+
+
+def scan(want: str | None = None) -> list[dict]:
+    """Every Samsung TV on this LAN: SSDP candidates confirmed by their REST identity.
+
+    With `want`, a candidate whose USN carries that id is confirmed alone first,
+    so finding one known TV costs one REST call.
+    """
+    replies = ssdp_search()
+    if want:
+        for source, reply in replies:
+            if usn_uuid(reply) == want and (found := identity(source, PROBE_TIMEOUT)) and found["id"] == want:
+                return [found]
+    candidates = list(dict.fromkeys(source for source, _ in replies))
+    with ThreadPoolExecutor(max_workers=max(1, len(candidates))) as pool:
+        found = [f for f in pool.map(lambda a: identity(a, PROBE_TIMEOUT), candidates) if f]
+    return sorted(found, key=lambda f: tuple(int(p) for p in f["address"].split(".")))
 
 
 def resolve(name: str | None = None) -> tuple[str | None, str]:
@@ -185,8 +229,7 @@ def resolve(name: str | None = None) -> tuple[str | None, str]:
             save(registry)
         return chosen, found
     raise SystemExit(
-        f"TV {chosen!r} ({entry.get('id')}) is not answering on {subnet()}.0/24; "
-        "is it off? Check with `tv/devices.py list`."
+        f"TV {chosen!r} ({entry.get('id')}) is not answering on this LAN; is it off? Check with `tv/devices.py list`."
     )
 
 
@@ -221,7 +264,7 @@ def scan_for(tv_id: str | None, preferred: str | None = None) -> str | None:
         return preferred if preferred and identity(preferred, PROBE_TIMEOUT) else None
     if preferred and _usable(preferred, tv_id):
         return preferred
-    for found in scan():
+    for found in scan(tv_id):
         if found["id"] == tv_id:
             return found["address"]
     return None
@@ -245,7 +288,6 @@ def main() -> int:
 
     sub.add_parser("list")
     scan_cmd = sub.add_parser("scan")
-    scan_cmd.add_argument("--hosts", help="address prefix, default this computer's /24")
     scan_cmd.add_argument("--prune", action="store_true", help="drop TVs in the file that did not answer")
     address_cmd = sub.add_parser("address")
     address_cmd.add_argument("name", nargs="?")
@@ -255,7 +297,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.command == "scan":
-        found = scan(args.hosts)
+        found = scan()
         registry = load()
         by_id = {entry["id"]: name for name, entry in registry["tv"].items() if entry.get("id")}
         for tv in found:
@@ -281,7 +323,7 @@ def main() -> int:
             print(f"default  {registry['default']}")
         save(registry)
         if not found:
-            print(f"no Samsung TV answered on {args.hosts or subnet()}.0/24 port {API_PORT}")
+            print("no Samsung TV answered SSDP on this LAN")
         return 0 if found else 1
 
     if args.command == "list":

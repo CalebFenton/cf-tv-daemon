@@ -41,7 +41,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CHAN = ROOT / "tv" / "chan.py"
 sys.path.insert(0, str(ROOT / "tv"))
 
-import project_env  # exports --tv as CF_TV_NAME, which the chan.py child inherits
+import project_env
 
 PYTHON = sys.executable
 
@@ -178,6 +178,7 @@ def main() -> int:
     r.add_argument("command")
 
     args = parser.parse_args()
+    project_env.select(args)
 
     if args.cmd == "key":
         return press(args.name, args.count)

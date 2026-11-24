@@ -17,9 +17,12 @@ The same value appears as `device.duid` and `device.udn`. It is set at
 manufacture and is not the address, the MAC (`wifiMac` is the Wi-Fi MAC even on
 a wired TV), or the model name.
 
-Scanning a /24 for it takes about 2 s (254 parallel 1.2 s probes), so a lookup
-is cheap enough to do on demand rather than keeping a discovery service
-running.
+Finding it takes about 3 s: an SSDP M-SEARCH for the DIAL service
+(`urn:dial-multiscreen-org:service:dial:1`, sent on the LAN interface
+explicitly), then a REST identity check of each device that answered, since
+non-TV casting devices answer the same search. A Samsung TV's SSDP `USN`
+carries the same `uuid:` as its REST `id`. That is cheap enough to do on
+demand rather than keeping a discovery service running.
 
 ## devices.toml
 
@@ -38,6 +41,7 @@ note = "living room"      # optional, free text
 id = "uuid:..."
 address = "192.0.2.175"
 model = "QN75QN85DAFXZA"
+speaker = "AA:BB:CC:DD:EE:FF"  # optional: the Bluetooth speaker the 50-btconnect hook reconnects
 ```
 
 `address` is a cache, not a key. `id` is the key.
@@ -55,15 +59,16 @@ tv/devices.py default qn85d         # the TV used when --tv is absent
 Resolution order for a name: `--tv NAME`, `$CF_TV_NAME`, `devices.toml`
 `default`, then `CF_TV_IP` in `.env` when no name is selected at all (the
 single-TV setup this repo had before). `--tv` may appear before or after the
-subcommand: it is read from `argv` at import time (`tv/project_env.py`) because
-module constants resolve the TV before argparse runs, and exported as
-`CF_TV_NAME`, so child processes (`tv/control.py` → `tv/chan.py`) use the same
-TV. `$CF_TV_DEVICES` moves the file.
+subcommand. The TV is resolved the first time a command needs it
+(`project_env.tv()`), after argument parsing, so `--help` and argument errors
+never touch the network. `--tv` is exported as `CF_TV_NAME`, so child
+processes (`tv/control.py` → `tv/chan.py`, `bin/snap`) use the same TV.
+`$CF_TV_DEVICES` moves the file.
 
 When a name is used: the stored address is checked against the stored `id`
-(one HTTP request). If it does not match, the /24 is scanned for that `id`, the
-address is written back, and the command continues. A TV that is off fails with
-a message naming the id and the subnet, not a timeout. While the address
+(one HTTP request). If it does not match, the LAN is searched over SSDP for that
+`id`, the address is written back, and the command continues. A TV that is off
+fails with a message naming the id, not a timeout. While the address
 answers on sdb but not yet on the REST API (a booting TV: sdbd starts ~10 s
 first), the API is polled for up to 30 s. An open sdb port is never taken as
 proof of identity, because DHCP may have handed the address to another TV.
@@ -71,26 +76,32 @@ proof of identity, because DHCP may have handed the address to another TV.
 `tv/devices.py` rewrites the file after a scan or a move. Keys added by hand
 are kept; comments are not.
 
-## Per-TV isolation
+## Per-TV state on this computer
 
-Two TVs on one host must not share state that belongs to one of them. These are
-keyed by address:
+Under `$XDG_RUNTIME_DIR/cf-tv/` (`/run/user/<uid>`, mode 0700, tmpfs), not
+`/tmp`, where another local user could create the channel socket first and
+receive the root commands. One directory per TV address
+(`project_env.tv_dir()`):
 
-| thing | path |
+| file | what |
 |---|---|
-| channel socket | `/tmp/tvchan-<ip>.sock` |
-| channel log | `/tmp/tvchan-<ip>.log` |
-| channel state | `/tmp/tvchan-<ip>.state` |
-| root probe cache | `/tmp/rootctl.probe-<ip>` |
+| `<ip>/chan.sock`, `chan.log`, `chan.state` | the root channel (`tv/chan.py serve`) |
+| `<ip>/probe` | `tv/root.py` probe cache (30 s) |
+| `<ip>/btconnect.addr` | the speaker file `boot install` deploys, written from `speaker` |
+| `sdb.lock` | one host sdb server serves every TV, so this lock is shared |
 
 `tv/chan.py serve` serves one TV. Two TVs need two `serve` processes, started
 with different `--tv`.
+
+## Per-TV settings
+
+- `speaker`: the Bluetooth speaker the `50-btconnect` boot/wake hook
+  reconnects. `tv/root.py boot install` deploys it to
+  `/opt/cf_tv_daemon/btconnect.addr`, and removes that file from a TV with no
+  `speaker`. `bin/bt-reconnect` uses it as its default `--addr`.
 
 ## What is still single-TV
 
 - `tv/hud.py` talks to `cf-vision`, a separate service, and to the cftv agent;
   it follows the selected TV but the recognition service does not.
-- `payload/btconnect.addr` is one speaker per TV on the TV itself, but the repo
-  keeps one copy for `boot install`, so a second TV with a different speaker
-  needs its own file. Currently the same hook and no speaker on the CU7000.
 - `tv/control.py` sends a key to one TV, the selected one.

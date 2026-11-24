@@ -35,10 +35,9 @@ saves 0.6%.
 **`bin/snap`** sends one channel command:
 `/usr/bin/dotnet /opt/cap/CaptureProbe.dll /opt/cap/.snap.jpg 2>&1; base64 -w0 /opt/cap/.snap.jpg`.
 It decodes the last stdout line into the output file. If the channel reports
-`channel_down` or a refused connection, it runs `sdb connect`, starts
-`tv/chan.py serve` in the background (log `/tmp/tvchan.log`), waits up to 60 s
-for `channel ready`, and retries once. If `serve` was never started (error
-`no_daemon`), it does not start it; start it yourself.
+`channel_down`, `no_daemon` or a refused connection, it starts the channel
+with `tv/root.py`'s `channel_start()` (which waits up to 70 s for it) and
+retries once. `bin/snap --tv NAME` selects the TV.
 
 **`bin/stream`** runs one channel command per burst. The command deletes old
 frames, captures a 16-frame warmup with `--loop 16 0` and throws it away, then

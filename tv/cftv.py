@@ -54,7 +54,7 @@ import project_env
 project_env.ensure()
 
 import bt
-from chan import CHANNEL_LOG, TV, client_request
+from chan import client_request
 from PIL import Image
 
 
@@ -113,7 +113,7 @@ def slot() -> Slot:
     for candidate in SLOTS:
         if candidate.app == found:
             return candidate
-    raise CftvError(f"none of the agent's app slots is installed on {TV}: {apps}")
+    raise CftvError(f"none of the agent's app slots is installed on {project_env.tv()}: {apps}")
 
 
 class CftvError(RuntimeError):
@@ -134,7 +134,7 @@ def request(payload: dict) -> dict:
         import root  # noqa: PLC0415  (tv/root.py)
 
         if not root.channel_start():
-            raise CftvError(f"could not start the root channel (see {CHANNEL_LOG})")
+            raise CftvError(f"could not start the root channel (see {project_env.channel_log()})")
         response = client_request(payload)
     return response
 
@@ -316,7 +316,7 @@ def _connect() -> tuple[socket.socket, object]:
         ensure()
     for attempt in range(20):
         try:
-            sock = socket.create_connection((TV, PORT), timeout=5)
+            sock = socket.create_connection((project_env.tv(), PORT), timeout=5)
             break
         except ConnectionRefusedError:
             if attempt == 19:
@@ -627,6 +627,7 @@ def main() -> int:
         sub.add_parser(name)
 
     args = parser.parse_args()
+    project_env.select(args)
     try:
         if args.op == "log":
             print(run(f"tail -20 {slot().q}cftv.log"), end="")

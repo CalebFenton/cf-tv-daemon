@@ -13,7 +13,7 @@ Owners and modes on the TV: `docs/06-security/threat-model.md` §2.
 | `on-boot.d/50-btconnect` | `1a39b358eb2654b6ef0a18a5cec05a0f` | `/opt/cf_tv_daemon/on-boot.d/` | reconnects the Bluetooth speaker (`docs/04-system/bluetooth.md`) |
 | `on-wake.d/50-btconnect` | same (git symlink to `../on-boot.d/50-btconnect`) | `/opt/cf_tv_daemon/on-wake.d/` (a regular file on the TV) | same hook on wake |
 | `../apps/chattr.cs` → `build/chattr/Chattr.dll` | `bfcd98547fbcfd1c141347ced28e0503` | `/opt/cf_tv_daemon/chattr/` (with `Chattr.runtimeconfig.json`) | sets and clears the immutable flag on `parseinfo.sh` |
-| `btconnect.addr` | per install (gitignored; copy `btconnect.addr.example` and set the speaker's address) | `/opt/cf_tv_daemon/btconnect.addr` | the speaker `50-btconnect` reconnects; deployed only if present |
+| `btconnect.addr` | written from `speaker` in the TV's `devices.toml` entry (`docs/04-system/devices.md`) | `/opt/cf_tv_daemon/btconnect.addr` | the speaker `50-btconnect` reconnects; removed from a TV without a `speaker` |
 | `../apps/capture-probe.cs` → `build/capture/CaptureProbe.dll` | built locally | `/opt/cap/` (with `CaptureProbe.runtimeconfig.json`) | screen capture for `bin/snap`, `bin/stream` |
 | `masklist` | empty | `/opt/masklist` | unit names masked by `parseinfo` **at every boot**: a mask persists until the line is removed (`docs/04-system/masking-daemons.md`) |
 

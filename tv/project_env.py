@@ -8,6 +8,8 @@ Also loads the repo's `.env` (KEY=value lines, not in git; template
 `.env.example`) into the environment; variables already set win.
 """
 
+import argparse
+import functools
 import os
 import sys
 from pathlib import Path
@@ -23,33 +25,25 @@ if ENV_FILE.is_file():
             os.environ.setdefault(key.strip(), value.strip())
 
 
-def _tv_from_argv() -> str | None:
-    """--tv NAME or --tv=NAME from anywhere in argv.
+def add_tv_argument(parser: argparse.ArgumentParser) -> None:
+    """Declare --tv; add it to the top parser and, via a parent, to each subparser.
 
-    Read before argparse runs, because modules resolve their TV at import
-    time (constants like TV and SOCKET_PATH). Exported as CF_TV_NAME, so child
-    processes select the same TV.
+    SUPPRESS as the default keeps a subparser from overwriting a value given
+    before the subcommand, so --tv works on either side of it.
     """
-    argv = sys.argv[1:]
-    for index, value in enumerate(argv):
-        if value == "--tv" and index + 1 < len(argv):
-            return argv[index + 1].strip() or None
-        if value.startswith("--tv="):
-            return value.partition("=")[2].strip() or None
-    return None
-
-
-if selected := _tv_from_argv():
-    os.environ["CF_TV_NAME"] = selected
-
-
-def add_tv_argument(parser) -> None:
-    """Declare --tv so argparse accepts and documents the flag _tv_from_argv already applied."""
     parser.add_argument(
         "--tv",
         metavar="NAME",
+        default=argparse.SUPPRESS,
         help="which TV (default: devices.toml `default`; list them with tv/devices.py list)",
     )
+
+
+def select(args: argparse.Namespace) -> None:
+    """Apply a parsed --tv before anything calls tv(); child processes inherit it as CF_TV_NAME."""
+    if name := getattr(args, "tv", None):
+        os.environ["CF_TV_NAME"] = name
+        _selection.cache_clear()
 
 
 def ensure() -> None:
@@ -62,14 +56,59 @@ def ensure() -> None:
     os.execv(python, [str(python), *sys.argv])
 
 
-def tv_ip() -> str:
-    """The selected TV's LAN address (tv/devices.py resolve: --tv, CF_TV_NAME, `default`, CF_TV_IP)."""
+def _devices():
     sys.path.insert(0, str(REPO / "tv"))
-    import devices  # noqa: PLC0415  (urllib and a thread pool; only callers that need a TV pay)
+    import devices  # noqa: PLC0415  (only callers that need a TV pay for urllib)
 
-    return devices.resolve()[1]
+    return devices
 
 
-def channel_paths(address: str) -> tuple[Path, Path]:
-    """(socket, log) of the root channel for one TV; `serve` and its clients both derive them from the address."""
-    return Path(f"/tmp/tvchan-{address}.sock"), Path(f"/tmp/tvchan-{address}.log")
+@functools.cache
+def _selection() -> tuple[str | None, str]:
+    """(name, address) of the selected TV: tv/devices.py resolve (--tv, CF_TV_NAME, `default`, CF_TV_IP).
+
+    Resolved on first use, once per process: it is an HTTP request, and a LAN
+    discovery when the TV's address moved.
+    """
+    return _devices().resolve()
+
+
+def tv() -> str:
+    """The selected TV's LAN address."""
+    return _selection()[1]
+
+
+def tv_settings() -> dict:
+    """The selected TV's devices.toml entry (`speaker`, `note`, ...); empty when selected by CF_TV_IP."""
+    name = _selection()[0]
+    return _devices().load()["tv"].get(name, {}) if name else {}
+
+
+def runtime_dir() -> Path:
+    """This user's runtime files: $XDG_RUNTIME_DIR/cf-tv (mode 0700, per user, tmpfs).
+
+    Not /tmp: there another local user could create the channel socket first
+    and receive the root commands meant for the TV.
+    """
+    base = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}"
+    if not Path(base).is_dir():
+        sys.exit(f"no per-user runtime directory ({base}); set XDG_RUNTIME_DIR")
+    directory = Path(base) / "cf-tv"
+    directory.mkdir(mode=0o700, exist_ok=True)
+    return directory
+
+
+def tv_dir() -> Path:
+    """The selected TV's runtime files: the channel's socket, log and state, the probe cache."""
+    directory = runtime_dir() / tv()
+    directory.mkdir(mode=0o700, exist_ok=True)
+    return directory
+
+
+def channel_socket() -> Path:
+    """The socket `tv/chan.py serve` listens on for the selected TV."""
+    return tv_dir() / "chan.sock"
+
+
+def channel_log() -> Path:
+    return tv_dir() / "chan.log"

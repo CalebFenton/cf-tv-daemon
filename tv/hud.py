@@ -110,7 +110,7 @@ class Camera:
         cftv.run(CAPTURE_START.format(token=token))
         for attempt in range(50):  # dotnet takes a fraction of a second to start
             try:
-                self.sock = socket.create_connection((cftv.TV, CAPTURE_PORT), timeout=5)
+                self.sock = socket.create_connection((project_env.tv(), CAPTURE_PORT), timeout=5)
                 break
             except ConnectionRefusedError:
                 if attempt == 49:
@@ -362,6 +362,7 @@ def main() -> int:
     p.add_argument("--seconds", type=float, help="stop after this long")
     sub.add_parser("off", help="remove the HUD from the TV")
     args = parser.parse_args()
+    project_env.select(args)
     if args.op == "live":
         return live(args.interval, args.seconds)
     hud({"off": True})

@@ -19,7 +19,7 @@ The single reference for the Bluetooth speaker. Updated 2026-10-24. Code:
 | field | value |
 |---|---|
 | speaker | StealthTech Sound + Charge, `AA:BB:CC:DD:EE:FF` (bonded, dual mode) |
-| connect target on the TV | `/opt/cf_tv_daemon/btconnect.addr`, deployed from `payload/btconnect.addr` (gitignored; copy `payload/btconnect.addr.example`) by `tv/root.py boot install` |
+| connect target on the TV | `/opt/cf_tv_daemon/btconnect.addr`, written by `tv/root.py boot install` from `speaker` in that TV's `devices.toml` entry (`docs/04-system/devices.md`) |
 | saved output (`db/btapp/lastSoundRoute`) | persisted, **not** a connection signal: `docs/04-system/control.md` §4 |
 | Bluetooth stack | Samsung "projectx" `bt-service` (`bluetooth-frwk-service.service`) on top of **Bluedroid** (Android's stack: `bt-btm`, `bt-btif`, `BT_OAL` log tags) |
 
@@ -143,7 +143,7 @@ answering pages blocks `bt-service` for 30–60 s (every other connect gets
 power cycle; failed connects make the TV show the prompt.
 
 `/opt/cf_tv_daemon/btconnect.addr` absent or malformed: the hook logs `no speaker
-configured` and stops. To change the speaker, edit `payload/btconnect.addr`
+configured` and stops. To change the speaker, edit `speaker` in `devices.toml`
 and run `boot install`; to stop the hook, `tv/root.py hooks disable
 50-btconnect`. Both copies share one lock (same file name).
 
