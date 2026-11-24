@@ -20,7 +20,8 @@
 /.dotnet31/
 /.venv*/
 /build/
-# Local scratch and private evidence: intermediate build dirs, pulled bus
+# Local scratch and everything identifying: the device registry
+# (devices.toml), tools/check_private.py's private-patterns, pulled bus
 # captures, screenshots, binaries pulled from the TV, the pre-publication history.
 /.local/
 
@@ -54,7 +55,3 @@ __pycache__/
 
 # Untracked local leftover.
 /payloads/
-
-# --- Device registry (tv/devices.py) ------------------------------------
-# Written by `tv/devices.py scan`. Local layout: names, addresses, notes.
-/devices.toml

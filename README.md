@@ -1,7 +1,7 @@
 # cf-tv-daemon
 
-A root daemon and host tooling for Caleb Fenton's Samsung TV ("CF" = Caleb
-Fenton). On the TV, `cf_tv_daemon` runs as root from every boot: it takes
+A root daemon and host tooling for Samsung Tizen TVs. On the TV,
+`cf_tv_daemon` runs as root from every boot: it takes
 commands from this computer and runs boot and wake hooks (Bluetooth speaker
 reconnect). On this computer, `tv/` and `bin/` drive it: root commands, screen
 capture, overlays and notifications, sound, remote keys, and the recognition
@@ -102,7 +102,7 @@ this computer.
 git clone --recurse-submodules https://github.com/CalebFenton/cf-tv-daemon.git
 cd cf-tv-daemon
 cp .env.example .env                # optional single-TV fallback: CF_TV_IP
-tv/devices.py scan                  # name the TVs on the LAN (devices.toml); add `speaker = "AA:BB:..."` per TV for the reconnect hook
+tv/devices.py scan                  # name the TVs on the LAN (.local/devices.toml); add `speaker = "AA:BB:..."` per TV for the reconnect hook
 # restore vendor/sdb and build/tv-framework per VENDOR.md (not in git)
 mise trust && mise install python uv ruff prek
 uv sync                             # .venv, including the samsung_tv_root submodule
@@ -112,14 +112,15 @@ prek install                        # git pre-commit hook: ruff, shell and awk s
 Pick the TV once, then every command finds it by name:
 
 ```sh
-tv/devices.py scan                  # writes devices.toml: names + the TVs' fixed ids
+tv/devices.py scan                  # writes .local/devices.toml: names + the TVs' fixed ids
 tv/devices.py list                  # up/down, sdb, model
 tv/devices.py default qn85d         # the TV commands use when --tv is absent
 ```
 
-`devices.toml` (not in git) stores each TV's fixed `id` from its REST API, not
-its address. A DHCP move is handled: the stored address is tried, then the /24
-is scanned for that id and the file is updated. Select per command with
+`.local/devices.toml` (git-ignored, with everything else that identifies a TV)
+stores each TV's fixed `id` from its REST API, not its address. A DHCP move is
+handled: the stored address is tried, then the LAN is searched (SSDP) for that
+id and the file is updated. Select per command with
 `--tv NAME`, or with `CF_TV_NAME` in the environment. With no name selected,
 `CF_TV_IP` from `.env` still works for a single-TV setup (`tv/project_env.py`).
 

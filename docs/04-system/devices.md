@@ -24,22 +24,24 @@ non-TV casting devices answer the same search. A Samsung TV's SSDP `USN`
 carries the same `uuid:` as its REST `id`. That is cheap enough to do on
 demand rather than keeping a discovery service running.
 
-## devices.toml
+## .local/devices.toml
 
-Written by `tv/devices.py scan`, not in git:
+Written by `tv/devices.py scan`, in the git-ignored `.local/` with everything
+else that identifies a TV or its owner (`tools/check_private.py` blocks such
+text from commits):
 
 ```toml
 default = "un55cu7000dxza"
 
 [tv.un55cu7000dxza]
-id = "uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-address = "192.0.2.185"
+id = "uuid:..."
+address = "192.0.2.10"
 model = "UN55CU7000DXZA"
 note = "living room"      # optional, free text
 
 [tv.qn85d]
 id = "uuid:..."
-address = "192.0.2.175"
+address = "192.0.2.11"
 model = "QN75QN85DAFXZA"
 speaker = "AA:BB:CC:DD:EE:FF"  # optional: the Bluetooth speaker the 50-btconnect hook reconnects
 ```

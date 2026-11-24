@@ -54,3 +54,14 @@ repos:
         entry: binary files go in build/, vendor/ or .local/, not in git
         types: [binary]
         exclude: ^apps/assets/fonts/.*\.ttf$
+
+  # This repository is public. Device ids, MACs, the owner's LAN, names and
+  # paths belong in .local/; the owner's own patterns are in
+  # .local/private-patterns (untracked: it lists what it guards).
+  - repo: local
+    hooks:
+      - id: private-text
+        name: Identifying text (tools/check_private.py)
+        language: system
+        entry: .venv/bin/python tools/check_private.py
+        types: [text]

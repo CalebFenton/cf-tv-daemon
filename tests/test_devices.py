@@ -7,8 +7,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tv"))
 import devices
 
-CU = "uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-QN = "uuid:11111111-2222-3333-4444-555555555555"
+CU = "uuid:test-cu"
+QN = "uuid:test-qn"
 
 
 def reply(uuid: str) -> str:

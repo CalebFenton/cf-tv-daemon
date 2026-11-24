@@ -11,13 +11,13 @@ the key. When a name is used, the stored address is tried first, then the LAN
 is searched for the id (SSDP, confirmed over REST). The found address is written back, so the scan pays
 once per move.
 
-`devices.toml` (not in git: `.env` holds no secrets but the layout is a local
-choice) lives at `$CF_TV_DEVICES`, else `<repo>/devices.toml`. Create it with
-`tv/devices.py scan`; `tv/devices.py list` shows it.
+`.local/devices.toml` (git-ignored, like everything identifying: ids, addresses,
+the speaker) or `$CF_TV_DEVICES`. Create it with `tv/devices.py scan`;
+`tv/devices.py list` shows it.
 
     [tv.qn85d]                 # the name every tool takes
     id = "uuid:..."            # the fixed identity; the key that survives DHCP
-    address = "192.0.2.175" # last known, refreshed by a scan
+    address = "192.0.2.10"     # last known, refreshed by a scan
     model = "QN75QN85DAFXZA"   # informational
     note = "living room"       # informational
 
@@ -48,7 +48,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-DEFAULT_PATH = REPO / "devices.toml"
+DEFAULT_PATH = REPO / ".local" / "devices.toml"
 API_PORT = 8001
 SDB_PORT = 26101
 PROBE_TIMEOUT = 1.2
@@ -62,7 +62,7 @@ BOOT_API_WAIT = 30.0
 
 
 def path() -> Path:
-    """The registry file: $CF_TV_DEVICES, else <repo>/devices.toml."""
+    """The registry file: $CF_TV_DEVICES, else <repo>/.local/devices.toml."""
     configured = os.environ.get("CF_TV_DEVICES", "").strip()
     return Path(configured).expanduser() if configured else DEFAULT_PATH
 

@@ -941,9 +941,7 @@ DLOG_BACKUP = f"{KIT}/dlog.conf.orig"
 DLOG_HOOK = f"{KIT}/on-boot.d/00-dlog-once"
 DLOG_OUT = "/opt/cap/dlog-boot.txt"
 # Bluetooth stack tags and the speaker (docs/04-system/bluetooth.md, Tools).
-DLOG_FILTER = (
-    "BLUETOOTH|BT_|bt-btm|bt-btif|bt-l2cap|bt-avp|bluedroid|a2dp|avrcp|authoriz|btapp|connectionmanager"
-)
+DLOG_FILTER = "BLUETOOTH|BT_|bt-btm|bt-btif|bt-l2cap|bt-avp|bluedroid|a2dp|avrcp|authoriz|btapp|connectionmanager"
 
 
 def wait_for(check, seconds: float, every: float):
@@ -1178,7 +1176,10 @@ def cmd_dlog(args) -> int:
         if "'" in args.filter:
             print("the filter may not contain a single quote", file=sys.stderr)
             return 2
-        encoded = base64.b64encode(dlog_hook(args.filter, args.seconds).encode()).decode()
+        pattern = args.filter
+        if args.filter == DLOG_FILTER and (speaker := project_env.tv_settings().get("speaker")):
+            pattern += "|" + speaker.lower()  # the speaker's own lines (devices.toml `speaker`)
+        encoded = base64.b64encode(dlog_hook(pattern, args.seconds).encode()).decode()
         _path, ok, output = run_root(
             [
                 f"test -f {DLOG_BACKUP} || cp -p {DLOG_CONF} {DLOG_BACKUP}; "

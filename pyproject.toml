@@ -1,7 +1,7 @@
 [project]
 name = "cf-tv-daemon"
 version = "0"
-description = "Caleb Fenton's root daemon and host tooling for a Samsung QN85D TV: boot/wake hooks, root commands, overlays, notifications, capture, Bluetooth"
+description = "Root daemon and host tooling for Samsung Tizen TVs: boot/wake hooks, root commands, overlays, notifications, capture, Bluetooth"
 license = "Unlicense"
 requires-python = ">=3.13"
 dependencies = [

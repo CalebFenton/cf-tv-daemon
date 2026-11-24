@@ -12,14 +12,14 @@ are called out here.
 | Item | Value | Source |
 |---|---|---|
 | Model | `UN55CU7000DXZA` ("Samsung CU7000 55") | `/api/v2/` → `device.modelName` |
-| Fixed id | `uuid:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` | `/api/v2/` → `id` (equals `duid`, `udn`) |
+| Fixed id | in `.local/devices.toml` | `/api/v2/` → `id` (equals `duid`, `udn`) |
 | Platform model | `T-KSU2ECAKUC-0090` | `/etc/prd_info.ini` `Model=` |
 | Firmware | `T-KSU2ECAKUC-0090-2230.0` | `/etc/prd_info.ini` `Version=` |
 | Build | `TIZEN-TRUNK2025-KantSU2e-OSU-2023-HOTFIX-RELEASE_20260514.4`, `release`, 2026-05-14 08:41:39 | `/etc/prd_info.ini` |
 | Kernel | `Linux 5.4.77 #1 SMP PREEMPT Mon Jan 5 12:33:32 UTC 2026 armv7l` | `uname -a` |
 | Tizen | `9.0.0 (Tizen9/TV)` | `/etc/os-release` |
 | Panel | `3840x2160` | `/api/v2/` → `device.resolution` |
-| Network | wired (`eth0`), MAC `AA:BB:CC:DD:EE:01` (`wifiMac`) | `/api/v2/`, `ip route` |
+| Network | wired (`eth0`); `wifiMac` is reported even so | `/api/v2/`, `ip route` |
 | Platform family | `23_KSUE_UB_T09` | `/api/v2/` → `device.model` |
 
 `/proc/target_version` reads `__TIZEN-TRUNK2025-KantSU2e-OSU-2023-HOTFIX-RELEASE_20260514.4__T-KSU2ECAKUC-0090`.
