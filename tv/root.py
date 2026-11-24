@@ -319,21 +319,23 @@ def field(lines: list[str], key: str) -> str:
 # ---------------------------------------------------------------- channel path
 
 
+def channel_request(request: dict, timeout: float) -> dict:
+    """One request to `tv/chan.py serve` over its socket; its JSON reply."""
+    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+        sock.settimeout(timeout)
+        sock.connect(str(project_env.channel_socket()))
+        sock.sendall((json.dumps(request) + "\n").encode())
+        data = b""
+        while chunk := sock.recv(65536):
+            data += chunk
+    return json.loads(data.decode())
+
+
 def channel_available() -> bool:
     if not project_env.channel_socket().exists():
         return False
     try:
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
-            sock.settimeout(5)
-            sock.connect(str(project_env.channel_socket()))
-            sock.sendall(b'{"op":"status"}\n')
-            data = b""
-            while True:
-                chunk = sock.recv(65536)
-                if not chunk:
-                    break
-                data += chunk
-        response = json.loads(data.decode())
+        response = channel_request({"op": "status"}, 5)
         return bool(response.get("ok") and response.get("up"))
     except Exception:
         return False
@@ -341,17 +343,7 @@ def channel_available() -> bool:
 
 def channel_exec(commands: list[str]) -> tuple[bool, str]:
     try:
-        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
-            sock.settimeout(60)
-            sock.connect(str(project_env.channel_socket()))
-            sock.sendall((json.dumps({"op": "exec", "commands": commands}) + "\n").encode())
-            data = b""
-            while True:
-                chunk = sock.recv(65536)
-                if not chunk:
-                    break
-                data += chunk
-        response = json.loads(data.decode())
+        response = channel_request({"op": "exec", "commands": commands}, 60)
         if not response.get("ok"):
             return False, ": ".join(filter(None, [str(response.get("error")), response.get("detail")]))
         results = response["results"]
@@ -361,6 +353,14 @@ def channel_exec(commands: list[str]) -> tuple[bool, str]:
         )
     except Exception as error:
         return False, f"{type(error).__name__}: {error}"
+
+
+def channel_put(name: str, data: bytes) -> str:
+    """Write a file into the channel agent's staging directory (WRITEFILE, up to 4 MiB); its path on the TV."""
+    response = channel_request({"op": "put", "items": [{"path": name, "data": base64.b64encode(data).decode()}]}, 120)
+    if not response.get("ok"):
+        raise RuntimeError(f"put {name}: {response.get('error')} {response.get('detail', '')}".strip())
+    return response["written"][0]["path"]
 
 
 def channel_start() -> bool:
@@ -645,25 +645,29 @@ def build_apps() -> None:
 
 
 # One command may carry at most 65,536 bytes on the channel (root agent
-# limit). Files go in pieces of at most INSTALL_CHUNK base64 bytes, so a file
-# larger than one command (the 30-hello animation, ~0.7 MB) spans several.
+# limit). Commands are grouped below that; a file sent inside a command
+# (without the channel) must fit in one group.
 INSTALL_CHUNK = 40_000
 
 
-def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
+def install_commands(files: list[tuple[Path, str, str]], staged: dict[str, str] | None = None) -> list[str]:
     """Write every file atomically as uid 0, then apply LOCKDOWN.
 
     Several commands, run in order on one path: a setup, groups under
     INSTALL_CHUNK bytes each, and the lockdown, which prints INSTALLED. A
-    failed group shows as `[exit N]` in the output (cmd_boot checks). Each
-    file is written to `<dest>.new` (a literal path, so its pieces may land in
-    different commands), then moved into place.
+    failed group shows as `[exit N]` in the output (cmd_boot checks).
+
+    `staged` maps a device path to a copy already uploaded with channel_put;
+    such a file is copied into place. Without the channel (daemon or exploit
+    path) there is no file transfer, so a file travels as base64 inside the
+    command, and one larger than INSTALL_CHUNK cannot be installed that way.
 
     parseinfo.sh lives in the world-writable /opt/etc, so a file mode alone
     does not protect it: anyone can rename a file over it. The immutable flag
     does (uid 901 mv/rm/write all fail, verified 2026-10-24); it has to be
     cleared to replace the file and set again afterwards.
     """
+    staged = staged or {}
     commands = [
         f"mkdir -p /opt/cap {KIT}/chattr {KIT}/on-boot.d {KIT}/on-wake.d "
         f"{DISABLED}/on-boot.d {DISABLED}/on-wake.d && "
@@ -673,35 +677,34 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         if all(dest != per_tv for _, dest, _ in files):
             commands[0] += f" && rm -f {per_tv}"
     group: list[str] = []
-
-    def add(lines: list[str]) -> None:
-        nonlocal group
-        if group and sum(map(len, group)) + sum(map(len, lines)) > INSTALL_CHUNK:
-            commands.append("\n".join(["set -e", *group]))
-            group = []
-        group += lines
-
     for source, dest, mode in files:
-        encoded = base64.b64encode(source.read_bytes()).decode()
-        for start in range(0, max(len(encoded), 1), INSTALL_CHUNK):
-            add(
-                [
-                    f"printf %s {encoded[start : start + INSTALL_CHUNK]} | base64 -d {'>' if start == 0 else '>>'} {dest}.new"
-                ]
-            )
+        if dest in staged:
+            write = f"cp {staged[dest]} $d.new && rm -f {staged[dest]}"
+        else:
+            encoded = base64.b64encode(source.read_bytes()).decode()
+            if len(encoded) > INSTALL_CHUNK:
+                sys.exit(
+                    f"{source.name} ({source.stat().st_size // 1024} KiB) is too large without the channel: "
+                    "start it (tv/chan.py serve), or install once without that devices.toml setting"
+                )
+            write = f"printf %s {encoded} | base64 -d > $d.new"
         # A hook disabled on the TV (tv/root.py hooks disable) is updated
         # where it is and stays disabled.
         disabled = disabled_path(dest)
         lines = [
             f"if [ -e {disabled} ]; then d={disabled}; else d={dest}; fi" if disabled else f"d={dest}",
-            f"chown 0:0 {dest}.new && chmod {mode} {dest}.new",
+            write,
+            f"chown 0:0 $d.new && chmod {mode} $d.new",
         ]
         if dest == PAYLOAD:
             lines.append(f"{CHATTR} -i {dest} 2>/dev/null || true")
-        lines.append(f"mv -f {dest}.new $d")
+        lines.append("mv -f $d.new $d")
         if dest == PAYLOAD:
             lines.append(f"{CHATTR} +i {dest}")
-        add(lines)
+        if group and sum(map(len, group)) + sum(map(len, lines)) > INSTALL_CHUNK:
+            commands.append("\n".join(["set -e", *group]))
+            group = []
+        group += lines
     if group:
         commands.append("\n".join(["set -e", *group]))
     commands.append(
@@ -850,7 +853,22 @@ def cmd_boot(args) -> int:
         return 0 if checked[1] == 0 else 1
 
     if args.action == "install":
-        path, ok, output = run_root(install_commands(files), via=args.via)
+        state = probe()
+        path = pick(state, args.via)
+        if path is None:
+            print(explain(state), file=sys.stderr)
+            return 1
+        # The channel transfers files (WRITEFILE); the other paths only run
+        # commands. Indexed names: boot and wake hooks share file names.
+        staged = (
+            {
+                dest: channel_put(f"install-{i}-{Path(dest).name}", source.read_bytes())
+                for i, (source, dest, _) in enumerate(files)
+            }
+            if path == "channel"
+            else {}
+        )
+        ok, output = run_on(path, install_commands(files, staged), 60.0)
         print(output.strip())
         if not ok or "INSTALLED" not in output or any_failed(output):
             print(f"install failed on the {path} path", file=sys.stderr)
