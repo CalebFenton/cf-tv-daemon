@@ -34,6 +34,10 @@ Consequences:
   the list does.
 - The symlinks live in tmpfs `/run`, so the system image and `/opt` unit
   files are never modified.
+- **The masklist is ours, not Samsung's.** The vendor `parseinfo.sh`
+  (`archive/originals/parseinfo.ORIGINAL.sh`, identical on the QN85D and the
+  CU7000) only writes `/proc/target_version`. `tv/root.py boot restore`, or a
+  firmware update that replaces the file, drops every mask at the next boot.
 - Units that started before AT-HUB run briefly, then get stopped.
 - Kernel suspend ("TV off" on the remote) does not re-run the payload; edits to
   the list take effect at the next real boot unless applied by hand.

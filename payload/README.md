@@ -6,7 +6,7 @@ Owners and modes on the TV: `docs/06-security/threat-model.md` §2.
 
 | file | md5 | deployed at | role |
 |---|---|---|---|
-| `parseinfo.awk` | `b5ab93532e4b94c3ed71ccc62f7a0379` | `/opt/etc/parseinfo.sh` (immutable) | run by `AT-HUB.service` at boot as root; vendor behaviour, `/opt/masklist`, `/opt/cmdq`, then the launcher |
+| `parseinfo.awk` | `74f4897c42dc9f7fb00153205e8f5f9f` | `/opt/etc/parseinfo.sh` (immutable) | run by `AT-HUB.service` at boot as root; vendor behaviour (`/proc/target_version`), `/opt/masklist`, `/opt/cmdq`, then the launcher |
 | `cf_tv_daemon_start.awk` | `cb7c6afb4349f26c851236bf4f94f79b` | `/opt/cf_tv_daemon/` | launcher: stops, resets and `systemd-run`s the unit `cf_tv_daemon` (`Restart=on-failure`). Run by `parseinfo.sh` at boot and by `tv/root.py boot install` |
 | `cf_tv_daemon.awk` | `a49bb68835323485fdd94d5214dddee9` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
 | `cf_tv_hooks.sh` | `0808839fcb2a1bc078a96be4a36b8d69` | `/opt/cf_tv_daemon/` | hook runner: shell text the daemon `eval`s on each event ([Hooks](#boot-and-wake-hooks)) |

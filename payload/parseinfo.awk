@@ -7,12 +7,12 @@
 # AT-HUB.service (System::Privileged). gawk is not UEP-hooked, which is why
 # this executes at all.
 #
-# What it adds over the vendor script:
-#   /opt/cmdq   queued commands, run detached, output to /opt/cmdout
+# What it adds over the vendor script, which only writes /proc/target_version
+# (archive/originals/parseinfo.ORIGINAL.sh):
+#   /opt/masklist  units masked and stopped at every boot; `boot restore`
+#                  drops every mask with this file
+#   /opt/cmdq      queued commands, run detached, output to /opt/cmdout
 #   then cf_tv_daemon_start.awk starts cf_tv_daemon (queue + boot/wake hooks)
-#
-# Everything the vendor script did is preserved, so /proc/target_version and
-# the masklist behaviour are unchanged.
 
 BEGIN{
   repo=""; model=""
@@ -25,7 +25,7 @@ BEGIN{
   print v > "/proc/target_version"
   close("/proc/target_version")
 
-  # --- vendor masklist behaviour ---
+  # --- masklist (docs/04-system/masking-daemons.md) ---
   system("mkdir -p /run/systemd/system")
   n=0
   while ((getline m < "/opt/masklist") > 0) {

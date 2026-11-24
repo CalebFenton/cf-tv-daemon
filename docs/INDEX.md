@@ -48,7 +48,8 @@ records and may be out of date.
 | `control.md` | keys, the key-to-app table, volume, TTS, audio output routing, Voice Guide |
 | `bluetooth.md` | speaker requests and function numbers, the `50-btconnect` hook, routing, the power-loss root cause, bt-service's own log (dlog) |
 | `capability-matrix.md` | proven capabilities, still blocked, dead ends |
-| `debloat.md` | what is disabled, how, rollback, what not to touch |
+| `debloat.md` | QN85D: what is disabled, how, rollback, what not to touch |
+| `debloat-cu7000.md` | CU7000: survey of candidates and mechanisms, nothing applied yet |
 | `masking-daemons.md` | `/opt/masklist` (re-applied every boot) |
 | `acr-telemetry.md` | content-recognition and telemetry services, current state |
 | `block-layer.md` | eMMC, VDFS read-only flag |
