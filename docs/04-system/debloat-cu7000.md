@@ -1,7 +1,79 @@
-# CU7000 debloat survey (`UN55CU7000DXZA`, `T-KSU2ECAKUC-0090-2230.0`, 192.0.2.185)
+# CU7000 debloat (`UN55CU7000DXZA`, `T-KSU2ECAKUC-0090-2230.0`)
 
-Research only, 2026-11-24, uptime ~35–60 min. Nothing was disabled, killed, masked or
-uninstalled. All probes ran as root through `tv/root.py exec`.
+§A is what is applied now and how to undo it. §0–§7 are the read-only survey
+from before anything was applied (2026-11-24, uptime ~35–60 min), kept as the
+baseline. All probes ran as root through `tv/root.py exec`.
+
+## A. Applied (2026-11-24)
+
+The user watches YouTube and the HDMI box, nothing else. Backups and lists on
+the TV: `/opt/usr/share/tv-backups/cu7000-debloat-01/` (`vconf.orig`,
+`uninstalled-apps.txt`, `markers.txt`).
+
+| change | what | undo |
+|---|---|---|
+| TV Plus no longer starts at power-on | `vconftool set -t bool -f db/menu/autorun_tv_plus 0` (the Settings switch "Autorun Samsung TV Plus"). With it off the TV powers on to the last source | set it back to `1` |
+| voice off | `db/si_service/voice_recog_enable 0`, `db/multi-assistant/prelaunch_mode 0`, `db/menu/voice/voice_activated 0` (bool), `db/menu/voice/wakeupless_status 0` (int) | values in `vconf.orig`: all `1` |
+| 23 store apps uninstalled | `pkgcmd -u -n <id> --global`: Tubi, Angel Studios, klyq, Amazon Luna, Xbox, Samsung TV Plus (`HEPsqFNie0`), Glance, Blacknut, Hulu, QVC+, Disney+, AMC+, YouTube TV, PBS Kids, ESPN, Sling, Peacock, GameBreaks, Spotify, GeForce NOW, Instagram, Prime Video, Apple TV. Kept: YouTube (`9Ur5IzDKqV`), Netflix, every Samsung component | reinstall from the Apps store |
+| 12 stop-markers | `touch /opt/usr/share/systemd/system/<m>` for `pisa-service` (also blocks `adagent-service`), `canalysis-daemon`, `com.samsung.tv.context-aware-agent`, `com.samsung.tv.context-aware-service`, `org.tizen.voice-app`, `org.tizen.voice-client`, `com.samsung.tv.bixby-prov`, `com.samsung.tv.ondevice-voice`, `com.samsung.tv.ghdaemon`, `samsunghealth-service-tv` (three units), `bms` and `slive-provider-daemon` (TV Plus), then `systemctl stop` of each unit | `rm` the marker, `systemctl start <unit>` |
+
+Not changed on purpose: `db/was/preload_by_country` stays `true`. It makes the
+TV start YouTube in the background at boot, so YouTube opens instantly; the
+other preloaded apps (Prime Video, TV Plus) are uninstalled. Markers left off:
+`googlecast-service` (casting to YouTube from a phone), `airplay-service-2`,
+`passthru-service`, `tts-download-service` (Voice Guide).
+
+Verified after one reboot (uptime 95 s): source `SOURCE_TYPE_HDMI3`, as before
+the reboot; all 13 marked units `inactive`; no `bms-service`, TV Plus or Prime
+process; root back through the daemon at 62 s; `doctor` all ok;
+`9Ur5IzDKqV.TizenYouTube` launched to the profile picker with the accounts
+signed in. Not verified: the power-on path after "TV off" on the remote, which
+is kernel suspend (`db/boot/instant_on = 1`) rather than a boot.
+
+Systemd units are covered; the matching apps that amd launches (voice,
+Bixby, ad targeting, ACR, SmartThings) are not yet: see §B.
+
+## B. App disables and Samsung updates (investigated 2026-11-24, not applied)
+
+**The vendor API works here.** `pkgcmd -D -t app -n com.samsung.tv.iacr
+--global` set `app_disable=true` in `package_app_info`, removed the app from
+`app_launcher -l`, and made `app_launcher -u 5001 -s` refuse it ("not
+available for the user 5001"), at once and without a reboot.
+`pkgcmd -A -t app -n com.samsung.tv.iacr --global` restored the row exactly.
+So app disables go through `pkgcmd -D`/`-A`, not through hand-written SQL
+against the live database (`tools/plan_cleanup.py`, M4), which `amd` and
+`pkgmgr-server` cache until a reboot. Persistence of `-D` across a reboot is
+not yet observed here.
+
+**Samsung updates undo both app disables and stop-markers.** Another CU-era
+set documents it ([commit-regrets/samsung_tizen_tv_root,
+SAMSUNG-UPDATES.md](https://github.com/commit-regrets/samsung_tizen_tv_root/blob/main/docs/SAMSUNG-UPDATES.md)):
+a preload update of `com.samsung.tv.pisa-service` rewrote its
+`package_app_info` rows (`app_disable` back to `false`) and deleted the
+`pisa-service` marker 4 s later; `pisa-service.path` then started the
+service. This TV has the same exposure [O]:
+
+- `db/built-in-app-upgrader/server_upgrade = True` (preload upgrades, no UI)
+  and `db/apps/auto_update = True` (store apps). Firmware auto-update is
+  already `0`.
+- `/var/log/appfw/app-installers/installation-history.log` shows preload
+  updates on 11-13 (`com.samsung.tv.coba.adagent`) and 11-18
+  (`com.samsung.tizen.samsung-analytics`).
+- `pisa-service.path` has `PathChanged=/opt/usr/share/systemd/system/pisa-service`.
+
+Two ways to make the debloat hold:
+
+1. Turn the two update switches off (`buxton2ctl set-bool system
+   db/apps/auto_update 0`, same for `db/built-in-app-upgrader/server_upgrade`).
+   Simple, but YouTube and Netflix then update only by hand, and YouTube
+   periodically stops working on old clients.
+2. A boot/wake hook (`payload/on-boot.d/`, runs at every power-on, also from
+   "TV off") that re-creates missing markers, stops their units, re-runs
+   `pkgcmd -D` for rows that are not disabled, and re-sets the vconf values in
+   §A. Updates stay on; an update can undo the debloat only until the next
+   power-on. Recommended.
+
+## Survey (before §A)
 
 Tags: **[O]** observed on this TV today. **[Q]** observed on the QN85D (repo docs), not
 re-tested here. **[I]** inferred, not tested.
@@ -25,7 +97,7 @@ Two `tcpdump` runs wrote `/tmp/*.cap` on the TV (tmpfs), which were also removed
 | Vendor privacy consent | `db/homedatacontrol/disclaimeragrees`: `viewing:false`, `visionAI:false`, `syncplus:false`, `rm:false`, `pp:true`, `tnc:true`. `db/setting/ad_id_opt_out=1` | [O] |
 | Firmware auto-update | **off** (`db/menu/support/softwareupdate/autoupdate=0`). Last update 2026-08-08, 2211.5 → 2230.0 | [O] |
 | App auto-update | **on** (`db/apps/auto_update=True`, `App_Game_Auto_Update=ON`). The store updated packages on 11-13, 11-18 and 11-24 (`pisa-service` 11-13, `samsung-analytics` 11-18, Tubi 11-24) | [O] |
-| Current source | `memory/eden/source/current_source` = `tv-service`/`SOURCE_TYPE_TV`, **not HDMI** | [O] |
+| Current source | `memory/eden/source/current_source` = `tv-service`/`SOURCE_TYPE_TV` (TV Plus on the tuner source) at survey time | [O] |
 
 So the vendor menu has already declined Viewing Information (ACR) and limited the ad ID.
 The ACR, ad and context daemons run anyway; whether they upload anything with consent off
