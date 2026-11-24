@@ -108,18 +108,34 @@ These are API facts from the TV's `Tizen.NUI.dll`:
 
 ## 7. Deploying into the borrowed slot
 
-The slot is `com.samsung.tv.social-chat-app`. Its manifest (verified
-2026-10-24) is `ui-application`, `type="dotnet-inhouse"`,
-`nodisplay="false"`, `multiple="false"`, `launch_mode="single"`,
-`api-version` 5.5. Its entry DLL is
-`/opt/usr/apps/com.samsung.tv.social-chat-app/bin/Com.Samsung.TV.SocialChatApp.dll`.
+`tv/cftv.py` keeps the slots in `SLOTS` and uses the first one installed on
+the TV. The agent finds its own app id from the path it was loaded from, so
+one `Cftv.dll` serves every slot.
 
-Manual install (this is what `tv/cftv.py ensure()` does):
+| TV | slot | entry DLL in `bin/` | precompiled stock copy |
+|---|---|---|---|
+| QN85D | `com.samsung.tv.social-chat-app` | `Com.Samsung.TV.SocialChatApp.dll` | none |
+| CU7000 | `com.samsung.tv.samsungdex` (Samsung DeX) | `com.samsung.tv.samsungdex.dll` | `bin/.native_image/com.samsung.tv.samsungdex.dll` → `.ni.dll` |
+
+Both manifests are `ui-application`, `type="dotnet-inhouse"`,
+`nodisplay="false"`, `multiple="false"`, `launch_mode="single"`
+(social-chat-app verified 2026-10-24, `api-version` 5.5; samsungdex
+2026-11-24, which also declares no `app-control`, so no other app hands it
+work). On the CU7000 these were passed over without a test: system UI the TV
+opens itself or from its menus (quickpanel, searchall, store, adplayer, the
+`coba.*` set), and `health-mde-workout-tracker` and `gamepadguide`. Those two
+ship a NativeAOT executable next to the DLL and set
+`prefer_dotnet_aot`, so replacing the DLL might not change what runs.
+
+Manual install (`tv/cftv.py ensure()` does this):
 
 ```sh
 A=com.samsung.tv.social-chat-app
 D=/opt/usr/apps/$A/bin/Com.Samsung.TV.SocialChatApp.dll
+K=/opt/usr/share/tv-backups/cftv/$A
 app_launcher -t $A                        # if running; never -k
+mkdir -p $K; [ -e $K/${D##*/} ] || grep -q Cftv $D || cp -a $D $K/   # stock DLL, once
+N=/opt/usr/apps/$A/bin/.native_image/${D##*/}; [ -e $N -o -L $N ] && mv $N $K/native_image
 cp <new>.dll $D && chown 201:0 $D && chmod 755 $D && chsmack -a "User::Pkg::$A::RO" $D
 app_launcher -u 5001 -s $A                # start; `app_launcher -r $A` = is it running
 ```
@@ -133,8 +149,16 @@ Rules:
   `package_app_info.app_exec` are ignored because the launcher resolves through
   `/opt/dbspace/.AppBinaryManager.db`. On 2026-10-22, with `app_exec` pointed
   at a new DLL, the app "launched" but `/proc/<pid>/cmdline` showed the old one.
-- **Leave the slot's stock `Com.Samsung.TV.SocialChatApp.runtimeconfig.json`**
-  (`netcoreapp2.0`, 2.0.0) as it is. The netcoreapp3.1 agent runs with it.
+- **Move the stock native image aside.** The launcher loads
+  `bin/.native_image/<entry>.dll` in preference to `bin/<entry>.dll`. On
+  2026-11-24, with the agent in `bin/` and the link still in place, the CU7000
+  ran stock DeX: the process mapped
+  `.native_image/com.samsung.tv.samsungdex.ni.dll` and wrote no `cftv.log`.
+  With the link moved, the agent started.
+- **Leave the slot's stock `runtimeconfig.json`** (`netcoreapp2.0`, 2.0.0 on
+  both TVs) as it is. The netcoreapp3.1 agent runs with it, on .NET Core
+  3.1.3 (QN85D) and on .NET 6.0.9 (CU7000), built against the QN85D's
+  reference assemblies in both cases.
 - **Installed files** (`bin/`, `res/`) are owned by 201:0 (`tizenglobalapp`)
   and labelled `User::Pkg::<app>::RO`. `res/` files are mode 644 (verified
   2026-10-24).
@@ -161,16 +185,20 @@ Rules:
 
 ## 8. Restoring the stock app
 
-The stock DLL is backed up as `/opt/usr/share/tv-backups/hello-02/orig.dll`
-(603,648 bytes, md5 `a977e986128daa7351f1775646742c90`, recorded in
-`orig.md5`; present on 2026-10-24).
+`tv/cftv.py` saves the stock entry DLL and, if there is one, the native
+image link in `/opt/usr/share/tv-backups/cftv/<app>/` before it first
+replaces them. The QN85D's slot held an agent before that existed. Its stock
+DLL is in `/opt/usr/share/tv-backups/hello-02/orig.dll` (603,648 bytes, md5
+`a977e986128daa7351f1775646742c90`, recorded in `orig.md5`; present on
+2026-10-24). The CU7000's stock DLL has md5 `7cda6ca0220609d39a8f08943307f9d2`.
 
 ```sh
-A=com.samsung.tv.social-chat-app
-D=/opt/usr/apps/$A/bin/Com.Samsung.TV.SocialChatApp.dll
+A=com.samsung.tv.samsungdex
+D=/opt/usr/apps/$A/bin/com.samsung.tv.samsungdex.dll
+K=/opt/usr/share/tv-backups/cftv/$A      # QN85D: cp hello-02/orig.dll instead
 app_launcher -t $A
-cp /opt/usr/share/tv-backups/hello-02/orig.dll $D && chown 201:0 $D && chmod 755 $D \
-  && chsmack -a "User::Pkg::$A::RO" $D
+cp -a $K/${D##*/} $D
+[ -L $K/native_image ] && mv $K/native_image /opt/usr/apps/$A/bin/.native_image/${D##*/}
 ```
 
 The next `bin/cftv` command other than `log` reinstalls the agent, because
@@ -182,7 +210,7 @@ The first build ran in `com.samsung.tv.simpletext-tpl`, an ambient template
 marked `nodisplay="true"`. The assembly loaded (`HelloScreen.dll` and
 `Tizen.NUI.ni.dll` were mapped), but nothing showed on screen. It was
 reverted; the backup is in `/opt/usr/share/tv-backups/hello-01/`. A visible app
-needs a `nodisplay="false"` slot, which is why social-chat-app is used.
+needs a `nodisplay="false"` slot.
 
 ## 10. Why not install our own app
 

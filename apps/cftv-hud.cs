@@ -23,7 +23,7 @@ using Rectangle = Tizen.NUI.Rectangle;
 /// </summary>
 public sealed partial class Cftv
 {
-    const string HudFontDir = Q + "fonts/";
+    static string HudFontDir => Q + "fonts/";
     const string HudFont = "Share Tech Mono";
     const int ScreenH = 1080;                           // ScreenW is in cftv.cs
     const int Bar = 3, Thin = 1, Arm = 44;              // bracket line, chrome line, longest arm

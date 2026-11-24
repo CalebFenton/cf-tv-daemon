@@ -11,7 +11,7 @@ Most wrong conclusions in this repo's history came from mixing these up.
 | context | uid | SMACK label | caps |
 |---|---|---|---|
 | `sdb shell`, every sdb injection (`tv/root.py inject`) | **901 `sdk`** | `System` | none |
-| our app in the borrowed slot (`com.samsung.tv.social-chat-app`) | 5001 | `User::Pkg::com.samsung.tv.social-chat-app` | none |
+| our app in the borrowed slot (`tv/cftv.py` `SLOTS`: `com.samsung.tv.social-chat-app` on the QN85D, `com.samsung.tv.samsungdex` on the CU7000) | 5001 | `User::Pkg::<slot>` | none |
 | boot payload, `cf_tv_daemon`, boot/wake hooks | **0** | `System::Privileged` | full |
 | channel commands (`tv/chan.py`) | 0 | `System::Privileged` (raised per command) | full |
 | channel agent process / anything exec'ing `dotnet` | 0 | `User` | full |

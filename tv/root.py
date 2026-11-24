@@ -73,10 +73,7 @@ if _LOCAL_SDB.is_file():
 SDB = ROOT / "vendor" / "sdb" / "data" / "tools" / "sdb"
 TV = project_env.tv_ip()
 SERIAL = f"{TV}:26101"
-# Per TV: two TVs on one host must not share an answer, and the address can
-# change under us (tv/devices.py re-finds it), so the key is the address.
 PROBE_CACHE = Path(f"/tmp/rootctl.probe-{TV}")
-# Must equal tv/chan.py's paths: that is the server this client talks to.
 CHANNEL_SOCKET, CHANNEL_LOG = project_env.channel_paths(TV)
 PROBE_TTL = 30.0
 
@@ -536,10 +533,7 @@ CAPTURE_BUILD = ROOT / "build" / "capture"
 APP_BUILDS = {CHATTR_BUILD: "chattr.csproj", CAPTURE_BUILD: "capture-probe.csproj"}
 
 # Expected ownership/mode after `boot install` (docs/06-security/threat-model.md).
-# Numeric ids, not names: the exploit path runs inside the archive payload's
-# mount namespace, whose synthetic /etc/passwd names uid 0 `owner` and has no
-# `root` or `sdk` entry. `chown root:root` fails there; `chown 0:0` works
-# everywhere. uid 0 is `root` in the device's real passwd.
+# Numeric ids: the exploit path's mount namespace has no `root` or `sdk` user.
 LOCKDOWN = {
     PAYLOAD: "755 0:0",
     KIT: "755 0:0",
@@ -1176,8 +1170,7 @@ def cmd_dlog(args) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    # --tv is read at import time (tv/project_env.py): the TV resolves before
-    # argparse runs. Declared here too so --help lists it.
+    # --tv on both levels, so it may come before or after the subcommand.
     common = argparse.ArgumentParser(add_help=False)
     project_env.add_tv_argument(common)
     sub = parser.add_subparsers(dest="command", required=True)

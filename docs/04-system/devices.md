@@ -56,12 +56,20 @@ Resolution order for a name: `--tv NAME`, `$CF_TV_NAME`, `devices.toml`
 `default`, then `CF_TV_IP` in `.env` when no name is selected at all (the
 single-TV setup this repo had before). `--tv` may appear before or after the
 subcommand: it is read from `argv` at import time (`tv/project_env.py`) because
-module constants resolve the TV before argparse runs.
+module constants resolve the TV before argparse runs, and exported as
+`CF_TV_NAME`, so child processes (`tv/control.py` → `tv/chan.py`) use the same
+TV. `$CF_TV_DEVICES` moves the file.
 
 When a name is used: the stored address is checked against the stored `id`
 (one HTTP request). If it does not match, the /24 is scanned for that `id`, the
 address is written back, and the command continues. A TV that is off fails with
-a message naming the id and the subnet, not a timeout.
+a message naming the id and the subnet, not a timeout. While the address
+answers on sdb but not yet on the REST API (a booting TV: sdbd starts ~10 s
+first), the API is polled for up to 30 s. An open sdb port is never taken as
+proof of identity, because DHCP may have handed the address to another TV.
+
+`tv/devices.py` rewrites the file after a scan or a move. Keys added by hand
+are kept; comments are not.
 
 ## Per-TV isolation
 
@@ -85,4 +93,4 @@ with different `--tv`.
 - `payload/btconnect.addr` is one speaker per TV on the TV itself, but the repo
   keeps one copy for `boot install`, so a second TV with a different speaker
   needs its own file. Currently the same hook and no speaker on the CU7000.
-- `bin/control` forwards `--tv` to `tv/chan.py`; a key press goes to one TV.
+- `tv/control.py` sends a key to one TV, the selected one.

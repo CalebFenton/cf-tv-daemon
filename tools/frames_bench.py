@@ -122,7 +122,7 @@ def main() -> None:
     capture, clip, q = int(opt("--capture", 0)), opt("--src", None), int(opt("--q", 4))
     x, y = 1920 - fw - 48, 1080 - fh - 48
     cftv.ensure()
-    pid = cftv.run(f"cat {cftv.Q}ready").strip()
+    pid = cftv.run(f"cat {cftv.slot().q}ready").strip()
     src = source(fw, fh, fps, clip, q)
     frames = jpegs(src.stdout)
     sound = "--audio" in sys.argv

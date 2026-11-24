@@ -41,7 +41,7 @@ ROOT = Path(__file__).resolve().parent.parent
 CHAN = ROOT / "tv" / "chan.py"
 sys.path.insert(0, str(ROOT / "tv"))
 
-import project_env
+import project_env  # exports --tv as CF_TV_NAME, which the chan.py child inherits
 
 PYTHON = sys.executable
 
@@ -97,15 +97,9 @@ CONTROL_KEYS = {
 
 
 def chan(command: str, timeout: int = 60) -> subprocess.CompletedProcess:
-    """Run one command through the persistent root channel.
-
-    --tv is forwarded when set: chan.py resolves its TV at import time, so it
-    must be told which one. Without it chan.py picks devices.toml's default,
-    the same TV this process chose.
-    """
-    selected = ["--tv", project_env.SELECTED_TV] if project_env.SELECTED_TV else []
+    """Run one command through the persistent root channel."""
     return subprocess.run(
-        [PYTHON, str(CHAN), *selected, "run", command],
+        [PYTHON, str(CHAN), "run", command],
         capture_output=True,
         text=True,
         timeout=timeout,

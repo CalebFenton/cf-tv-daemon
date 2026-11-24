@@ -77,9 +77,10 @@ tv/cftv.py send()   ──TCP $CF_TV_IP:7741──> agent: token line, then one 
                     <──────────────────────────── one JSON reply line per command
 ```
 
-- **Agent:** one persistent NUI app in the borrowed slot
-  `com.samsung.tv.social-chat-app`. It runs as uid 5001 (`owner`), label
-  `User::Pkg::com.samsung.tv.social-chat-app` (verified 2026-10-24). Every
+- **Agent:** one persistent NUI app in a borrowed slot (`tv/cftv.py`
+  `SLOTS`, `docs/03-video/app-build.md` §7): `com.samsung.tv.social-chat-app`
+  on the QN85D, `com.samsung.tv.samsungdex` on the CU7000. It runs as uid 5001
+  (`owner`), label `User::Pkg::<slot>` (verified 2026-10-24). Every
   command except `log` first calls `tv/cftv.py ensure()`:
   - It builds `build/cftv/Cftv.dll` when `apps/cftv.cs` or
     `apps/cftv.csproj` is newer (recipe: `docs/03-video/app-build.md`).

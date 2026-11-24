@@ -99,7 +99,7 @@ root's write also fails until the flag is cleared. Tool and update procedure:
 - **Our setup adds two token-protected TCP listeners on the TV (since
   2026-11-06).** Before that it added none (verified 2026-10-24: every
   listening TCP socket belonged to a vendor process or `sdbd`).
-  - `:7741`, the cftv agent (uid 5001, `User::Pkg::com.samsung.tv.social-chat-app`):
+  - `:7741`, the cftv agent (uid 5001, `User::Pkg::<slot>`, `docs/03-video/app-build.md` §7):
     whatever it can draw, play or say on the TV. The first line must be the
     32-byte random token in `cftv/token` (mode 0600, uid 5001), new at each
     agent start, compared in constant time. The commands cannot run code.

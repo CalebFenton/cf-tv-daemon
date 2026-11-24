@@ -84,7 +84,7 @@ def main() -> None:
     )
     time.sleep(max(0.0, seconds - 1.5) + 3)
     note("== after\n" + cftv.run(STATE).strip())
-    note("== agent log\n" + cftv.run(f"grep esvideo {cftv.Q}cftv.log | tail -15").strip())
+    note("== agent log\n" + cftv.run(f"grep esvideo {cftv.slot().q}cftv.log | tail -15").strip())
     time.sleep(3)
     note("== avocd / resource calls on the bus\n" + cftv.run(BUS_CALLS).strip())
     bus = log.with_name(log.stem.replace("probe", "bus") + ".txt")

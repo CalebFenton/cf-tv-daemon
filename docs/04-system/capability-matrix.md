@@ -77,7 +77,7 @@ Detail: `docs/01-root/native-code.md`, `docs/06-security/uep-bypass.md`,
 | X2 | Unsigned `sed -f` scripts (`e`, `s///e`) | yes | 2026-10-20 |
 | X3 | Unsigned bash/sh/node scripts | no | refused by the UEP check in `libkUEPUser.so` (see X12) |
 | X4 | C# under the signed `/usr/bin/dotnet` as uid 0 | yes | everyday use: channel agent, `apps/*.cs`; label `User` |
-| X5 | NUI app on screen | yes | `cftv` in the borrowed slot `com.samsung.tv.social-chat-app`, uid 5001 (`docs/03-video/app-build.md`, `docs/03-video/cftv.md`) |
+| X5 | NUI app on screen | yes | `cftv` in a borrowed slot, uid 5001: `com.samsung.tv.social-chat-app` (QN85D), `com.samsung.tv.samsungdex` (CU7000, image and text over HDMI 2026-11-24) (`docs/03-video/app-build.md` §7, `docs/03-video/cftv.md`) |
 | X6 | P/Invoke into the TV's own libraries | yes | `apps/cftv.cs`, `apps/bt-trace.cs` |
 | X7 | Raw ARM code from C# | yes | anonymous `mmap` RW, `mprotect` RX, call: returned `0x1337`; `svc #0` `getpid()` (2026-10-20) |
 | X8 | Our own ELF via `elfload.dll` | yes, freestanding only | `/opt/el/elfload.dll` maps `PT_LOAD`, applies the PIE bias, calls the entry: returned 1337 (2026-10-21). No argv/auxv/TLS, so static glibc segfaults (2026-10-23). Its source is not in the repo |

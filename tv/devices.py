@@ -38,8 +38,10 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import socket
 import sys
+import time
 import tomllib
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
@@ -51,9 +53,8 @@ API_PORT = 8001
 SDB_PORT = 26101
 PROBE_TIMEOUT = 1.2
 SCAN_WORKERS = 128
-
-
-# ---------------------------------------------------------------- the file
+# After a reboot sdbd answers ~10 s before the REST API that proves identity.
+BOOT_API_WAIT = 30.0
 
 
 def path() -> Path:
@@ -73,8 +74,16 @@ def load() -> dict:
     return {"default": data.get("default"), "tv": televisions}
 
 
+def _toml_key(name: str) -> str:
+    return name if re.fullmatch(r"[A-Za-z0-9_-]+", name) else json.dumps(name)
+
+
 def save(registry: dict) -> None:
-    """Write the registry back, stable order, one TV per table."""
+    """Write the registry back, stable order, one TV per table, keeping keys added by hand.
+
+    Values go through json.dumps: a JSON string, number or boolean is also a
+    valid TOML value, so a quote in a note cannot break the file.
+    """
     lines = [
         "# TVs this repo drives. Written by `tv/devices.py scan`; edit names and",
         "# notes by hand. Keyed by the TV's fixed id, never by address: DHCP moves",
@@ -82,22 +91,18 @@ def save(registry: dict) -> None:
         "",
     ]
     if registry.get("default"):
-        lines.append(f'default = "{registry["default"]}"')
-        lines.append("")
+        lines += [f"default = {json.dumps(registry['default'])}", ""]
     for name in sorted(registry["tv"]):
         entry = registry["tv"][name]
-        lines.append(f"[tv.{name}]")
-        for key in ("id", "address", "model", "note"):
-            if entry.get(key):
-                lines.append(f'{key} = "{entry[key]}"')
+        lines.append(f"[tv.{_toml_key(name)}]")
+        first = [k for k in ("id", "address", "model", "note") if k in entry]
+        for key in first + sorted(k for k in entry if k not in first):
+            if entry[key] not in ("", None):
+                lines.append(f"{_toml_key(key)} = {json.dumps(entry[key])}")
         lines.append("")
     target = path()
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text("\n".join(lines))
-    target.chmod(0o600)
-
-
-# ---------------------------------------------------------------- identity
 
 
 def api(address: str, timeout: float = 3.0) -> dict | None:
@@ -106,7 +111,7 @@ def api(address: str, timeout: float = 3.0) -> dict | None:
     try:
         with urllib.request.urlopen(url, timeout=timeout) as response:
             return json.loads(response.read().decode())
-    except Exception:
+    except (OSError, ValueError):
         return None
 
 
@@ -148,9 +153,6 @@ def scan(hosts: str | None = None, workers: int = SCAN_WORKERS) -> list[dict]:
     return sorted(found, key=lambda f: f["address"])
 
 
-# ---------------------------------------------------------------- selection
-
-
 def resolve(name: str | None = None) -> tuple[str | None, str]:
     """(name, address) for the TV this command should use.
 
@@ -176,9 +178,6 @@ def resolve(name: str | None = None) -> tuple[str | None, str]:
 
     entry = registry["tv"][chosen]
     stored = entry.get("address")
-    if stored and _usable(stored, entry.get("id")):
-        return chosen, stored
-
     found = scan_for(entry.get("id"), stored)
     if found:
         if found != stored:
@@ -192,18 +191,20 @@ def resolve(name: str | None = None) -> tuple[str | None, str]:
 
 
 def _usable(address: str, tv_id: str | None) -> bool:
-    """Can this address serve a command now?
+    """Does the TV with this id answer at this address?
 
-    True when the TV's identity matches, and also when the address answers on
-    sdb but not yet on the REST API: after a reboot sdbd comes up ~10 s before
-    the API, and reporting "TV not answering" during that window would fail a
-    command that would work. A mismatched identity is never accepted, so this
-    cannot talk to the wrong TV.
+    A booting TV answers on sdb before its REST API. An open sdb port does not
+    say which TV it is (DHCP may have given the address to another one), so
+    while sdb is open the API is polled for up to BOOT_API_WAIT instead.
     """
-    found = identity(address, PROBE_TIMEOUT)
-    if found:
-        return not tv_id or found["id"] == tv_id
-    return _sdb_open(address) and bool(tv_id)
+    deadline = time.monotonic() + BOOT_API_WAIT
+    while True:
+        found = identity(address, PROBE_TIMEOUT)
+        if found:
+            return not tv_id or found["id"] == tv_id
+        if time.monotonic() >= deadline or not _sdb_open(address):
+            return False
+        time.sleep(1)
 
 
 def _sdb_open(address: str, timeout: float = 1.5) -> bool:
@@ -224,9 +225,6 @@ def scan_for(tv_id: str | None, preferred: str | None = None) -> str | None:
         if found["id"] == tv_id:
             return found["address"]
     return None
-
-
-# ---------------------------------------------------------------- commands
 
 
 def reachable(address: str) -> dict:

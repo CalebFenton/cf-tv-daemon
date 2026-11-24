@@ -75,11 +75,12 @@ immutable flag set.
    lines, leaving `parseinfo.sh` at mode 0666 (not executable) and no daemon.
    Re-running the fixed install rewrote and locked everything down.
 2. **No `com.samsung.tv.social-chat-app` slot.** `ls /opt/usr/apps` has 305
-   entries and no `com.samsung.tv.social-chat-app`, so the borrowed app slot
-   `bin/cftv` uses does not exist here. Root, the daemon and the channel are
-   unaffected; `cftv` needs a different slot on this TV (`docs/03-video/app-build.md`
-   explains why the slot must have `nodisplay="false"`; several present apps
-   qualify, none tested).
+   entries and no `com.samsung.tv.social-chat-app`. The cftv agent uses
+   `com.samsung.tv.samsungdex` here instead. That app ships a precompiled
+   stock copy in `bin/.native_image/`, which the launcher prefers over
+   `bin/`, so it has to be moved aside (`docs/03-video/app-build.md` §7). The
+   stock DLL and the native image link are saved in
+   `/opt/usr/share/tv-backups/cftv/com.samsung.tv.samsungdex/`.
 3. **Developer mode does not block internet on this TV.** TCP 443 to `1.1.1.1`
    opens. The kit author's TVs lose internet in developer mode; this one keeps
    it, so nothing here relies on the TV being offline.
@@ -97,6 +98,10 @@ immutable flag set.
   Bluetooth, so it logs "speaker not seen"; harmless, and the hook is shared
   with the QN85D by design)
 - `tv/root.py doctor`, `report`, `boot status`
+- `bin/cftv image` (PNG with alpha) and `text` over a game on HDMI, read back
+  with `bin/snap` (2026-11-24). The agent built against the QN85D's reference
+  assemblies runs unchanged on this TV's .NET 6.0.9.
 
-Not verified here: screen capture probes other than `CaptureProbe`, `cftv`
-overlays (blocked on the missing slot), Bluetooth speaker routing, dlog.
+Not verified here: screen capture probes other than `CaptureProbe`, the other
+`cftv` items (GIF, rect, video, sound, say, notify, hud), Bluetooth speaker
+routing, dlog.

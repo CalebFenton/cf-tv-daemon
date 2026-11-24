@@ -22,7 +22,8 @@ using Rectangle = Tizen.NUI.Rectangle;
 /// cftv - persistent on-screen agent. Shows what the host sends it: images,
 /// animated images, text, rectangles, video files and streams, sounds, speech.
 ///
-/// Runs in the borrowed app slot (com.samsung.tv.social-chat-app, uid 5001).
+/// Runs in a borrowed app slot (tv/cftv.py SLOTS, uid 5001), whose entry DLL
+/// it replaces.
 /// The host (tv/cftv.py) connects to TCP port 7741, sends the token from
 /// Q/token as its first line, then one JSON command per line; the agent
 /// answers each with one JSON line. A reader thread per connection hands each
@@ -42,9 +43,11 @@ using Rectangle = Tizen.NUI.Rectangle;
 /// </summary>
 public sealed partial class Cftv : NUIApplication
 {
-    const string App = "com.samsung.tv.social-chat-app";
-    const string Q = "/opt/usr/home/owner/apps_rw/" + App + "/cftv/";
-    const string LogPath = Q + "cftv.log", TokenPath = Q + "token";
+    // The slot's app id is the directory the launcher loaded this DLL from:
+    // /opt/usr/apps/<app>/bin/<entry>.dll. The host (tv/cftv.py) picks the slot.
+    static readonly string App = new DirectoryInfo(Path.GetDirectoryName(typeof(Cftv).Assembly.Location)).Parent.Name;
+    static readonly string Q = "/opt/usr/home/owner/apps_rw/" + App + "/cftv/";
+    static readonly string LogPath = Q + "cftv.log", TokenPath = Q + "token";
     const int Port = 7741;
 
     sealed class Item

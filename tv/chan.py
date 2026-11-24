@@ -60,11 +60,8 @@ if TYPE_CHECKING:  # asyncio costs ~1 s to import; only `serve` needs it
     import asyncio
 
 ROOT = Path(__file__).resolve().parent.parent
-# Resolved once: a name may need a LAN scan to re-find a TV whose address
-# moved, so calling this twice would scan twice.
 TV = project_env.tv_ip()
-# One socket per TV. Two `serve` processes sharing a path would collide, and a
-# client could get the other TV's answer.
+# Per TV, so two `serve` processes never share a socket.
 SOCKET_PATH, CHANNEL_LOG = project_env.channel_paths(TV)
 STATE_PATH = Path(f"/tmp/tvchan-{TV}.state")
 
@@ -490,13 +487,13 @@ def client_request(request: dict) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    # Already applied at import time (tv/project_env.py); declared to --help.
+    # --tv on both levels, so it may come before or after the subcommand.
     common = argparse.ArgumentParser(add_help=False)
     project_env.add_tv_argument(common)
     sub = parser.add_subparsers(dest="command", required=True)
     project_env.add_tv_argument(parser)
 
-    sub.add_parser("serve")
+    sub.add_parser("serve", parents=[common])
     run = sub.add_parser("run", parents=[common])
     run.add_argument("commands", nargs="+")
     sub.add_parser("status", parents=[common])

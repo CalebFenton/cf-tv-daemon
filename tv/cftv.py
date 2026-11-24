@@ -4,9 +4,9 @@
 Installs and starts the on-TV agent `apps/cftv.cs` through the root channel
 (tv/chan.py), then talks to it directly over TCP (port 7741, a per-start token
 from the agent's directory, one JSON line per command and reply). The agent
-runs in the borrowed app slot (com.samsung.tv.social-chat-app) as
-transparent, non-focusable, click-through windows, so whatever is on screen
-keeps playing and keeps the remote.
+runs in a borrowed app slot (SLOTS) as transparent, non-focusable,
+click-through windows, so whatever is on screen keeps playing and keeps the
+remote.
 
     bin/cftv image logo.png --at 100,80               natural size
     bin/cftv image cat.gif --at 1400,600 --size 400x400 --id cat
@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import functools
 import hashlib
 import json
 import os
@@ -43,6 +44,7 @@ import socket
 import subprocess
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -55,13 +57,41 @@ import bt
 from chan import CHANNEL_LOG, TV, client_request
 from PIL import Image
 
-APP = "com.samsung.tv.social-chat-app"
-SLOT_DLL = f"/opt/usr/apps/{APP}/bin/Com.Samsung.TV.SocialChatApp.dll"
-Q = f"/opt/usr/home/owner/apps_rw/{APP}/cftv/"
+
+@dataclass(frozen=True)
+class Slot:
+    """A shipped NUI app whose entry DLL the agent replaces (docs/03-video/app-build.md §7)."""
+
+    app: str
+    dll: str  # entry DLL file name in bin/
+
+    @property
+    def entry(self) -> str:
+        return f"/opt/usr/apps/{self.app}/bin/{self.dll}"
+
+    @property
+    def native_image(self) -> str:
+        return f"/opt/usr/apps/{self.app}/bin/.native_image/{self.dll}"
+
+    @property
+    def q(self) -> str:
+        """The agent's directory: log, token, ready, media, fonts."""
+        return f"/opt/usr/home/owner/apps_rw/{self.app}/cftv/"
+
+    def own(self, path: str) -> str:
+        """Files the app (uid 5001) reads or writes need its owner and SMACK label."""
+        return f"chown 5001:5001 {path} && chsmack -a 'User::Pkg::{self.app}' {path}"
+
+
+# The first one installed on the TV is used. Each is a `dotnet-inhouse`
+# ui-application with nodisplay="false" (a hidden one never reaches the
+# screen, app-build.md §9) that nothing launches on its own.
+SLOTS = (
+    Slot("com.samsung.tv.social-chat-app", "Com.Samsung.TV.SocialChatApp.dll"),  # QN85D
+    Slot("com.samsung.tv.samsungdex", "com.samsung.tv.samsungdex.dll"),  # CU7000, which lacks the one above
+)
+BACKUPS = "/opt/usr/share/tv-backups/cftv"  # <app>/: the stock entry DLL and native image link
 PORT = 7741  # the agent's command port (apps/cftv.cs Port)
-MEDIA = Q + "media/"
-# Files the app (uid 5001) reads or writes need its owner and SMACK label.
-OWN = f"chown 5001:5001 {{0}} && chsmack -a 'User::Pkg::{APP}' {{0}}"
 CHUNK = 4 * 1024 * 1024  # agent WRITEFILE ceiling per item
 # The TV's own notification chime; `notify --sound` with no file plays it.
 SYSTEM_SOUND = "/usr/share/feedback/sound/operation/normal_noti.wav"
@@ -73,7 +103,17 @@ SOURCES = tuple(
 )
 # Fonts the agent registers (FontClient.AddCustomFontDirectory) for the HUD.
 FONTS = sorted((ROOT / "apps" / "assets" / "fonts").glob("*.ttf"))
-FONT_DIR = Q + "fonts/"
+
+
+@functools.cache
+def slot() -> Slot:
+    """The slot this TV has; one channel round trip, the first time it is needed."""
+    apps = " ".join(s.app for s in SLOTS)
+    found = run(f"for a in {apps}; do [ -d /opt/usr/apps/$a ] && {{ echo $a; break; }}; done; true").strip()
+    for candidate in SLOTS:
+        if candidate.app == found:
+            return candidate
+    raise CftvError(f"none of the agent's app slots is installed on {TV}: {apps}")
 
 
 class CftvError(RuntimeError):
@@ -190,11 +230,12 @@ def stop_agent() -> None:
     first; for 3 s after the agent is gone, if focus is anywhere else, resume
     that app.
     """
+    app = slot().app
     before = run(f"{FOCUSED_APP}; true").strip()
     moved = run(
-        f"app_launcher -t {APP} >/dev/null 2>&1; "
-        f"i=0; while app_launcher -r {APP} >/dev/null && [ $i -lt 30 ]; do sleep 0.1; i=$((i+1)); done; "
-        f"case '{before}' in ''|{APP}) exit 0;; esac; "
+        f"app_launcher -t {app} >/dev/null 2>&1; "
+        f"i=0; while app_launcher -r {app} >/dev/null && [ $i -lt 30 ]; do sleep 0.1; i=$((i+1)); done; "
+        f"case '{before}' in ''|{app}) exit 0;; esac; "
         f"i=0; while [ $i -lt 30 ]; do now=$({FOCUSED_APP}); "
         f'if [ -n "$now" ] && [ "$now" != \'{before}\' ]; then '
         f"app_launcher -s '{before}' >/dev/null 2>&1; echo \"$now\"; break; fi; "
@@ -208,15 +249,15 @@ def ensure() -> None:
     """Install the agent and its fonts if the TV's copies differ, start it if needed."""
     dll = build()
     local = hashlib.md5(dll.read_bytes()).hexdigest()
+    s = slot()
+    q, fonts_dir = s.q, s.q + "fonts/"
     state = run(
-        # md5sum prints nothing when the agent was never installed, so the
-        # hash must never be an empty first field: `md5sum` alone would shift
-        # every later field and the parse below would fail on a fresh TV.
-        f"h=$(md5sum {SLOT_DLL} 2>/dev/null | cut -d' ' -f1); echo ${{h:-none}}; "
-        f"app_launcher -r {APP} >/dev/null && echo running || echo stopped; "
-        f"r=$(cat {Q}ready 2>/dev/null); echo ${{r:-none}}; "
-        f"t=$(cat {Q}token 2>/dev/null); echo ${{t:-none}}; "
-        f"cd {FONT_DIR} 2>/dev/null && md5sum *.ttf 2>/dev/null; true"
+        # md5sum prints nothing for a missing file; `none` keeps the fields aligned.
+        f"h=$(md5sum {s.entry} 2>/dev/null | cut -d' ' -f1); echo ${{h:-none}}; "
+        f"app_launcher -r {s.app} >/dev/null && echo running || echo stopped; "
+        f"r=$(cat {q}ready 2>/dev/null); echo ${{r:-none}}; "
+        f"t=$(cat {q}token 2>/dev/null); echo ${{t:-none}}; "
+        f"cd {fonts_dir} 2>/dev/null && md5sum *.ttf 2>/dev/null; true"
     ).split()
     installed, running, ready_pid, token = state[0], state[1] == "running", state[2], state[3]
     fonts_on_tv = dict(zip(state[5::2], state[4::2], strict=True))  # name -> md5
@@ -227,32 +268,39 @@ def ensure() -> None:
             stop_agent()
             running = False
         upload(dll.read_bytes(), "/tmp/Cftv.dll")
+        backup = f"{BACKUPS}/{s.app}"
         run(
-            f"cp /tmp/Cftv.dll {SLOT_DLL} && rm /tmp/Cftv.dll && "
-            f"chown 201:0 {SLOT_DLL} && chmod 755 {SLOT_DLL} && "
-            f"chsmack -a 'User::Pkg::{APP}::RO' {SLOT_DLL}"
+            f"mkdir -p {backup} && "
+            # The stock DLL, once; a slot that already holds an agent has nothing to save.
+            f"{{ [ -e {backup}/{s.dll} ] || grep -q Cftv {s.entry} || cp -a {s.entry} {backup}/; }} && "
+            # The launcher loads the stock precompiled copy in bin/.native_image
+            # in preference to bin/, so it would run instead of the agent.
+            f"{{ ! [ -e {s.native_image} -o -L {s.native_image} ] || mv {s.native_image} {backup}/native_image; }} && "
+            f"cp /tmp/Cftv.dll {s.entry} && rm /tmp/Cftv.dll && "
+            f"chown 201:0 {s.entry} && chmod 755 {s.entry} && "
+            f"chsmack -a 'User::Pkg::{s.app}::RO' {s.entry}"
         )
 
     stale = [f for f in FONTS if fonts_on_tv.get(f.name) != hashlib.md5(f.read_bytes()).hexdigest()]
     if stale:
-        run(f"mkdir -p {FONT_DIR} && " + OWN.format(FONT_DIR))
+        run(f"mkdir -p {fonts_dir} && " + s.own(fonts_dir))
         for font in stale:
-            upload(font.read_bytes(), FONT_DIR + font.name)
-            run(OWN.format(FONT_DIR + font.name))
+            upload(font.read_bytes(), fonts_dir + font.name)
+            run(s.own(fonts_dir + font.name))
 
     alive = (
         running and ready_pid != "none" and run(f"test -d /proc/{ready_pid} && echo yes || echo no").strip() == "yes"
     )
     if not alive:
         run(
-            f"mkdir -p {Q} {MEDIA} && rm -f {Q}ready {Q}token && "
-            f"chown -R 5001:5001 {Q} && chsmack -a 'User::Pkg::{APP}' {Q} {MEDIA}"
+            f"mkdir -p {q}media && rm -f {q}ready {q}token && "
+            f"chown -R 5001:5001 {q} && chsmack -a 'User::Pkg::{s.app}' {q} {q}media"
         )
         token = run(
-            f"app_launcher -u 5001 -s {APP} >/dev/null 2>&1; "
-            f"i=0; while [ ! -s {Q}ready ] && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; "
-            f"test -s {Q}ready || {{ echo 'agent did not start; log:'; tail -5 {Q}cftv.log; exit 1; }}; "
-            f"cat {Q}token"
+            f"app_launcher -u 5001 -s {s.app} >/dev/null 2>&1; "
+            f"i=0; while [ ! -s {q}ready ] && [ $i -lt 100 ]; do sleep 0.1; i=$((i+1)); done; "
+            f"test -s {q}ready || {{ echo 'agent did not start; log:'; tail -5 {q}cftv.log; exit 1; }}; "
+            f"cat {q}token"
         ).strip()
     global _token
     _token = token
@@ -292,7 +340,8 @@ def send(command: dict, timeout: float = 5.0) -> dict:
     """
     global _agent
     if command.get("op") == "video":
-        run(f"test -s {SAVED_SOURCE} || echo '{source_get()} {speaker_in_use() or '-'}' > {SAVED_SOURCE}")
+        saved = slot().q + "source"
+        run(f"test -s {saved} || echo '{source_get()} {speaker_in_use() or '-'}' > {saved}")
     line = json.dumps(command).encode() + b"\n"
     for attempt in (1, 2):
         try:
@@ -340,7 +389,6 @@ SOURCE_SELECT = bytes.fromhex(
     "000823000000000404000000130000000104130000006f72672e74697a656e2e74762d766965776572"
 )
 SOURCE_OFFSET = 32
-SAVED_SOURCE = Q + "source"
 TUNER = 0
 
 
@@ -380,7 +428,7 @@ def restore_source() -> bool:
     nothing reconnects it on its own; a disconnect + connect makes the TV
     route audio to it again. Only done if it was in use before the video.
     """
-    saved = run(f"cat {SAVED_SOURCE} 2>/dev/null; rm -f {SAVED_SOURCE}").split()
+    saved = run(f"f={slot().q}source; cat $f 2>/dev/null; rm -f $f").split()
     source = int(saved[0]) if saved and saved[0].isdigit() else source_get()
     speaker = saved[1] if len(saved) > 1 and saved[1] != "-" else None
     if source == TUNER:
@@ -408,10 +456,10 @@ def media(src: str) -> str:
         return src
     path = Path(src)
     data = path.read_bytes()
-    remote = MEDIA + hashlib.sha256(data).hexdigest()[:16] + path.suffix.lower()
+    remote = slot().q + "media/" + hashlib.sha256(data).hexdigest()[:16] + path.suffix.lower()
     if run(f"test -f {remote} && echo have || echo need").strip() == "need":
         upload(data, remote)
-        run(OWN.format(remote) + f" && chmod 644 {remote}")
+        run(slot().own(remote) + f" && chmod 644 {remote}")
     return remote
 
 
@@ -452,10 +500,10 @@ def sound_media(src: str, volume: float | None = None) -> str:
         raise CftvError("ffmpeg is needed to convert sounds to WAV") from None
     if result.returncode != 0:
         raise CftvError(f"ffmpeg could not read {src}: {result.stderr.decode(errors='replace').strip()[-300:]}")
-    remote = MEDIA + hashlib.sha256(result.stdout).hexdigest()[:16] + ".wav"
+    remote = slot().q + "media/" + hashlib.sha256(result.stdout).hexdigest()[:16] + ".wav"
     if run(f"test -f {remote} && echo have || echo need").strip() == "need":
         upload(result.stdout, remote)
-        run(OWN.format(remote) + f" && chmod 644 {remote}")
+        run(slot().own(remote) + f" && chmod 644 {remote}")
     return remote
 
 
@@ -581,7 +629,7 @@ def main() -> int:
     args = parser.parse_args()
     try:
         if args.op == "log":
-            print(run(f"tail -20 {Q}cftv.log"), end="")
+            print(run(f"tail -20 {slot().q}cftv.log"), end="")
             return 0
 
         ensure()
