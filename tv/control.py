@@ -39,6 +39,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHAN = ROOT / "tv" / "chan.py"
+sys.path.insert(0, str(ROOT / "tv"))
+
+import project_env
+
 PYTHON = sys.executable
 
 # Keys the TV's keymap actually defines. Verified against
@@ -93,9 +97,15 @@ CONTROL_KEYS = {
 
 
 def chan(command: str, timeout: int = 60) -> subprocess.CompletedProcess:
-    """Run one command through the persistent root channel."""
+    """Run one command through the persistent root channel.
+
+    --tv is forwarded when set: chan.py resolves its TV at import time, so it
+    must be told which one. Without it chan.py picks devices.toml's default,
+    the same TV this process chose.
+    """
+    selected = ["--tv", project_env.SELECTED_TV] if project_env.SELECTED_TV else []
     return subprocess.run(
-        [PYTHON, str(CHAN), "run", command],
+        [PYTHON, str(CHAN), *selected, "run", command],
         capture_output=True,
         text=True,
         timeout=timeout,
@@ -154,6 +164,7 @@ def audio_cmd(command: str) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    project_env.add_tv_argument(parser)
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     k = sub.add_parser("key", help="send a key by X keysym name")

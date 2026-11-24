@@ -350,6 +350,7 @@ def live(interval: float, seconds: float | None) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    project_env.add_tv_argument(parser)
     sub = parser.add_subparsers(dest="op", required=True)
     p = sub.add_parser("live", help="HUD on the TV until Ctrl-C")
     p.add_argument(

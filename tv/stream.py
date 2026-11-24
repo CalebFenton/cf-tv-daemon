@@ -25,7 +25,11 @@ import sys
 import time
 from pathlib import Path
 
-SOCKET_PATH = Path("/tmp/tvchan.sock")
+import project_env
+
+project_env.ensure()
+
+SOCKET_PATH, _LOG = project_env.channel_paths(project_env.tv_ip())
 PROBE = "/opt/cap/CaptureProbe.dll"
 
 

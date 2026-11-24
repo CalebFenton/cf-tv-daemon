@@ -75,8 +75,11 @@ BEGIN{
 
   # Modes are set on every start: mkdir -p does not fix existing directories,
   # and deployments before 2026-10-24 left them 0777.
-  system("chown root:root " RUN " " LOCKS "; chmod 755 " RUN "; chmod 700 " LOCKS)
-  system("chown sdk:sdk " REQ " " OUT " " RC " " STAGE "; chmod 700 " REQ " " OUT " " RC " " STAGE)
+  # Numeric ids: the same payload may be run from a namespace whose /etc/passwd
+  # lacks `root`/`sdk` (the archive exploit's does). system() discards the
+  # error, so a name lookup that fails would leave the queue unrunnable.
+  system("chown 0:0 " RUN " " LOCKS "; chmod 755 " RUN "; chmod 700 " LOCKS)
+  system("chown 901:901 " REQ " " OUT " " RC " " STAGE "; chmod 700 " REQ " " OUT " " RC " " STAGE)
   system("rm -f " OUT "/* " RC "/* " REQ "/* " STAGE "/* 2>/dev/null")
   # Capped at 256 KiB (cut to the last 128 KiB): ~40 bytes a line, a few lines
   # a boot, so years of boots. Plain text on purpose: /opt has ~500 MB free.

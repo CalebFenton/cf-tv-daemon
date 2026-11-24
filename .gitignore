@@ -55,3 +55,7 @@ __pycache__/
 
 # Untracked local leftover.
 /payloads/
+
+# --- Device registry (tv/devices.py) ------------------------------------
+# Written by `tv/devices.py scan`. Local layout: names, addresses, notes.
+/devices.toml

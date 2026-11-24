@@ -60,8 +60,13 @@ if TYPE_CHECKING:  # asyncio costs ~1 s to import; only `serve` needs it
     import asyncio
 
 ROOT = Path(__file__).resolve().parent.parent
-SOCKET_PATH = Path("/tmp/tvchan.sock")
-STATE_PATH = Path("/tmp/tvchan.state")
+# Resolved once: a name may need a LAN scan to re-find a TV whose address
+# moved, so calling this twice would scan twice.
+TV = project_env.tv_ip()
+# One socket per TV. Two `serve` processes sharing a path would collide, and a
+# client could get the other TV's answer.
+SOCKET_PATH, CHANNEL_LOG = project_env.channel_paths(TV)
+STATE_PATH = Path(f"/tmp/tvchan-{TV}.state")
 
 # The root-agent/crypto stack is heavy (~1.6 s of CPU just to import). CLI
 # callers only need a UNIX socket, so these are imported lazily inside
@@ -103,7 +108,6 @@ def _load_heavy_deps() -> None:
     SdbClient, find_sdb, route_callback_host = _sc, _fs, _rch
 
 
-TV = project_env.tv_ip()
 PAYLOADS = ROOT / "build" / "payloads-netcoreapp3.1"
 
 # Resolve sdb from the repo before falling back to discovery. Without this a
@@ -486,15 +490,19 @@ def client_request(request: dict) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    # Already applied at import time (tv/project_env.py); declared to --help.
+    common = argparse.ArgumentParser(add_help=False)
+    project_env.add_tv_argument(common)
     sub = parser.add_subparsers(dest="command", required=True)
+    project_env.add_tv_argument(parser)
 
     sub.add_parser("serve")
-    run = sub.add_parser("run")
+    run = sub.add_parser("run", parents=[common])
     run.add_argument("commands", nargs="+")
-    sub.add_parser("status")
-    put = sub.add_parser("put")
+    sub.add_parser("status", parents=[common])
+    put = sub.add_parser("put", parents=[common])
     put.add_argument("local", nargs="+")
-    pull = sub.add_parser("pull")
+    pull = sub.add_parser("pull", parents=[common])
     pull.add_argument("paths", nargs="+")
     pull.add_argument("--outdir", default=".")
 

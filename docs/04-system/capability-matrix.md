@@ -2,7 +2,10 @@
 
 The canonical table of what we can and cannot do on the TV, with evidence.
 QN75QN85DAFXZA (`21_NIKEM2_QTV`), firmware `T-NKM2AKUC-2301.1`. Updated
-2026-10-24. Each row gives the status, the evidence with the date it was last
+2026-10-24. A second TV, UN55CU7000DXZA on `T-KSU2ECAKUC-0090-2230.0`, joined
+2026-11-24: A5, A8 and A9 were re-verified there and the boot payload was
+installed the same day (`device-cu7000.md`). Rows below without a CU7000 note
+are the QN85D's only. Each row gives the status, the evidence with the date it was last
 checked, and the detail doc. The details live in the linked docs; this file
 only summarizes them.
 

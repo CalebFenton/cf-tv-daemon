@@ -73,7 +73,11 @@ if _LOCAL_SDB.is_file():
 SDB = ROOT / "vendor" / "sdb" / "data" / "tools" / "sdb"
 TV = project_env.tv_ip()
 SERIAL = f"{TV}:26101"
-PROBE_CACHE = Path("/tmp/rootctl.probe")
+# Per TV: two TVs on one host must not share an answer, and the address can
+# change under us (tv/devices.py re-finds it), so the key is the address.
+PROBE_CACHE = Path(f"/tmp/rootctl.probe-{TV}")
+# Must equal tv/chan.py's paths: that is the server this client talks to.
+CHANNEL_SOCKET, CHANNEL_LOG = project_env.channel_paths(TV)
 PROBE_TTL = 30.0
 
 CMD_QUEUE = "/opt/cmdq"
@@ -308,12 +312,12 @@ def field(lines: list[str], key: str) -> str:
 
 
 def channel_available() -> bool:
-    if not Path("/tmp/tvchan.sock").exists():
+    if not CHANNEL_SOCKET.exists():
         return False
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(5)
-            sock.connect("/tmp/tvchan.sock")
+            sock.connect(str(CHANNEL_SOCKET))
             sock.sendall(b'{"op":"status"}\n')
             data = b""
             while True:
@@ -331,7 +335,7 @@ def channel_exec(commands: list[str]) -> tuple[bool, str]:
     try:
         with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
             sock.settimeout(60)
-            sock.connect("/tmp/tvchan.sock")
+            sock.connect(str(CHANNEL_SOCKET))
             sock.sendall((json.dumps({"op": "exec", "commands": commands}) + "\n").encode())
             data = b""
             while True:
@@ -358,7 +362,7 @@ def channel_start() -> bool:
     file under a running server would garble its log.
     """
     env = dict(os.environ, SDB=str(SDB))
-    log = open("/tmp/tvchan.log", "a")
+    log = open(CHANNEL_LOG, "a")
     subprocess.Popen(
         [str(ROOT / ".venv" / "bin" / "python"), str(ROOT / "tv" / "chan.py"), "serve"],
         cwd=str(ROOT),
@@ -532,20 +536,24 @@ CAPTURE_BUILD = ROOT / "build" / "capture"
 APP_BUILDS = {CHATTR_BUILD: "chattr.csproj", CAPTURE_BUILD: "capture-probe.csproj"}
 
 # Expected ownership/mode after `boot install` (docs/06-security/threat-model.md).
+# Numeric ids, not names: the exploit path runs inside the archive payload's
+# mount namespace, whose synthetic /etc/passwd names uid 0 `owner` and has no
+# `root` or `sdk` entry. `chown root:root` fails there; `chown 0:0` works
+# everywhere. uid 0 is `root` in the device's real passwd.
 LOCKDOWN = {
-    PAYLOAD: "755 root:root",
-    KIT: "755 root:root",
-    RUN_DIR: "755 root:root",
-    f"{RUN_DIR}/req": "700 sdk:sdk",
-    f"{RUN_DIR}/stage": "700 sdk:sdk",
-    f"{RUN_DIR}/out": "700 sdk:sdk",
-    f"{RUN_DIR}/rc": "700 sdk:sdk",
-    CMD_QUEUE: "600 sdk:sdk",
-    CMD_OUT: "600 sdk:sdk",
-    "/opt/masklist": "644 root:root",
+    PAYLOAD: "755 0:0",
+    KIT: "755 0:0",
+    RUN_DIR: "755 0:0",
+    f"{RUN_DIR}/req": "700 901:901",
+    f"{RUN_DIR}/stage": "700 901:901",
+    f"{RUN_DIR}/out": "700 901:901",
+    f"{RUN_DIR}/rc": "700 901:901",
+    CMD_QUEUE: "600 901:901",
+    CMD_OUT: "600 901:901",
+    "/opt/masklist": "644 0:0",
     # The channel runs CaptureProbe.dll from here as root: a writable directory
     # would let any app swap it. Was 0777 until 2026-10-25.
-    "/opt/cap": "755 root:root",
+    "/opt/cap": "755 0:0",
 }
 
 
@@ -625,7 +633,7 @@ INSTALL_CHUNK = 40_000
 
 
 def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
-    """Write every file atomically as root:root, then apply LOCKDOWN.
+    """Write every file atomically as uid 0, then apply LOCKDOWN.
 
     Several commands, run in order on one path: a setup, groups of files under
     INSTALL_CHUNK bytes each, and the lockdown, which prints INSTALLED. A
@@ -650,7 +658,7 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         lines = [
             f"if [ -e {disabled} ]; then d={disabled}; else d={dest}; fi" if disabled else f"d={dest}",
             f"printf %s {encoded} | base64 -d > $d.new",
-            f"chown root:root $d.new && chmod {mode} $d.new",
+            f"chown 0:0 $d.new && chmod {mode} $d.new",
         ]
         if dest == PAYLOAD:
             lines.append(f"{CHATTR} -i {dest} 2>/dev/null || true")
@@ -667,13 +675,13 @@ def install_commands(files: list[tuple[Path, str, str]]) -> list[str]:
         "\n".join(
             [
                 "set -e",
-                f"find {KIT} -path {RUN_DIR} -prune -o -exec chown root:root {{}} +",
+                f"find {KIT} -path {RUN_DIR} -prune -o -exec chown 0:0 {{}} +",
                 f"find {KIT} -path {RUN_DIR} -prune -o -type d -exec chmod 755 {{}} +",
                 f"find {KIT} -path {RUN_DIR} -prune -o -type f -exec chmod 644 {{}} +",
                 f"touch {CMD_QUEUE} {CMD_OUT} /opt/masklist",
-                f"chown sdk:sdk {CMD_QUEUE} {CMD_OUT} && chmod 600 {CMD_QUEUE} {CMD_OUT}",
-                "chown root:root /opt/masklist && chmod 644 /opt/masklist",
-                "chown root:root /opt/cap && chmod 755 /opt/cap",
+                f"chown 901:901 {CMD_QUEUE} {CMD_OUT} && chmod 600 {CMD_QUEUE} {CMD_OUT}",
+                "chown 0:0 /opt/masklist && chmod 644 /opt/masklist",
+                "chown 0:0 /opt/cap && chmod 755 /opt/cap",
                 "echo INSTALLED",
             ]
         )
@@ -692,7 +700,7 @@ def device_status(files: list[tuple[Path, str, str]]) -> str:
         f"for f in {dests}; do md5sum $f 2>/dev/null || "
         f"md5sum $(echo $f | sed 's#^{KIT}/on-#{DISABLED}/on-#') 2>/dev/null || echo \"MISSING $f\"; done; "
         f'for f in {KIT}/on-*.d/* {DISABLED}/on-*.d/*; do [ -f "$f" ] && echo "HOOKFILE $f"; done; '
-        f"stat -c 'MODE %a %U:%G %n' {' '.join(LOCKDOWN)} 2>&1",
+        f"stat -c 'MODE %a %u:%g %n' {' '.join(LOCKDOWN)} 2>&1",
         timeout=40,
     )
     if not ok:
@@ -883,7 +891,7 @@ DLOG_HOOK = f"{KIT}/on-boot.d/00-dlog-once"
 DLOG_OUT = "/opt/cap/dlog-boot.txt"
 # Bluetooth stack tags and the speaker (docs/04-system/bluetooth.md, Tools).
 DLOG_FILTER = (
-    "BLUETOOTH|BT_|bt-btm|bt-btif|bt-l2cap|bt-avp|bluedroid|a2dp|avrcp|authoriz|btapp|connectionmanager|20:64:de"
+    "BLUETOOTH|BT_|bt-btm|bt-btif|bt-l2cap|bt-avp|bluedroid|a2dp|avrcp|authoriz|btapp|connectionmanager"
 )
 
 
@@ -1168,23 +1176,28 @@ def cmd_dlog(args) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    # --tv is read at import time (tv/project_env.py): the TV resolves before
+    # argparse runs. Declared here too so --help lists it.
+    common = argparse.ArgumentParser(add_help=False)
+    project_env.add_tv_argument(common)
     sub = parser.add_subparsers(dest="command", required=True)
+    project_env.add_tv_argument(parser)
 
-    run = sub.add_parser("exec")
+    run = sub.add_parser("exec", parents=[common])
     run.add_argument("--via", choices=("daemon", "channel", "exploit"), default=None)
     run.add_argument("--timeout", type=float, default=20.0, help="seconds each command may run (daemon path)")
     run.add_argument("commands", nargs="+")
     run.set_defaults(handler=cmd_exec)
 
-    probe_parser = sub.add_parser("probe")
+    probe_parser = sub.add_parser("probe", parents=[common])
     probe_parser.set_defaults(handler=cmd_probe)
 
-    boot = sub.add_parser("boot")
+    boot = sub.add_parser("boot", parents=[common])
     boot.add_argument("action", choices=("install", "status", "restore"))
     boot.add_argument("--via", choices=("daemon", "channel", "exploit"), default=None)
     boot.set_defaults(handler=cmd_boot)
 
-    hooks = sub.add_parser("hooks", help="run, list, enable or disable boot/wake hooks")
+    hooks = sub.add_parser("hooks", help="run, list, enable or disable boot/wake hooks", parents=[common])
     hooks.add_argument(
         "action", choices=("boot", "wake", "list", "enable", "disable"), help="boot/wake: run that event's hooks now"
     )
@@ -1192,20 +1205,20 @@ def main() -> int:
     hooks.add_argument("--via", choices=("daemon", "channel", "exploit"), default=None)
     hooks.set_defaults(handler=cmd_hooks)
 
-    reboot = sub.add_parser("reboot", help="reboot the TV and wait until it is usable")
+    reboot = sub.add_parser("reboot", help="reboot the TV and wait until it is usable", parents=[common])
     reboot.add_argument("--report", action="store_true", help="print the boot report afterwards")
     reboot.add_argument("--via", choices=("daemon", "channel", "exploit"), default=None)
     reboot.set_defaults(handler=cmd_reboot)
 
-    report = sub.add_parser("report", help="this boot on one timeline")
+    report = sub.add_parser("report", help="this boot on one timeline", parents=[common])
     report.add_argument("--via", choices=("daemon", "channel", "exploit"), default=None)
     report.add_argument("--lines", type=int, default=40, help="show the last N timeline lines since boot (0 = all)")
     report.set_defaults(handler=cmd_report)
 
-    doctor = sub.add_parser("doctor", help="health check: sdb, daemon, channel, payload, space")
+    doctor = sub.add_parser("doctor", help="health check: sdb, daemon, channel, payload, space", parents=[common])
     doctor.set_defaults(handler=cmd_doctor)
 
-    dlog = sub.add_parser("dlog", help="platform logging for the next boot only")
+    dlog = sub.add_parser("dlog", help="platform logging for the next boot only", parents=[common])
     dlog.add_argument("action", choices=("arm", "fetch", "disarm"))
     dlog.add_argument("--filter", default=DLOG_FILTER, help="grep -E regex (default: Bluetooth)")
     dlog.add_argument("--seconds", type=int, default=300, help="how long to keep logging")

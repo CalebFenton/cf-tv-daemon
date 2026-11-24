@@ -17,6 +17,8 @@ cd "$(dirname "$0")/.." 2>/dev/null || exit 98
 OUT=${1:-/tmp/snap.jpg}
 PY=.venv/bin/python
 PROBE=/opt/cap/CaptureProbe.dll
+# Per TV: tv/chan.py names its socket and log after the address it serves.
+CHANLOG=$("$PY" -c 'import sys; sys.path.insert(0, "tv"); import project_env; print(project_env.channel_paths(project_env.tv_ip())[1])')
 REMOTE=/opt/cap/.snap.jpg
 
 snap_once() {
@@ -32,12 +34,12 @@ rc=$?
 if [ $rc -ne 0 ] || [ ! -s /tmp/.snap.b64 ]; then
     if grep -qi 'channel_down\|refused\|ConnectionRefused' /tmp/.snap.err /tmp/.snap.b64 2>/dev/null; then
         echo "snap: channel down, restarting..." >&2
-        nohup "$PY" tv/chan.py serve >/tmp/tvchan.log 2>&1 &
+        nohup "$PY" tv/chan.py serve >"$CHANLOG" 2>&1 &
         i=0
         while [ $i -lt 60 ]; do
             sleep 1
             i=$((i + 1))
-            grep -q 'channel ready' /tmp/tvchan.log 2>/dev/null && break
+            grep -q 'channel ready' "$CHANLOG" 2>/dev/null && break
         done
         snap_once
         rc=$?

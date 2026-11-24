@@ -52,7 +52,7 @@ import project_env
 project_env.ensure()
 
 import bt
-from chan import TV, client_request
+from chan import CHANNEL_LOG, TV, client_request
 from PIL import Image
 
 APP = "com.samsung.tv.social-chat-app"
@@ -94,7 +94,7 @@ def request(payload: dict) -> dict:
         import root  # noqa: PLC0415  (tv/root.py)
 
         if not root.channel_start():
-            raise CftvError("could not start the root channel (see /tmp/tvchan.log)")
+            raise CftvError(f"could not start the root channel (see {CHANNEL_LOG})")
         response = client_request(payload)
     return response
 
@@ -209,7 +209,10 @@ def ensure() -> None:
     dll = build()
     local = hashlib.md5(dll.read_bytes()).hexdigest()
     state = run(
-        f"md5sum {SLOT_DLL} | cut -d' ' -f1; "
+        # md5sum prints nothing when the agent was never installed, so the
+        # hash must never be an empty first field: `md5sum` alone would shift
+        # every later field and the parse below would fail on a fresh TV.
+        f"h=$(md5sum {SLOT_DLL} 2>/dev/null | cut -d' ' -f1); echo ${{h:-none}}; "
         f"app_launcher -r {APP} >/dev/null && echo running || echo stopped; "
         f"r=$(cat {Q}ready 2>/dev/null); echo ${{r:-none}}; "
         f"t=$(cat {Q}token 2>/dev/null); echo ${{t:-none}}; "
@@ -532,6 +535,7 @@ def geometry(args, command: dict, natural: tuple[int, int] | None = None) -> Non
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    project_env.add_tv_argument(parser)
     sub = parser.add_subparsers(dest="op", required=True)
 
     def visual(name: str, *positional: str) -> argparse.ArgumentParser:

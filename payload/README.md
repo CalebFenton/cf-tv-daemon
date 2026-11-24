@@ -8,7 +8,7 @@ Owners and modes on the TV: `docs/06-security/threat-model.md` §2.
 |---|---|---|---|
 | `parseinfo.awk` | `b5ab93532e4b94c3ed71ccc62f7a0379` | `/opt/etc/parseinfo.sh` (immutable) | run by `AT-HUB.service` at boot as root; vendor behaviour, `/opt/masklist`, `/opt/cmdq`, then the launcher |
 | `cf_tv_daemon_start.awk` | `cb7c6afb4349f26c851236bf4f94f79b` | `/opt/cf_tv_daemon/` | launcher: stops, resets and `systemd-run`s the unit `cf_tv_daemon` (`Restart=on-failure`). Run by `parseinfo.sh` at boot and by `tv/root.py boot install` |
-| `cf_tv_daemon.awk` | `dc88cd7e5f2690fb16660f79a2ea3006` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
+| `cf_tv_daemon.awk` | `a49bb68835323485fdd94d5214dddee9` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
 | `cf_tv_hooks.sh` | `0808839fcb2a1bc078a96be4a36b8d69` | `/opt/cf_tv_daemon/` | hook runner: shell text the daemon `eval`s on each event ([Hooks](#boot-and-wake-hooks)) |
 | `on-boot.d/50-btconnect` | `1a39b358eb2654b6ef0a18a5cec05a0f` | `/opt/cf_tv_daemon/on-boot.d/` | reconnects the Bluetooth speaker (`docs/04-system/bluetooth.md`) |
 | `on-wake.d/50-btconnect` | same (git symlink to `../on-boot.d/50-btconnect`) | `/opt/cf_tv_daemon/on-wake.d/` (a regular file on the TV) | same hook on wake |

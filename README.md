@@ -101,7 +101,7 @@ this computer.
 ```sh
 git clone --recurse-submodules https://github.com/CalebFenton/cf-tv-daemon.git
 cd cf-tv-daemon
-cp .env.example .env                # set CF_TV_IP to the TV's address
+cp .env.example .env                # optional single-TV fallback: CF_TV_IP
 cp payload/btconnect.addr.example payload/btconnect.addr  # optional: the speaker for the reconnect hook
 # restore vendor/sdb and build/tv-framework per VENDOR.md (not in git)
 mise trust && mise install python uv ruff prek
@@ -109,7 +109,19 @@ uv sync                             # .venv, including the samsung_tv_root submo
 prek install                        # git pre-commit hook: ruff, shell and awk syntax
 ```
 
-`CF_TV_IP` is read from the environment or from `.env` (`tv/project_env.py`).
+Pick the TV once, then every command finds it by name:
+
+```sh
+tv/devices.py scan                  # writes devices.toml: names + the TVs' fixed ids
+tv/devices.py list                  # up/down, sdb, model
+tv/devices.py default qn85d         # the TV commands use when --tv is absent
+```
+
+`devices.toml` (not in git) stores each TV's fixed `id` from its REST API, not
+its address. A DHCP move is handled: the stored address is tried, then the /24
+is scanned for that id and the file is updated. Select per command with
+`--tv NAME`, or with `CF_TV_NAME` in the environment. With no name selected,
+`CF_TV_IP` from `.env` still works for a single-TV setup (`tv/project_env.py`).
 
 Every command runs in `.venv` however it is started: `bin/` commands are
 `sh` wrappers around `tv/*.py`, and `tv/root.py`, `tv/chan.py`,

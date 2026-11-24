@@ -2,6 +2,11 @@
 
 All values read on the TV 2026-10-24 unless marked.
 
+Two TVs are rooted and driveable: this QN85D and a CU7000 added 2026-11-24.
+The facts below are the QN85D's; the CU7000's differences are in
+[`device-cu7000.md`](device-cu7000.md). `tv/devices.py` names both and finds
+either after a DHCP address change (`devices.md` in this directory).
+
 ## Identity
 
 | Item | Value | Source |
