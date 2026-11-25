@@ -62,36 +62,76 @@ function collect() {
   add(document.getElementById('t'), 'timezone', Intl.DateTimeFormat().resolvedOptions().timeZone);
   add(document.getElementById('t'), 'tzOffsetMin', new Date().getTimezoneOffset());
   add(document.getElementById('t'), 'localTime', new Date().toString());
-  // Engine features that pin a Chromium milestone.
+  // Engine features that pin a Chromium milestone. Each entry landed in the
+  // milestone named, so the highest true entry is the engine's floor.
   const feats = {
     'WebAssembly': typeof WebAssembly,
-    'Wasm.threads': WebAssembly && typeof WebAssembly.validate === 'function'
-      ? WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0,3,2,1,0,10,10,1,8,0,65,0,254,16,26,11])) : 'n/a',
-    'BigInt': typeof BigInt,
-    'globalThis': typeof globalThis,
-    'Optional.chaining': (() => { try { return eval('({})?.a') === undefined } catch(e) { return false } })(),
-    'Array.flat': typeof [].flat,
-    'WeakRef': typeof WeakRef,
-    'Atomics.waitAsync': typeof Atomics !== 'undefined' && typeof Atomics.waitAsync,
-    'structuredClone': typeof structuredClone,
-    'reportError': typeof reportError,
-    'AbortSignal.timeout': typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout,
-    'requestIdleCallback': typeof requestIdleCallback,
-    'ResizeObserver': typeof ResizeObserver,
-    'CSS.supports(display:grid)': CSS.supports('display','grid'),
-    'OffscreenCanvas': typeof OffscreenCanvas,
-    'WebGL2': (() => { try { return !!document.createElement('canvas').getContext('webgl2') } catch(e) { return false } })(),
-    'SharedArrayBuffer': typeof SharedArrayBuffer,
-    'Intl.Segmenter': typeof Intl !== 'undefined' && typeof Intl.Segmenter,
-    'Array.at': typeof [].at,
-    'Object.hasOwn': typeof Object.hasOwn,
-    'findLast': typeof [].findLast,
+    'BigInt (m67)': typeof BigInt,
+    'globalThis (m71)': typeof globalThis,
+    'optional-chaining (m80)': (() => { try { eval('({})?.a'); return true } catch(e) { return false } })(),
+    'WeakRef (m84)': typeof WeakRef,
+    'Intl.Segmenter (m87)': typeof Intl !== 'undefined' && typeof Intl.Segmenter,
+    'Atomics.waitAsync (m87)': typeof Atomics !== 'undefined' && typeof Atomics.waitAsync,
+    'Array.at (m92)': typeof [].at,
+    'Object.hasOwn (m93)': typeof Object.hasOwn,
+    'findLast (m97)': typeof [].findLast,
+    'structuredClone (m98)': typeof structuredClone,
+    'AbortSignal.timeout (m103)': typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout,
+    'Array.toSorted (m110)': typeof [].toSorted,
+    'Array.with (m110)': typeof [].with,
+    'RegExp v-flag (m112)': (() => { try { new RegExp('[a]', 'v'); return true } catch(e) { return false } })(),
+    'Array.toReversed (m110)': typeof [].toReversed,
+    'Object.groupBy (m117)': typeof Object.groupBy,
+    'Map.groupBy (m117)': typeof Map !== 'undefined' && typeof Map.groupBy,
+    'Promise.withResolvers (m119)': typeof Promise !== 'undefined' && typeof Promise.withResolvers,
+    'URL.canParse (m120)': typeof URL !== 'undefined' && typeof URL.canParse,
+    'Array.fromAsync (m121)': typeof Array.fromAsync,
+    'Set.prototype.union (m122)': typeof Set !== 'undefined' && typeof Set.prototype.union,
+    'Promise.try (m124)': typeof Promise !== 'undefined' && typeof Promise.try,
+    'Float16Array (m129)': typeof Float16Array,
+    'RegExp.escape (m136)': typeof RegExp !== 'undefined' && typeof RegExp.escape,
+    'uaData (m90)': typeof navigator.userAgentData,
+    // Engine identity: Chromium reports these regardless of a spoofed UA.
+    'chrome object': typeof window.chrome,
+    'chrome.runtime': typeof window.chrome === 'object' && typeof window.chrome.runtime,
+    'webkitURL': typeof webkitURL,
+    'CSS.supports(-webkit-appearance)': CSS.supports('-webkit-appearance', 'none'),
   };
   for (const [k, v] of Object.entries(feats)) add(document.getElementById('t'), k, v);
   for (const k of Object.keys(facts)) delete facts[k];
   for (const row of document.querySelectorAll('#t tr')) {
     facts[row.cells[0].textContent] = row.cells[1].textContent;
   }
+}
+async function uaCh() {
+  const t = document.getElementById('t');
+  if (!navigator.userAgentData) {
+    add(t, 'uaData', 'absent');
+    return;
+  }
+  try {
+    add(t, 'uaData.brands', JSON.stringify(navigator.userAgentData.brands));
+    add(t, 'uaData.mobile', navigator.userAgentData.mobile);
+    add(t, 'uaData.platform', navigator.userAgentData.platform);
+    const h = await navigator.userAgentData.getHighEntropyValues(
+      ['fullVersionList', 'platformVersion', 'architecture', 'bitness', 'model', 'uaFullVersion']);
+    add(t, 'uaCh.fullVersionList', JSON.stringify(h.fullVersionList));
+    add(t, 'uaCh.uaFullVersion', h.uaFullVersion);
+    add(t, 'uaCh.platformVersion', h.platformVersion);
+    add(t, 'uaCh.architecture', h.architecture);
+    add(t, 'uaCh.bitness', h.bitness);
+    add(t, 'uaCh.model', h.model);
+  } catch (e) {
+    add(t, 'uaCh.error', String(e));
+  }
+}
+const reach = [];
+function snapshot() {
+  for (const k of Object.keys(facts)) delete facts[k];
+  for (const row of document.querySelectorAll('#t tr')) {
+    facts[row.cells[0].textContent] = row.cells[1].textContent;
+  }
+  reach.forEach((r, i) => { facts['reach.' + i + '.' + r[0]] = r[1]; });
 }
 async function probeUrl(t, label, url, opts) {
   const tr = t.insertRow();
@@ -109,15 +149,18 @@ async function probeUrl(t, label, url, opts) {
     cell.className = r.ok ? 'ok' : 'no';
     cell.textContent = 'HTTP ' + r.status + ' ' + ms + 'ms len=' + body.length +
       ' :: ' + body.slice(0, 160).replace(/\\s+/g, ' ');
+    reach.push([label, cell.textContent]);
     return body;
   } catch (e) {
     cell.className = 'no';
     cell.textContent = String(e) + ' after ' + Math.round(performance.now() - t0) + 'ms';
+    reach.push([label, cell.textContent]);
     return null;
   }
 }
 (async () => {
   collect();
+  await uaCh();
   const r = document.getElementById('r');
   // The panel's own HTTP surface, from the panel itself.
   await probeUrl(r, 'self:17654/zc/0', 'http://127.0.0.1:17654/zc/0?action=getInfo');
@@ -126,10 +169,11 @@ async function probeUrl(t, label, url, opts) {
   await probeUrl(r, 'file /proc/version', 'file:///proc/version');
   await probeUrl(r, 'file /etc/os-release', 'file:///etc/os-release');
   await probeUrl(r, 'file /proc/self/status', 'file:///proc/self/status');
-  // Confirm our own origin works.
+  // Our own origin, to confirm this page can talk home at all.
   await probeUrl(r, 'host echo', '/echo?' + encodeURIComponent(navigator.userAgent));
-  document.getElementById('j').textContent = JSON.stringify(facts, null, 1).slice(0, 6000);
-  // Ship the result home so it survives a Web View that closes on us.
+  // Report the engine exactly, in the page and to the log.
+  snapshot();
+  document.getElementById('j').textContent = JSON.stringify(facts, null, 1).slice(0, 8000);
   try {
     await fetch('/report', { method: 'POST', body: JSON.stringify(facts) });
   } catch (e) {}

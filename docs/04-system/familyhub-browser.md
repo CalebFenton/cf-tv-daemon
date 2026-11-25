@@ -1,49 +1,98 @@
-# Panel browser — Chromium 76.0.3809.146
+# Panel browser — what it actually is
 
-Read from the CU7000's sibling device, the Family Hub panel, in Developer
-Mode → `WebEngine Version`, 2026-11-25.
+Measured from the Family Hub panel itself, 2026-11-25, by loading
+`tools/fridge_probe.py` in Developer Mode → Web View.
 
-| Item | Value |
-|---|---|
-| Web engine | **Chromium `76.0.3809.146`** |
-| Release date of that build | 2019-07 (M76 stable) |
-| Panel | Tizen 7.2.1, One UI 7.0 Refrigerator, `AFH-US-KTM-24-T7XXMU` |
-| Context it runs in | `org.tizen.browser`, `uid=5001`, SMACK `User::Pkg::org.tizen.browser` |
+## 1. The `WebEngine Version` line is not the browser version
 
-## Why this number matters
+Developer Mode → `WebEngine Version` reads **`76.0.3809.146`**. That string is
+**wrong for the browser** — do not use it to pick an exploit.
 
-`76.0.3809.146` is **four years older than the Q60T Synacktiv rooted** (that TV
-ran Chromium 79), and six years behind the 2024 TV baseline (M108). Every V8
-bug patched between M76 and M108 is a candidate.
+The probe's feature table contradicts it. Every one of these was present:
 
-The known-adjacent chain, for shape rather than direct reuse:
+| feature | landed in | present |
+|---|---|---|
+| optional chaining | M80 | yes |
+| `WeakRef` | M84 | yes |
+| `Intl.Segmenter`, `Atomics.waitAsync` | M87 | yes |
+| `Array.prototype.at` | M92 | yes |
+| `Object.hasOwn` | M93 | yes |
+| `Array.prototype.findLast` | M97 | yes |
+| `structuredClone` | M98 | yes |
+| `AbortSignal.timeout` | **M103** | yes |
 
-- Synacktiv, Q60T: CVE-2020-6383 (`Array.prototype.sort` type confusion, V8,
-  patched in M80) → code execution in `efl_webprocess` as `uid=5001`.
-  https://github.com/synacktiv/samsung-q60t-exploit
-- Calif, UN43T5300 (2026): from that browser shell, `/dev/ntksys` physmap →
-  `struct cred` overwrite → root, no ROP, no shellcode, UEP not triggered.
-  https://github.com/califio/publications/blob/main/MADBugs/samsung-tv/writeup.md
+So the engine is **at least Chromium 103** (May 2022) — 27 milestones newer than
+the menu claims. Either `WebEngine Version` names a different component (a
+widget/EFL layer), or it is a stale constant. It is not the V8 build.
 
-Both bugs are older than this engine, so neither is patched here by version.
-The open question is not "is the browser old enough" — it plainly is — but
-whether the panel's kernel exposes the same physmap driver (§4.2 of
-`device-familyhub.md`).
+Consequence: **every 2019–2021 public V8 chain is patched out here.**
+CVE-2020-6383 (Synacktiv's Q60T bug, fixed M80) and CVE-2020-6418 are dead on
+this device. My earlier note that the panel was older than the Q60T was wrong;
+it is years newer.
 
-## The probe page
+The upper bound is unresolved. `AbortSignal.timeout` is the highest milestone
+confirmed, so the engine is somewhere in **M103–M109** unless a later feature
+tests true. That range matters: CVE-2022-4262 (V8 type confusion, exploited in
+the wild, fixed in `108.0.5359.94`) falls inside it.
 
-`tools/fridge_probe.py` serves a page that reports the exact engine, the
-features that pin a milestone, and whether the panel can reach its own loopback
-and `file://` URLs. It logs the User-Agent and posts the full table back.
+## 2. The User-Agent is a configurable lie
 
-```sh
-tools/fridge_probe.py 8088      # as a supervised service
-# then, in the panel's Web View:
-#   http://<this-host>:8088/
+The panel sends:
+
+```
+Mozilla/5.0 (Linux; Tizen 3.0; FamilyHub) AppleWebKit/537.3 (KHTML, like Gecko)
+  Version/2.3 Mobile Safari/537.3
 ```
 
-A Chromium 76 User-Agent is the confirmation; the feature table distinguishes
-76.0.3809.146 from a spoofed string. The `file://` probe is the interesting one:
-if local file reads work from the Web View, the panel's own `/proc/version`,
-`/etc/os-release` and (if permitted) `/dev` listing answer the driver question
-without any exploit at all.
+Three things prove this is an app-level override, not the engine:
+
+- It claims **Tizen 3.0** on a device reporting **Tizen 7.2.1**.
+- `Version/2.3 … Mobile Safari` is a WebKit/Safari token; no Chromium emits it.
+- The Web View settings offer **two UA choices** (this one, and an Android one),
+  so the string is a setting, not a fact.
+
+The real engine still shows through in other properties:
+`vendor = "Google Inc."`, `product = "Gecko"`, `platform = "Linux armv7l"`,
+plus the M103+ feature set.
+
+**Practical rule: never version-fingerprint this device by User-Agent.** It also
+means switching to the Android UA changes what *remote servers* serve the panel,
+not what the panel runs. It cannot change which V8 is executing.
+
+## 3. Reachability from the Web View (observed)
+
+| target | result |
+|---|---|
+| `http://127.0.0.1:17654/zc/0` (its own Spotify eSDK) | `TypeError: Failed to fetch` |
+| `file:///proc/version`, `file:///etc/os-release`, `file:///proc/self/status` | `TypeError: Failed to fetch` |
+| `http://<host>:8088/echo` (the probe's own origin) | HTTP 200, 114 ms |
+
+So the Web View runs under a strict CSP/origin policy: it cannot read its own
+loopback service and cannot read local files. That closes the cheap
+"read `/proc` from the browser" route to the driver question.
+
+Other observed properties: `hardwareConcurrency = 4`, `screen 540x960 @24`,
+`devicePixelRatio 2`, `maxTouchPoints 0`, `WebGL2 = false`,
+`SharedArrayBuffer = undefined`, timezone `CST6CDT`.
+
+`WebGL2` off and `SharedArrayBuffer` absent mean a reduced attack surface: the
+usual GPU- and wasm-thread-based primitives are unavailable, so a V8 exploit
+here would have to be pure JS-heap work.
+
+## 4. What the probe does not answer
+
+Whether the kernel exposes `/dev/sdp_mem` or `/dev/ntksys` with the world-writable
+permissions the TVs have. The browser cannot read the filesystem (§3), so that
+question needs either a root-level primitive first or the panel's own
+`eMMC Information` screen.
+
+## 5. Reproducing
+
+```sh
+tools/fridge_probe.py 8088        # supervised service, binds 0.0.0.0:8088
+# panel: Developer Mode → Web View → http://<this-host-ip>:8088/
+```
+
+The page prints the feature table and `POST`s the same data to `/report`, which
+the server logs, so the result survives the Web View closing. The UA and the
+full report are logged on every load.

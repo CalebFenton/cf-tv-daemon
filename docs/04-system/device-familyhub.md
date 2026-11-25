@@ -25,8 +25,10 @@ Read from the panel's `Software information` screen, 2026-11-25:
 that took the One UI 7 update. It is **not** the 2017 `SDP1406`/Tizen 3.0
 platform that the published firmware dumps describe, and not the Tizen 3.0
 "Mobile profile" the old Family Hub developer page mentions. Tizen 7.2.1 puts
-it on the same generation as 2024 TVs (Tizen 8-class web engine, Chromium
-M108-class), which is the important fact for §4.
+it on the same generation as 2024 TVs. Its web engine measures as **at least
+Chromium 103** — see `familyhub-browser.md`, which explains why the menu's
+`WebEngine Version` of `76.0.3809.146` must not be trusted. That version is the
+important fact for §4.
 
 ## 2. Network surface
 
@@ -85,22 +87,33 @@ must be run as root."*
 on a fridge.** The chain is: get code execution inside the panel's browser, then
 escalate with a world-writable vendor driver. Both halves are public.
 
-**4.1 Browser foothold.** The panel ships `org.tizen.browser` (the TV's Tizen
-browser; present since the 2017 image and still the fridge's Internet app). The
-Tizen browser is a frozen Chromium: 2024-era Tizen devices ship M108-class, and
-Samsung does not update the engine between firmware releases. That is old
-enough that a public V8 exploit commonly lands. Demonstrated on TVs:
+**4.1 Browser foothold.** The panel ships a Web View that runs a Chromium-based
+engine. Measured from the panel itself (`familyhub-browser.md`), that engine is
+**at least Chromium 103**, not the `76.0.3809.146` the Developer Mode menu
+claims — the menu value is a stale constant, and the User-Agent is a configurable
+override, so neither can be used to pick an exploit.
 
-- Synacktiv, Q60T (2021): CVE-2020-6383 V8 type confusion → code execution in
-  `efl_webprocess` as `uid=5001`, label `User::Pkg::org.tizen.browser`.
+That changes which public work is relevant: anything from 2019–2021 is patched
+out. The live window is **CVE-2022-4262** (V8 type confusion, exploited in the
+wild, fixed in `108.0.5359.94`), which lands inside the confirmed floor of
+M103 and an unresolved ceiling above it. Demonstrated on TVs, for shape:
+
+- Synacktiv, Q60T (2021): CVE-2020-6383 → code execution in `efl_webprocess` as
+  `uid=5001`, label `User::Pkg::org.tizen.browser`. **Patched here** (fixed M80).
   https://github.com/synacktiv/samsung-q60t-exploit
-- Alejandro Parodi (2026): a V8 RCE on a Samsung TV browser with no ADB and no
-  hardware access, ARM32 ROP → reverse shell.
+- Alejandro Parodi (2026): ARM32 V8 RCE on a Samsung TV browser, no ADB and no
+  hardware access, ROP → reverse shell. The technique shape is current; the bug
+  he used is not necessarily.
   https://hdbreaker.github.io/blog/samsung-tv-v8-rce-rop-reverse-shell/
 
 The delivery is the ordinary browser: the panel has an Internet app and a
-`Web View` entry in Developer Mode, so a URL is enough. This is the non-hardware
-way in.
+`Web View` entry in Developer Mode, so a URL is enough. Confirmed working — the
+probe page loaded and ran.
+
+Two constraints measured on this panel cut the usual primitives: `WebGL2` is
+off and `SharedArrayBuffer` is absent, so a V8 exploit here has to be pure
+JS-heap work. The Web View also cannot read its own loopback or `file://` URLs,
+so it cannot be used to inspect `/proc` or `/dev` directly.
 
 **4.2 Escalation.** Two public primitives, both from the browser's `uid=5001`
 context:
