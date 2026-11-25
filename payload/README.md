@@ -8,7 +8,7 @@ Owners and modes on the TV: `docs/06-security/threat-model.md` §2.
 |---|---|---|---|
 | `parseinfo.awk` | `74f4897c42dc9f7fb00153205e8f5f9f` | `/opt/etc/parseinfo.sh` (immutable) | run by `AT-HUB.service` at boot as root; vendor behaviour (`/proc/target_version`), `/opt/masklist`, `/opt/cmdq`, then the launcher |
 | `cf_tv_daemon_start.awk` | `cb7c6afb4349f26c851236bf4f94f79b` | `/opt/cf_tv_daemon/` | launcher: stops, resets and `systemd-run`s the unit `cf_tv_daemon` (`Restart=on-failure`). Run by `parseinfo.sh` at boot and by `tv/root.py boot install` |
-| `cf_tv_daemon.awk` | `a49bb68835323485fdd94d5214dddee9` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
+| `cf_tv_daemon.awk` | `ed649492c3b123252406912adb9b594b` | `/opt/cf_tv_daemon/` | unit `cf_tv_daemon`: root command queue in `/opt/cf_tv_daemon/state/`, and the `boot`/`wake` events (`docs/01-root/access-contexts.md` §3) |
 | `cf_tv_hooks.sh` | `0808839fcb2a1bc078a96be4a36b8d69` | `/opt/cf_tv_daemon/` | hook runner: shell text the daemon `eval`s on each event ([Hooks](#boot-and-wake-hooks)) |
 | `on-boot.d/30-hello` | `7aa7efd372371f112121edacba3f05f4` | `/opt/cf_tv_daemon/on-boot.d/` | plays `hello.webp` once, top right, through the cftv agent (starting it if needed) when the TV comes on |
 | `on-wake.d/30-hello` | same (git symlink to `../on-boot.d/30-hello`) | `/opt/cf_tv_daemon/on-wake.d/` | same hook on wake |

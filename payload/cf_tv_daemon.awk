@@ -22,8 +22,10 @@
 #
 #    Wake detection: the remote's power button suspends the kernel. Processes
 #    survive and boot hooks do not rerun, so a wake is visible only as a jump
-#    in (wall clock - uptime): uptime stops while suspended, the wall clock
-#    does not.
+#    in (wall clock - CLOCK_MONOTONIC): the monotonic clock stops while
+#    suspended, the wall clock does not. Not /proc/uptime: on kernel 5.4 (the
+#    CU7000) it is CLOCK_BOOTTIME, which counts suspended time, so no wake was
+#    ever seen there (2026-11-25: 3 suspends, 0 wake events).
 
 BEGIN{
   RUN="/opt/cf_tv_daemon/state"; REQ=RUN "/req"; OUT=RUN "/out"; RC=RUN "/rc"
@@ -31,7 +33,7 @@ BEGIN{
   DAEMONLOG="/opt/cf_tv_daemon.log"
   LOCK=RUN "/.lock"; PIDF=RUN "/daemon.pid"; BOOTF=RUN "/boot_id"
   HOOKS="/opt/cf_tv_daemon/cf_tv_hooks.sh"
-  WAKE_JUMP=15   # seconds of missing uptime that count as a suspend
+  WAKE_JUMP=3    # seconds suspended that count as a wake; both clocks are read in whole seconds
 
   system("mkdir -p " REQ " " OUT " " RC " " STAGE " " LOCKS)
   # Under systemd-run there is no shell to redirect output, so open the log here.
@@ -133,15 +135,18 @@ function event(name) {
   system("( CF_EVENT=" name "; eval \"$(< " HOOKS ")\" ) >/dev/null 2>&1 &")
 }
 
-function uptime(   line, f) {
-  getline line < "/proc/uptime"; close("/proc/uptime")
-  split(line, f, " ")
-  return int(f[1])
+# CLOCK_MONOTONIC in whole seconds: the `now at <ns> nsecs` line of
+# /proc/timer_list, on kernels 4.1 and 5.4 alike (~0.7 ms a read on the CU7000).
+function monotonic(   line, f) {
+  while ((getline line < "/proc/timer_list") > 0)
+    if (line ~ /^now at /) { split(line, f, " "); break }
+  close("/proc/timer_list")
+  return int(f[3] / 1000000000)
 }
 
-# Wall clock minus uptime. Constant while running, grows by the time suspended.
+# Wall clock minus monotonic. Constant while running, grows by the time suspended.
 function offset() {
-  return systime() - uptime()
+  return systime() - monotonic()
 }
 
 function note(msg) {

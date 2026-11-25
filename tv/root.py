@@ -854,6 +854,9 @@ def cmd_boot(args) -> int:
 
     if args.action == "install":
         state = probe()
+        if args.via is None and state.get("daemon") and not state.get("channel") and channel_start():
+            # The channel is the path that transfers files; bring it up through the daemon.
+            state = probe(force=True)
         path = pick(state, args.via)
         if path is None:
             print(explain(state), file=sys.stderr)
