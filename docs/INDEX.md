@@ -45,6 +45,7 @@ records and may be out of date.
 | `device.md` | identity, storage, network, ports, power, developer mode (QN85D) |
 | `device-cu7000.md` | the second TV, CU7000: identity, the archive-root result, how its boot payload differs |
 | `device-familyhub.md` | third Tizen device, a Family Hub fridge on Tizen 7.2.1: one open port, service menus, the public browser→driver root chain vs the hardware route, why no repo code applies |
+| `familyhub-browser.md` | the panel's web engine is Chromium 76.0.3809.146 (2019): what that opens, the Q60T/Calif chains it is older than, and the probe page |
 | `devices.md` | naming several TVs, `tv/devices.py`, `devices.toml`, finding a TV after a DHCP move |
 | `control.md` | keys, the key-to-app table, volume, TTS, audio output routing, Voice Guide |
 | `bluetooth.md` | speaker requests and function numbers, the `50-btconnect` hook, routing, the power-loss root cause, bt-service's own log (dlog) |
