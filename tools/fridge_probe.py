@@ -116,9 +116,8 @@ function collect() {
           0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]));
       } catch(e) { return false; }
     })(),
-    'Wasm.exceptions (m95)': (() => {
-      try { return WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0])); } catch(e) { return false; }
-    })(),
+    'URLPattern (m95)': typeof URLPattern,
+    'container-type (m105)': CSS.supports('container-type', 'inline-size'),
   };
   for (const [k, v] of Object.entries(feats)) add(document.getElementById('t'), k, v);
   for (const k of Object.keys(facts)) delete facts[k];

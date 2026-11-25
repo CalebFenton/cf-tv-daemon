@@ -89,14 +89,24 @@ escalate with a world-writable vendor driver. Both halves are public.
 
 **4.1 Browser foothold.** The panel ships a Web View that runs a Chromium-based
 engine. Measured from the panel itself (`familyhub-browser.md`), that engine is
-**at least Chromium 103**, not the `76.0.3809.146` the Developer Mode menu
-claims — the menu value is a stale constant, and the User-Agent is a configurable
+**Chromium 105** (exact: M105 features true, M106 false). The Developer Mode
+menu's `76.0.3809.146` is a stale constant and the User-Agent is a configurable
 override, so neither can be used to pick an exploit.
 
-That changes which public work is relevant: anything from 2019–2021 is patched
-out. The live window is **CVE-2022-4262** (V8 type confusion, exploited in the
-wild, fixed in `108.0.5359.94`), which lands inside the confirmed floor of
-M103 and an unresolved ceiling above it. Demonstrated on TVs, for shape:
+**The direction of the version comparison matters.** A bug fixed in a later
+milestone is **present** in M105. So the panel is exposed to every V8/Wasm bug
+fixed from M106 onward — a window of roughly three and a half years — not a
+narrow 2022 slice. Only bugs fixed at or before M104 are patched out, which does
+kill the 2019–2021 corpus (CVE-2020-6383 was fixed in M80).
+
+Live candidates whose affected range includes M105, several exploited in the
+wild: CVE-2022-3723, CVE-2022-4262, CVE-2023-2033, CVE-2023-3079,
+CVE-2024-0519, and **CVE-2024-2887** (Wasm type confusion, Pwn2Own 2024, fixed in
+Chrome 123). `CVE-2024-2887` is the most promising for this panel: reached from
+ordinary JS, WebAssembly is enabled here, and ZDI's write-up calls the primitive
+a universal type confusion in the Wasm type section.
+
+Demonstrated on TVs, for shape:
 
 - Synacktiv, Q60T (2021): CVE-2020-6383 → code execution in `efl_webprocess` as
   `uid=5001`, label `User::Pkg::org.tizen.browser`. **Patched here** (fixed M80).
@@ -110,10 +120,11 @@ The delivery is the ordinary browser: the panel has an Internet app and a
 `Web View` entry in Developer Mode, so a URL is enough. Confirmed working — the
 probe page loaded and ran.
 
-Two constraints measured on this panel cut the usual primitives: `WebGL2` is
-off and `SharedArrayBuffer` is absent, so a V8 exploit here has to be pure
-JS-heap work. The Web View also cannot read its own loopback or `file://` URLs,
-so it cannot be used to inspect `/proc` or `/dev` directly.
+Measured constraints on this panel: `WebGL2` off, `WebGL1` on, and the Web View
+refuses cross-origin isolation, so `SharedArrayBuffer` stays unavailable. That
+rules out the usual shared-memory primitives but not Wasm-based ones. The Web
+View also cannot read its own loopback or `file://` URLs, so it cannot inspect
+`/proc` or `/dev` directly.
 
 **4.2 Escalation.** Two public primitives, both from the browser's `uid=5001`
 context:

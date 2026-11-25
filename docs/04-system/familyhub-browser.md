@@ -22,17 +22,18 @@ The probe's feature table contradicts it. Every one of these was present:
 | `AbortSignal.timeout` | **M103** | yes |
 
 So the engine is **at least Chromium 103** (May 2022) — 27 milestones newer than
-the menu claims. Either `WebEngine Version` names a different component (a
-widget/EFL layer), or it is a stale constant. It is not the V8 build.
+the menu claims. §3b pins it exactly to **105**. Either `WebEngine Version` names
+a different component (a widget/EFL layer), or it is a stale constant. It is not
+the V8 build.
 
 Consequence: **every 2019–2021 public V8 chain is patched out here.**
 CVE-2020-6383 (Synacktiv's Q60T bug, fixed M80) and CVE-2020-6418 are dead on
 this device. My earlier note that the panel was older than the Q60T was wrong;
 it is years newer.
 
-The upper bound is now pinned too (§3b): M103 true, M110 false. The engine is
-**Chromium 103–109**, and CVE-2022-4262 (V8 type confusion, exploited in the
-wild, fixed in `108.0.5359.94`) falls inside that window.
+The upper bound is pinned in §3b: **Chromium 105**. Read §3b before drawing any
+conclusion about which bugs are live — the direction of the comparison matters,
+and an earlier version of this file got it backwards.
 
 ## 2. The User-Agent is a configurable lie
 
@@ -100,33 +101,75 @@ sites serve.
 `WebGL2` is off, so the GPU-backed primitives are unavailable; any V8 work here
 has to be pure JS-heap. `WebGL1` availability is now measured separately.
 
-## 3b. The version window
+## 3b. The version window: Chromium 105
 
-| milestone | present |
-|---|---|
-| M98 `structuredClone` | yes |
-| M103 `AbortSignal.timeout` | **yes** |
-| M110 `Array.toSorted` / `.with` / `.toReversed` | **no** |
-| M112 RegExp `v` flag | no |
-| M117+ (`Object.groupBy`, `Promise.withResolvers`, `URL.canParse`, …) | no |
-| M90 `navigator.userAgentData` | absent |
+Three runs, each narrowing the bracket:
 
-So the engine is **Chromium 103 through 109**, inclusive. That is a hard floor
-and a hard ceiling from two independent runs.
+| milestone | present | run |
+|---|---|---|
+| M98 `structuredClone` | yes | 1 |
+| M103 `AbortSignal.timeout` | **yes** | 1 |
+| M105 `HTMLScriptElement.supports`, CSS `:has()` | **yes** | 3 |
+| M106 `Intl.NumberFormat.formatRange` | **no** | 3 |
+| M110 `Array.toSorted` / `.with` / `.toReversed` | no | 1 |
+| M112 RegExp `v` flag | no | 1 |
+| M117+ | no | 1 |
+| M90 `navigator.userAgentData` | absent | all |
 
-The version's consequence:
+**The engine is Chromium 105** (released 2022-08). M105 true and M106 false is an
+exact bracket, not an approximation.
 
-- Everything fixed at or below M102 is patched: CVE-2020-6383, CVE-2020-6418 and
-  the whole 2019–2021 V8 corpus are dead here.
-- **CVE-2022-4262** (V8 type confusion, exploited in the wild, fixed in
-  `108.0.5359.94`) falls **inside** the window. So do the other V8 fixes in
-  M103–M109.
-- Anything fixed in M110 or later is patched.
+The consequence for exploitation — **this is the opposite of what an earlier
+version of this file said**:
 
-`navigator.userAgentData` being absent is a small oddity: Chromium shipped it in
-M90, so an engine at M103+ should have it. Either Samsung compiled it out of this
-Web View, or the Web View is not a stock Chromium build. Treat that as an open
-question rather than a contradiction.
+- A fix shipped in a *later* milestone means the bug is **present** in M105.
+  Comparing an affected engine to a fix version only tells you which side of the
+  fix you are on, and M105 is on the vulnerable side of everything released
+  afterwards.
+- So Chromium 105 is exposed to **every V8 bug fixed from M106 through the
+  present day** — roughly a three-and-a-half-year window, not a 2022-only one.
+- Only bugs fixed at or before M104 are truly patched here (CVE-2020-6383,
+  CVE-2020-6418 and the 2019–2021 corpus).
+
+Candidate bugs, all of which list an affected range that includes M105:
+
+| CVE | kind | fixed in |
+|---|---|---|
+| CVE-2022-3723 | V8 type confusion, exploited in the wild | 107.0.5304.87 |
+| CVE-2022-4262 | V8 type confusion, exploited in the wild | 108.0.5359.94 |
+| CVE-2023-2033 | V8 type confusion, exploited in the wild | 112.0.5615.121 |
+| CVE-2023-3079 | V8 type confusion, exploited in the wild | 114.0.5735.110 |
+| CVE-2024-0519 | V8 out-of-bounds, exploited in the wild | 120.0.6099.224 |
+| CVE-2024-2887 | **Wasm** type confusion, Pwn2Own 2024 | 123.0.6312.86 |
+
+`CVE-2024-2887` is the interesting one for this panel: it is a WebAssembly type
+confusion reached from ordinary JS, WebAssembly is enabled here, and its affected
+range is "all Chrome before 123". The public ZDI write-up describes the primitive
+as a universal type confusion in the Wasm type section.
+
+## 3c. Cross-origin isolation is refused
+
+The server sends both `Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp` (verified with `curl -D-`), and the
+panel still reports:
+
+```
+crossOriginIsolated = false
+SharedArrayBuffer    = undefined
+Atomics              = object
+```
+
+So this is the Web View refusing isolation, not a missing header. Without
+`SharedArrayBuffer`, the common V8 exploit building blocks — racy JIT-adjacent
+primitives, worker-shared backing stores — are unavailable. Any exploit here
+must be pure single-page JS-heap work.
+
+`WebGL1` is available (`true`), `WebGL2` is not, so GPU-backed primitives are
+out as well.
+
+`navigator.userAgentData` being absent is still unexplained: Chromium shipped it
+in M90, so an M105 engine should have it. Either Samsung compiled it out, or this
+is not a stock Chromium build. Open question, not a contradiction.
 
 ## 4. What the probe does not answer
 
