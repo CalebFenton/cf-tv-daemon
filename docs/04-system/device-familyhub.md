@@ -150,8 +150,15 @@ non-hardware route works here.
 the 2017 generation): eMMC in-circuit read/write plus UART on `CN9` (pins 12
 `UART0_TXD`, 13 `UART0_RXD`, 115200). doitaljosh soldered CLK/CMD/DAT, edited
 the ext4 rootfs, changed the root password, and got a root shell. That unit's
-rootfs was ext4; this 2024 unit's is more likely VDFS, which changes the recipe.
-`CN9` on a 2024 board is also not the 2017 pinout until someone checks.
+rootfs was ext4; this 2024 unit has the TV partition shape instead
+(`familyhub-prior-art.md` §8), which changes the recipe. `CN9` on a 2024 board is
+also not the 2017 pinout until someone checks.
+
+Note what the `eMMC Information` screen did establish: `p20` is `/opt` (219 MB,
+34 MB used) and `p21` is `/opt/usr` (2.9 GB, 1.8 GB used), with `p17` as `csa`.
+That is the TV layout, so a writable persistent store exists in the same places
+the TV payload uses — but the filesystem type is still unknown, and `vdfs` vs
+`ext4` decides whether the 2017 hardware recipe transfers at all.
 
 ## 5. Does the TV code work here?
 

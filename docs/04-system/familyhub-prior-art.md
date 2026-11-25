@@ -133,3 +133,69 @@ The order that avoids wasted work:
   artifact, not a payload.
 - Whether this panel exposes any physmap device is unmeasured, and it is the
   gate that decides whether the browser route is worth pursuing at all.
+
+## 8. What the eMMC screen establishes
+
+Read from Developer Mode → `eMMC Information`, 2026-11-25:
+
+| partition | mount | total | used |
+|---|---|---|---|
+| `mmcblk0p17` | `csa` | 10 MB | — |
+| `mmcblk0p20` | `opt` | 219 MB | 34 MB |
+| `mmcblk0p21` | `usr` | 2938 MB | 1856 MB |
+
+This is the **Tizen TV partition shape**, not the 2017 fridge's. Compare on the
+QN85D: `p17` = `/mnt/drm`, `p20` = `/mnt/systemrw`, `p21` = `/opt` (`vdfs rw`).
+The 2017 fridge dump instead had rootfs on `p12` (ext4), apps in `/usr/apps`, and
+no `/opt` split at all.
+
+Three consequences:
+
+1. **The 2017 recipes do not describe this device.** The eMMC/UART route that
+   worked on `SDP1406` targeted an ext4 rootfs and `/usr/apps`; this unit has the
+   TV's `vdfs` layout with `/opt` and `/opt/usr` split.
+2. **A writable, persistent store exists** (`p20` `/opt`, 219 MB, 34 MB used;
+   `p21` `/opt/usr`, 2.9 GB, 1.8 GB used). That is the same shape
+   `payload/parseinfo.awk` writes to, and the same shape commit-regrets uses for
+   gate 3 (a stock on-boot app on writable `/opt`).
+3. **`csa` (10 MB) is the TV's DRM/keystore partition name.** Its presence means
+   this panel is on the TV platform, so `vdfs`, UEP and the mask/stop-file
+   mechanisms are all plausible — and so are the physmap drivers in §5.
+
+It does not show the filesystem type. `vdfs` vs `ext4` changes the hardware
+recipe completely, and only a shell or a mount listing answers it.
+
+## 9. If it has to be built from scratch
+
+The order that avoids wasted work, cheapest first. Each step is a gate; stop as
+soon as one fails.
+
+**Step 1 — get any code execution as the panel's `owner` (uid 5001).**
+Two candidates, both needing an ARM32 port:
+
+- Port `mistymntncop/CVE-2022-4262` to ARM32. The x64 PoC's 64-bit machinery is
+  not needed: ARM32 V8 has **no pointer-compression cage**, so a type confusion
+  yields full-address-space R/W directly. `hdbreaker`'s
+  `blog/01-primitivas.md` documents exactly this and is the model to follow —
+  `addrOf` = write the object to a confused slot, read it back as an integer.
+- Or `CVE-2022-3723`, one milestone earlier, same class.
+
+**Step 2 — identify `libchrome` and gadgets.** ARM32 needs `elf_base` and
+`mprotect`; `hdbreaker`'s `anchor.js` → `soscan.js` → `sodump.js` sequence does
+this from JS alone, dumping ~82 MB of `libchrome.so` over HTTP with no shell.
+
+**Step 3 — find the physmap device.** From the renderer:
+`ls -l /dev/video*` and `id` (needs `gid=44 video`). Try `mmap` with a known
+`vm_pgoff`. If a V4L2 node honours it, the rest is mechanical; if none does, stop
+— the browser route dead-ends at a `owner` shell with no escalation.
+
+**Step 4 — kernel constants.** Kernel base, `init_task`, `task_struct` and `cred`
+offsets. commit-regrets measured all of these for 5.4.249 ARM32; a fridge build
+will need the same work, and their `docs/EXPLOIT.md` documents the method
+(`__ksymtab` string scan for `init_task`, walk `tasks.prev`, patch `cred+4..32`).
+
+**Step 5 — persistence, only if asked.** Their gate 3: a stock on-boot app on
+writable `/opt`. §8 says that partition exists here.
+
+The honest estimate: steps 1 and 2 are a port of published ARM32 work; step 3 is
+a coin flip that decides everything; step 4 is measurement, not research.
