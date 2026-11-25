@@ -1,148 +1,168 @@
 # Device — Family Hub refrigerator (reconnaissance only)
 
 Third Tizen device, a Samsung Family Hub refrigerator. **No access obtained.**
-This is what the network and public sources establish, and what does not carry
-over from the TVs. Reconnaissance 2026-11-25.
+Reconnaissance 2026-11-25. Facts are marked observed, read off the panel, or
+public.
 
 Read [access-contexts.md](../01-root/access-contexts.md) first: every route
-there starts with SDB on 26101, and this device has no SDB.
+there starts with SDB on 26101, and this device has no SDB and no network
+service to reach.
 
-## 1. What the device is
+## 1. Identity
 
-Observed from this workstation:
+Read from the panel's `Software information` screen, 2026-11-25:
 
-| Item | Value | How |
-|---|---|---|
-| Hostname | `Samsung-FamilyHub` | reverse DNS |
-| Model family | Family Hub, `Family_HUB` | eSDK `modelDisplayName` |
-| LAN surface | **one TCP port open**, `17654` | full 1–65535 TCP scan |
-| Port 17654 | Spotify **eSDK** (`Server: eSDK`), `remoteName` `SAMSUNG FAMILY HUB (5BF8)` | `GET /zc/0?action=getInfo` |
-| mDNS | `_spotify-connect._tcp` only, `CPath=/zc/0` | mDNS query |
-| Not present | 26101 SDB, 26099, 8001/8002 REST, 8888, 9197, 9080, any CoAP/DTLS on 49152–49160 | scan + DTLS ClientHello probes |
+| Item | Value |
+|---|---|
+| One UI | `7.0 Refrigerator` |
+| Tizen | **`7.2.1`** |
+| Firmware | `AFH-US-KTM-24-T7XXMU 20251031.075639` |
+| Build tail | `AW3AW4R` / `2006250C, FFFFFFFF` |
+| Wi-Fi | `TMA-1`, address in `.local/devices.toml` (observed in the panel's own network dialog) |
+| Hostname | `Samsung-FamilyHub` (reverse DNS) |
 
-`/zc/0?action=getInfo` returns a full Spotify Connect payload: `version`
-`2.9.0`, `libraryVersion` `3.166.72`, `deviceType` `SPEAKER`, `clientID`, and
-`scope` `streaming,client-authorization-universal`. Every other path answers
-`404` from the same `eSDK` server; `OPTIONS`/`HEAD` get `400`; a POST body is
-ignored. This is the same service the Home Assistant Family Hub integrations
-describe as the legacy local API — it is Spotify's embedded SDK, not a Samsung
-control API, and it exposes no filesystem or shell path.
+`AFH-US-KTM-24` and the `20251031` build stamp make this a **2024-model panel**
+that took the One UI 7 update. It is **not** the 2017 `SDP1406`/Tizen 3.0
+platform that the published firmware dumps describe, and not the Tizen 3.0
+"Mobile profile" the old Family Hub developer page mentions. Tizen 7.2.1 puts
+it on the same generation as 2024 TVs (Tizen 8-class web engine, Chromium
+M108-class), which is the important fact for §4.
 
-Consequence: **this device has no network foothold at all.** The TVs have SDB
-and a REST API; the fridge has neither.
+## 2. Network surface
 
-## 2. Platform
+Observed from this workstation, full 1–65535 TCP scan:
 
-Public evidence, from
-[doitaljosh/familyhub-reverse-engineering](https://github.com/doitaljosh/familyhub-reverse-engineering)
-(1st-generation panel, firmware dumped from the eMMC):
+| Item | Value |
+|---|---|
+| Open TCP ports | **17654 only** |
+| Port 17654 | Spotify **eSDK** (`Server: eSDK`) |
+| mDNS | `_spotify-connect._tcp`, `CPath=/zc/0` |
+| Absent | 26101 SDB, 26099, 8001/8002 REST, 8888, 9197, 9080; no CoAP/DTLS answer on 49152–49160 or 5683 |
 
-- Device tree: `model = "Samsung FAMHUB_7 SDP1406 SoC"`, `compatible =
-  "samsung,dtv\0samsung,sdp1406fhd"`, bootargs
-  `root=/dev/mmcblk0p12 rootfstype=ext4 ro … console=ttyS0,115200N8`.
-- Kernel source: `linux-3.10.30-famhubv1`, "based on the SDP1415 SoC (1st
-  generation)".
-- Storage: GPT, 21 partitions; rootfs is plain **ext4** with `ro`, not VDFS.
-- `/usr/bin/dotnet` is absent from that image's package list; apps live in
-  `/usr/apps` (`org.tizen.browser`, `org.tizen.glazecamera`,
-  `com.samsung.samsung-connect`, Spotify Hub, …) — a different layout from the
-  TVs' `/opt/usr/apps`.
+`GET /zc/0?action=getInfo` returns a Spotify Connect payload (`version 2.9.0`,
+`libraryVersion 3.166.72`, `deviceType SPEAKER`, `remoteName SAMSUNG FAMILY HUB
+(5BF8)`). Every other path answers `404` from the same server, `OPTIONS`/`HEAD`
+`400`. Path traversal is rejected. This is Spotify's embedded SDK, not a Samsung
+control API; it exposes no filesystem or shell.
 
-So the panel is a Samsung **DTV** SoC with a Tizen TV–derived userspace, but a
-fridge-specific build (Tizen 3.0 at dump time; 4.0/6.0 reported since). Two
-things follow: the SoC family is one this repo already knows from the TV side,
-and the filesystem is friendlier (ext4, writable once you have root), but the
-service layout and packaging are not the TVs'.
+**No network foothold exists.** Unlike the TVs, there is no SDB listener to
+attack and no REST API to read state from. Anything that gets in has to arrive
+through the panel itself: the browser, the service menus, or the USB port.
 
-**Unverified:** which generation this particular unit is. It is not on the
-1st-gen `SDP1406` unless it is a 2017–2020 model. `Settings > About Family Hub`
-shows the software version; the Developer Mode screen (§3) has `eMMC
-Information`. Both need someone at the panel.
+## 3. Service menus
 
-## 3. Getting into the service menus
+Found by [u/doitaljosh](https://www.reddit.com/r/appliancerepair/comments/rfvwdg/)
+disassembling the Fridge Manager binary, on the 2021-era build. Both start in
+**Fridge Manager** by tapping the two top corners of the title bar, A =
+top-left, B = top-right:
 
-From [u/doitaljosh](https://www.reddit.com/r/appliancerepair/comments/rfvwdg/),
-who found them by disassembling the Fridge Manager binary:
+- **Engineer Mode** — `ABABAB`. No password. Fridge/Function tests, System
+  Information, Static IP, **File Transfer**.
+- **Developer Mode** — `ABAAAB`, then a password. Fridge Function Test, OTN,
+  LCD Always On, Silent Reboot, Factory Mode, Micom, Touch/Audio Version, Voice
+  Engineering Mode, **eMMC Information**, **Dump History Tracer Log**, Fridge
+  Manager Setting, **Web View**, Voice Developer, KPI Logger (SSM) Server,
+  White Balance, Geocoding Enable Server, Cloud Service, FKP Server, SES Update
+  Client, **Tizen Store Server**, Video Test, CPU Temp, Reset Location, Reset,
+  Virtual Micom, Screen Power Manager.
+- **Rescue Mode** — hold Recent Apps/Home 10 s: factory reset, filesystem
+  repair, firmware upgrade.
 
-Both start in **Fridge Manager** by tapping the two top corners of the title
-bar, with A = top-left and B = top-right.
+Password history (**reported by commenters, not verified here**): `1122` until
+the July 2023 update; the pad became an alphanumeric keyboard and nothing
+public surfaced for ~2 years; `tizenreflcd1!` reported working from 2025-10
+with many independent confirmations, apparently given out by Samsung support.
+Some late-2026 units reject both. One UI 7 may have changed this again.
 
-**Engineer Mode** — `ABABAB` (six alternating taps). No password. Gives
-Fridge/Function tests, System Information, Static IP, **File Transfer**.
+This is a **service/diagnostic menu, not the TV's developer-mode dialog**: no
+"Host PC IP" field, and public reports agree SDB stays closed. doitaljosh:
+*"a script exists that accomplishes enabling SDB for development builds, but it
+must be run as root."*
 
-**Developer Mode** — `ABAAAB` (A, B, then A three times, then B), then a
-password. Gives: Fridge Function Test, OTN, LCD Always On,
-Silent Reboot, Factory Mode, Micom, Touch/Audio Version, Voice Engineering
-Mode, **eMMC Information**, **Dump History Tracer Log**, Fridge Manager
-Setting, **Web View**, Voice Developer, KPI Logger (SSM) Server, White Balance,
-Geocoding Enable Server, Cloud Service, FKP Server, SES Update Client,
-**Tizen Store Server**, Video Test, CPU Temp, Reset Location, Reset, Virtual
-Micom, Screen Power Manager.
+## 4. Root routes, and the one that is not hardware
 
-**Rescue Mode** — hold Recent Apps / Home for 10 s (physical or on-screen), the
-unit reboots into a menu with factory reset, filesystem repair, firmware
-upgrade.
+**There is a published non-hardware route class. It has not been demonstrated
+on a fridge.** The chain is: get code execution inside the panel's browser, then
+escalate with a world-writable vendor driver. Both halves are public.
 
-Password history, all *reported by commenters*, none verified here:
+**4.1 Browser foothold.** The panel ships `org.tizen.browser` (the TV's Tizen
+browser; present since the 2017 image and still the fridge's Internet app). The
+Tizen browser is a frozen Chromium: 2024-era Tizen devices ship M108-class, and
+Samsung does not update the engine between firmware releases. That is old
+enough that a public V8 exploit commonly lands. Demonstrated on TVs:
 
-| Build | Password | Status |
-|---|---|---|
-| before the July 2023 update | `1122` | worked; numeric pad |
-| July 2023 onward | alphanumeric keyboard instead of a pad | nobody published one for ~2 years |
-| reported 2025-10 onward, many independent confirmations | `tizenreflcd1!` | stated to come from Samsung support; some late-2026 units reject it |
+- Synacktiv, Q60T (2021): CVE-2020-6383 V8 type confusion → code execution in
+  `efl_webprocess` as `uid=5001`, label `User::Pkg::org.tizen.browser`.
+  https://github.com/synacktiv/samsung-q60t-exploit
+- Alejandro Parodi (2026): a V8 RCE on a Samsung TV browser with no ADB and no
+  hardware access, ARM32 ROP → reverse shell.
+  https://hdbreaker.github.io/blog/samsung-tv-v8-rce-rop-reverse-shell/
 
-Note the menu contents: this Developer Mode is a **service/diagnostic menu**. It
-does not have the TV's "Developer Mode = On, Host PC IP" dialog, and public
-reports agree that SDB stays closed: *"a script exists that accomplishes
-enabling SDB for development builds, but it must be run as root"* (doitaljosh).
-No one has published a fridge dev-mode path to SDB.
+The delivery is the ordinary browser: the panel has an Internet app and a
+`Web View` entry in Developer Mode, so a URL is enough. This is the non-hardware
+way in.
 
-## 4. Root routes that exist
+**4.2 Escalation.** Two public primitives, both from the browser's `uid=5001`
+context:
 
-| Route | Evidence | Applies here? |
-|---|---|---|
-| **Hardware: eMMC in-circuit + UART** | doitaljosh soldered CLK/CMD/DAT on the flash chip, modified the ext4 rootfs, changed the root password, then had a root shell on the `CN9` UART console. Full dump + GPT published. | Only proven route. Requires opening the door panel. |
-| **UART console, `CN9`** | Pinout published: pin 12 `UART0_TXD`, 13 `UART0_RXD`, 1/14 `GND`, 15 `5V5`; bootargs `console=ttyS0,115200N8`. `CN10` is the Micom debug header. | Login only works with the root password, which is why the eMMC edit comes first. |
-| **SamyGO `uepkiller.sh`** | Named by doitaljosh as the way to defeat UEP so unsigned binaries run, after root. | Technique transfers; no fridge-specific package. |
-| Network exploit | none published. 17654 was a Mongoose 6.6 server on Tizen 3.0 (2018 report); on this unit it is Spotify eSDK, and the old `.krate/...` paths return 404. | No. |
+- `/dev/sdp_mem` — world-writable, `SECLABEL "*"`, and `sdp_mem_mmap()` passes
+  the user's `vm_pgoff` to `remap_pfn_range` with no bounds check: arbitrary
+  physical R/W. Synacktiv used it to clear `s_uepStatus` (so unsigned binaries
+  run), rewrite `poweroff_cmd`, and point a `/proc` read handler at
+  `__orderly_poweroff()` to get command execution as root.
+- `/dev/ntksys` — `MODE="0666", SECLABEL{smack}="*"`. `SET_MEM_INFO` stores a
+  user-supplied physical base and size, then `mmap` remaps that PFN verbatim.
+  Calif's 2026 write-up uses it to scan RAM for the browser's `struct cred` and
+  zero the UID/GID fields — data-only root, no ROP, no shellcode, and it
+  survives UEP because nothing new is executed from disk.
+  https://github.com/califio/publications/blob/main/MADBugs/samsung-tv/writeup.md
 
-**There is no public root kit for the Family Hub.** Searches for one return the
-TV kits, the 2019 hardware dump, and the service-menu passwords. Nothing else.
+Both are Novatek/Samsung DTV-platform drivers and both were found on TVs, not on
+a fridge. **Whether this panel exposes `sdp_mem`/`ntksys` with the same
+permissions is unverified**; it is the single question that decides whether the
+non-hardware route works here.
+
+**4.3 Hardware route** (the only one actually proven on a fridge, and only on
+the 2017 generation): eMMC in-circuit read/write plus UART on `CN9` (pins 12
+`UART0_TXD`, 13 `UART0_RXD`, 115200). doitaljosh soldered CLK/CMD/DAT, edited
+the ext4 rootfs, changed the root password, and got a root shell. That unit's
+rootfs was ext4; this 2024 unit's is more likely VDFS, which changes the recipe.
+`CN9` on a 2024 board is also not the 2017 pinout until someone checks.
 
 ## 5. Does the TV code work here?
 
-No. Every tool in this repo starts at SDB, and the fridge has no SDB.
+No, as written. All of it starts at SDB, and the fridge has no SDB.
 
 | Component | Requires | Status |
 |---|---|---|
-| `tv/root.py` (probe, exec, boot, hooks) | SDB 26101, or the daemon/channel | unusable |
-| `tv/devices.py`, `.local/devices.toml` | SDB/SSDP identity via REST 8001 | unusable (and it stores MACs/uuids — the fridge would need `.local`) |
-| `tv/cftv.py`, `apps/cftv.cs` | the vendor `.NET` runtime in `/opt/usr/apps`, borrowed app slot | unusable; no `dotnet`, different app paths |
-| `apps/chattr.cs` | VDFS + `FS_IMMUTABLE_FL` | irrelevant; rootfs is ext4 |
-| `payload/parseinfo.awk` + boot chain | `AT-HUB.service` → `/opt/etc/parseinfo.sh`, VDFS `/opt` | unusable; no such unit or layout |
-| `payload/on-boot.d/*`, `40-debloat` | hook runner + `buxton2ctl` + `pkgcmd` | unusable; different service manager and package DB |
-| `vendor/samsung-tv-root-source` (archive-root) | SDB package-name injection, `.NET` 3.1/6, `sdbd-tarlauncher` | unusable; foothold does not exist |
-| `docs/reference/tiz0wn`, `quiet-tizen` | same TV Tizen stack | unusable |
+| `tv/root.py`, `tv/chan.py`, `tv/cftv.py` | SDB 26101 / channel / daemon | unusable |
+| `payload/parseinfo.awk`, `payload/on-boot.d/*` | `AT-HUB.service`, VDFS `/opt`, `buxton2ctl`, `pkgcmd` | unusable |
+| `vendor/samsung-tv-root-source` | SDB package-name injection, `sdbd-tarlauncher` | unusable; foothold absent |
+| `apps/cftv.cs`, `apps/chattr.cs` | vendor `.NET`, VDFS immutable flag | unusable |
 
-What does carry over is the *method*, not the code: find an interpreter the
-vendor's UEP policy does not hook, get it run as root by a boot-time unit, keep
-the payload on a writable partition. That is `persistent-root.md`'s lesson and
-it should transfer to a fridge build — but only after root, which is the wall.
+What transfers is the **escalation half**, not the entry half. `sdp_mem` and
+`ntksys` are the same driver family as on the TVs, so a payload written for
+either should work unchanged *if* the nodes are present with the same
+permissions — a static ARMv7 binary through `memfd` to beat UEP. The entry half
+(browser exploit) and the persistence half (nothing in this repo applies) are
+both new work.
 
 ## 6. Next steps, cheapest first
 
-1. **Read the model and software version** at the panel: `Settings > About
-   Family Hub`. That decides whether this is the dumped 1st-gen platform or a
-   newer one, and therefore whether the published device tree and kernel source
-   describe it.
-2. **Try Developer Mode** (`ABAAAB`, then `tizenreflcd1!`, else `1122`).
-   Read `eMMC Information` and `System Information`. Confirm whether anything
-   there opens a network service — check for 26101 afterwards.
-3. **Try the Engineer Mode File Transfer / Web View**, which are the only
-   non-hardware surfaces that might move a file onto the panel.
-4. **Hardware only if 1–3 fail**: open the door panel, find `CN9`, and follow
-   the eMMC route. Read-only dump first; the rootfs edit is what makes the UART
-   login useful.
+1. **Developer Mode at the panel**: `ABAAAB`, try `tizenreflcd1!`, then `1122`.
+   Report what the password prompt looks like (pad vs keyboard) and whether
+   `Web View`, `eMMC Information` and `Tizen Store Server` are present. That
+   tells us whether the One UI 7 build kept the 2021 menu.
+2. **From this workstation**: watch for 26101/8001 while that menu is open
+   (`nc -z -w2 $FRIDGE_IP 26101`). If SDB appears, the whole TV toolchain
+   becomes usable and this doc gets much shorter.
+3. **Enumerate devices from the browser** if the panel's browser can be pointed
+   at an HTTP server: a probe page that fetches `file://`/`/proc` paths tells us
+   the engine version (from the User-Agent) and whether the driver nodes are
+   visible. No code execution needed to learn the browser build.
+4. **Decide route**: if `sdp_mem`/`ntksys` are present and world-writable, the
+   public escalation is the non-hardware path and is worth porting. If they are
+   not, the honest answer is hardware again.
 
-Do not run the TV payload against this device. Nothing in it is written for a
-fridge, and `boot install` targets paths that do not exist there.
+Do not run the TV payload against this device. `boot install` targets paths that
+do not exist on it.
