@@ -30,10 +30,9 @@ CVE-2020-6383 (Synacktiv's Q60T bug, fixed M80) and CVE-2020-6418 are dead on
 this device. My earlier note that the panel was older than the Q60T was wrong;
 it is years newer.
 
-The upper bound is unresolved. `AbortSignal.timeout` is the highest milestone
-confirmed, so the engine is somewhere in **M103–M109** unless a later feature
-tests true. That range matters: CVE-2022-4262 (V8 type confusion, exploited in
-the wild, fixed in `108.0.5359.94`) falls inside it.
+The upper bound is now pinned too (§3b): M103 true, M110 false. The engine is
+**Chromium 103–109**, and CVE-2022-4262 (V8 type confusion, exploited in the
+wild, fixed in `108.0.5359.94`) falls inside that window.
 
 ## 2. The User-Agent is a configurable lie
 
@@ -72,12 +71,62 @@ loopback service and cannot read local files. That closes the cheap
 "read `/proc` from the browser" route to the driver question.
 
 Other observed properties: `hardwareConcurrency = 4`, `screen 540x960 @24`,
-`devicePixelRatio 2`, `maxTouchPoints 0`, `WebGL2 = false`,
-`SharedArrayBuffer = undefined`, timezone `CST6CDT`.
+`devicePixelRatio 2`, `maxTouchPoints 0`, `WebGL2 = false`, timezone
+`CST6CDT`.
 
-`WebGL2` off and `SharedArrayBuffer` absent mean a reduced attack surface: the
-usual GPU- and wasm-thread-based primitives are unavailable, so a V8 exploit
-here would have to be pure JS-heap work.
+**Correction:** an earlier run reported `SharedArrayBuffer = undefined` and I
+read that as a capability limit on the panel. That was my own bug — every
+Chromium hides `SharedArrayBuffer` unless the page is cross-origin isolated with
+`Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp`. The probe now sends both, so the
+next run measures the engine rather than the page's headers.
+
+## 2b. The Android UA changes nothing
+
+The Web View offers a second User-Agent (Android). Loading the probe under it
+produced an **identical feature table** — same milestones true, same ones false —
+and only the UA string and `appVersion` changed:
+
+```
+Mozilla/5.0 (Linux; U; Android 2.2.1; en-us; ADR6400L 4G Build/FRG83D)
+  AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1
+```
+
+`vendor` stayed `Google Inc.`, `product` stayed `Gecko`, `platform` stayed
+`Linux armv7l`. This is the control experiment that settles it: the UA is an
+app-level setting with no effect on the engine. It changes only what remote
+sites serve.
+
+`WebGL2` is off, so the GPU-backed primitives are unavailable; any V8 work here
+has to be pure JS-heap. `WebGL1` availability is now measured separately.
+
+## 3b. The version window
+
+| milestone | present |
+|---|---|
+| M98 `structuredClone` | yes |
+| M103 `AbortSignal.timeout` | **yes** |
+| M110 `Array.toSorted` / `.with` / `.toReversed` | **no** |
+| M112 RegExp `v` flag | no |
+| M117+ (`Object.groupBy`, `Promise.withResolvers`, `URL.canParse`, …) | no |
+| M90 `navigator.userAgentData` | absent |
+
+So the engine is **Chromium 103 through 109**, inclusive. That is a hard floor
+and a hard ceiling from two independent runs.
+
+The version's consequence:
+
+- Everything fixed at or below M102 is patched: CVE-2020-6383, CVE-2020-6418 and
+  the whole 2019–2021 V8 corpus are dead here.
+- **CVE-2022-4262** (V8 type confusion, exploited in the wild, fixed in
+  `108.0.5359.94`) falls **inside** the window. So do the other V8 fixes in
+  M103–M109.
+- Anything fixed in M110 or later is patched.
+
+`navigator.userAgentData` being absent is a small oddity: Chromium shipped it in
+M90, so an engine at M103+ should have it. Either Samsung compiled it out of this
+Web View, or the Web View is not a stock Chromium build. Treat that as an open
+question rather than a contradiction.
 
 ## 4. What the probe does not answer
 

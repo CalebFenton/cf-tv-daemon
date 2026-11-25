@@ -77,6 +77,12 @@ function collect() {
     'findLast (m97)': typeof [].findLast,
     'structuredClone (m98)': typeof structuredClone,
     'AbortSignal.timeout (m103)': typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout,
+    'HTMLScriptElement.supports (m105)': typeof HTMLScriptElement !== 'undefined' && typeof HTMLScriptElement.supports,
+    'CSS :has() (m105)': CSS.supports('selector(:has(a))'),
+    'Intl.NumberFormat.formatRange (m106)': (() => {
+      try { return typeof new Intl.NumberFormat().formatRange === 'function'; } catch(e) { return false; }
+    })(),
+    'Array.toSpliced (m110)': typeof [].toSpliced,
     'Array.toSorted (m110)': typeof [].toSorted,
     'Array.with (m110)': typeof [].with,
     'RegExp v-flag (m112)': (() => { try { new RegExp('[a]', 'v'); return true } catch(e) { return false } })(),
@@ -96,6 +102,23 @@ function collect() {
     'chrome.runtime': typeof window.chrome === 'object' && typeof window.chrome.runtime,
     'webkitURL': typeof webkitURL,
     'CSS.supports(-webkit-appearance)': CSS.supports('-webkit-appearance', 'none'),
+    // Isolation-dependent capabilities. Both need COOP+COEP, which the server
+    // now sends, so a `false` here is the engine refusing, not the page.
+    'crossOriginIsolated': typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated,
+    'SharedArrayBuffer': typeof SharedArrayBuffer,
+    'Atomics (needs SAB)': typeof Atomics,
+    'WebGL2': (() => { try { return !!document.createElement('canvas').getContext('webgl2'); } catch(e) { return false; } })(),
+    'WebGL1': (() => { try { return !!document.createElement('canvas').getContext('webgl'); } catch(e) { return false; } })(),
+    'OffscreenCanvas': typeof OffscreenCanvas,
+    'Wasm.simd (m91)': (() => {
+      try {
+        return WebAssembly.validate(new Uint8Array([
+          0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]));
+      } catch(e) { return false; }
+    })(),
+    'Wasm.exceptions (m95)': (() => {
+      try { return WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,4,1,96,0,0])); } catch(e) { return false; }
+    })(),
   };
   for (const [k, v] of Object.entries(feats)) add(document.getElementById('t'), k, v);
   for (const k of Object.keys(facts)) delete facts[k];
@@ -192,9 +215,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _send(self, code: int, body: bytes, ctype: str = "text/html; charset=utf-8"):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
-        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Content-Length", len(body))
         self.send_header("Cache-Control", "no-store")
         self.send_header("Access-Control-Allow-Origin", "*")
+        # Cross-origin isolation: without these two, SharedArrayBuffer is
+        # undefined in every Chromium. With them, the engine exposes it, which
+        # is what a V8 heap exploit usually wants.
+        self.send_header("Cross-Origin-Opener-Policy", "same-origin")
+        self.send_header("Cross-Origin-Embedder-Policy", "require-corp")
         self.end_headers()
         self.wfile.write(body)
 
