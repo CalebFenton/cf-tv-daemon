@@ -2,14 +2,39 @@
 
 Ad, ACR/context, voice and "smart extras" components were disabled on
 2026-10-22 with three vendor mechanisms (stop-markers, the app registry, vconf
-preferences) plus one WAS cache edit. All of it is still in effect. Method and
-app groups follow [jss8649/quiet-tizen](https://github.com/jss8649/quiet-tizen)
+preferences) plus one WAS cache edit. Since 2026-11-25 the `40-debloat` hook
+keeps the markers, apps and preferences applied (§ Drift and the hook).
+Method and app groups follow [jss8649/quiet-tizen](https://github.com/jss8649/quiet-tizen)
 (UN75U8000FFXZA, same access route), restricted to IDs in its profile
 `profiles/un75u8000ffxza-1300.9.json`.
 
 Not disabled: `contents-recognition-service` (Samsung's ACR frame grabber) is
 still running; it has no marker and no registry entry. See
 `docs/04-system/acr-telemetry.md`.
+
+## Drift and the hook (2026-11-25)
+
+Found on 2026-11-25: Samsung had undone part of it. The `pisa-service` marker
+was gone, `com.samsung.tv.pisa-service`, `com.samsung.tv.adagent-service` and
+`org.tizen.pisa-control-service` were enabled again (`app_disable='false'`,
+36 of 39 left), and `pisa-service`/`adagent-service` were running
+(`pisa-service` since 2026-11-23 19:02). The same pattern as a vendor package
+update on the CU7000 (`docs/04-system/debloat-cu7000.md` §B). Everything else
+below still held.
+
+`payload/debloat/qn85d.list` now lists the 9 markers, the 39 app ids (identical
+to the ids in the two on-TV restore scripts) and the 3 preferences;
+`payload/on-boot.d/40-debloat` re-applies them on boot, at uptime 300 s and on
+every wake (`payload/README.md`). Its first run re-created the marker, stopped
+both units and disabled the 3 apps (39 of 39). The hook disables with
+`pkgcmd -D`, which sets `app_disable` only; the 3 re-disabled apps keep
+`app_onboot`/`app_autorestart` as the update left them.
+
+That first run also disabled `org.tizen.stt-client`, never part of this
+debloat: the hook then matched each id as an app id *or* a package name, and
+`org.tizen.voice-client` is both. It was re-enabled with `pkgcmd -A` (flags
+back to the baseline `false|false|false`), and the list format now separates
+`app ID` (exactly that app) from `pkg ID` (the whole package).
 
 ## Current state (verified 2026-10-24 unless marked)
 

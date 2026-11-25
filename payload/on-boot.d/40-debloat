@@ -16,8 +16,8 @@ db=/opt/dbspace/.pkgmgr_parser.db
 
 apply() {
   # Not `name`: say() reads the runner's $name (the hook's file name).
-  local kind arg rest unit ids q id cur
-  ids=
+  local kind arg rest unit apps pkgs id cur
+  apps="''"; pkgs="''"   # SQL lists; '' matches nothing
   while read -r kind arg rest; do
     case $kind in
       marker)
@@ -26,7 +26,8 @@ apply() {
         for unit in $rest; do systemctl stop --no-block "$unit.service"; done
         say "marker $arg re-created; stopped $rest"
         ;;
-      app) ids="$ids '$arg',";;
+      app) apps="$apps,'$arg'";;
+      pkg) pkgs="$pkgs,'$arg'";;
       vconf)
         set -- $rest   # KEY VALUE; $arg is the type
         cur=$(vconftool get "$1" 2>/dev/null); cur=${cur#*= }; cur=${cur% (*}
@@ -36,10 +37,9 @@ apply() {
         ;;
     esac
   done < "$list"
-  [ -n "$ids" ] || return
-  q=${ids%,}
-  for id in $(sqlite3 "$db" "select app_id from package_app_info
-      where app_disable = 'false' and (app_id in ($q) or package in ($q));"); do
+  [ "$apps$pkgs" = "''''" ] && return
+  for id in $(sqlite3 "$db" "select app_id from package_app_info where app_disable = 'false'
+      and (app_id in ($apps) or app_id in ($pkgs) or package in ($pkgs));"); do
     if pkgcmd -D -t app -n "$id" --global 2>&1 | grep -q 'key\[end\] val\[ok\]'; then
       say "app $id disabled"
     else

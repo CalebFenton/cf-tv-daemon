@@ -1,0 +1,69 @@
+# What payload/on-boot.d/40-debloat keeps disabled on the QN85D: the debloat of
+# 2026-10-22 (docs/04-system/debloat.md), nothing added. Selected per TV by
+# `debloat = "qn85d"` in devices.toml; format in cu7000.list.
+#
+# Not here: the WAS preload cache edit (a database field, not a marker, app or
+# vconf key) and contents-recognition-service (no marker, no registry entry).
+
+# Ads, viewing information (ACR), analytics
+marker pisa-service pisa-service adagent-service
+marker canalysis-daemon canalysis-service
+app com.samsung.tizen.samsung-analytics
+app com.samsung.tv.acr
+app com.samsung.tv.canalysis-service
+app com.samsung.tv.contents-recognition-dbmgr
+app com.samsung.tv.adagent-service
+app com.samsung.tv.pisa-service
+app org.tizen.pisa-control-service
+app com.samsung.tv.targeted-ad-service
+app yL49PNFmjW.PromotionApp
+app yL49PNFmjW.service
+
+# Context suggestions
+marker com.samsung.tv.context-aware-agent com.samsung.tv.context-aware-agent
+marker com.samsung.tv.context-aware-service com.samsung.tv.context-aware-service
+app com.samsung.tv.context-aware-agent
+app com.samsung.tv.context-aware-agent-toast-view
+app com.samsung.tv.context-aware-grab-control
+app com.samsung.tv.context-aware-server-requester
+app com.samsung.tv.context-aware-service
+app content-grab-service
+
+# Voice: Bixby, Alexa, wake words, suggestions
+marker org.tizen.voice-app org.tizen.voice-app
+marker com.samsung.tv.ondevice-voice com.samsung.tv.ondevice-voice
+marker com.samsung.tv.ghdaemon com.samsung.tv.ghdaemon
+app com.samsung.tv.alexa-client
+app com.samsung.tv.alexa-fullscreen-app
+app com.samsung.tv.bixby-context-client
+app com.samsung.tv.bixby-prov
+app com.samsung.tv.bixbycapsuleviewer
+app com.samsung.tv.ghdaemon
+app com.samsung.tv.mybixby
+app com.samsung.tv.ondevice-voice
+app com.samsung.tv.utterance-recommender-app
+app com.samsung.tv.utterance-recommender-core
+app com.samsung.tv.vif
+app com.samsung.tv.voiceassistant-music
+app com.samsung.tv.wakeup-engine-alexa
+app com.samsung.tv.wakeup-engine-bixby
+app org.tizen.voice-app
+app org.tizen.voice-app-service
+app org.tizen.voice-client
+app org.tizen.voice-onboarding
+vconf bool db/si_service/voice_recog_enable 0
+vconf bool db/multi-assistant/prelaunch_mode 0
+
+# Samsung Health
+marker samsunghealth-service-tv samsunghealth-service-tv samsunghealth-service-tv-dbus-activation samsunghealth-service-tv-path-activation
+app samsunghealth-service-tv
+
+# Other unused Samsung extras
+marker slive-provider-daemon slive-provider-daemon
+app com.samsung.tizen.smartthings-client
+app com.samsung.tv.adplayer
+app com.samsung.tv.aov-dashboard
+app com.samsung.tv.ghservice
+
+# Samsung TV Plus does not start by itself
+vconf bool db/menu/autorun_tv_plus 0
