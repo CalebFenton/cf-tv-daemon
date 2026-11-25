@@ -44,6 +44,7 @@ records and may be out of date.
 |---|---|
 | `device.md` | identity, storage, network, ports, power, developer mode (QN85D) |
 | `device-cu7000.md` | the second TV, CU7000: identity, the archive-root result, how its boot payload differs |
+| `device-familyhub.md` | third Tizen device, a Family Hub fridge: one open port, service-menu entry methods and passwords, the only proven root route (hardware), why no repo code applies |
 | `devices.md` | naming several TVs, `tv/devices.py`, `devices.toml`, finding a TV after a DHCP move |
 | `control.md` | keys, the key-to-app table, volume, TTS, audio output routing, Voice Guide |
 | `bluetooth.md` | speaker requests and function numbers, the `50-btconnect` hook, routing, the power-loss root cause, bt-service's own log (dlog) |
