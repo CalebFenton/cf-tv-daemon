@@ -15,17 +15,18 @@
 #    no capabilities and are locked out. Each command runs in a detached shell,
 #    so the loop keeps accepting work while commands run.
 #
-# 2. Events. On the first start after a boot, and on every wake from suspend,
-#    cf_tv_hooks.sh runs each file in /opt/cf_tv_daemon/on-boot.d/ or on-wake.d/,
-#    detached. New behaviour belongs in a hook, not here: this file is the root
-#    lifeline, and a broken daemon means falling back to the exploit.
+# 2. Events. On the first start after a boot, and every time the screen comes
+#    on, cf_tv_hooks.sh runs each file in /opt/cf_tv_daemon/on-boot.d/ or
+#    on-wake.d/, detached. New behaviour belongs in a hook, not here: this file
+#    is the root lifeline, and a broken daemon means falling back to the exploit.
 #
-#    Wake detection: the remote's power button suspends the kernel. Processes
-#    survive and boot hooks do not rerun, so a wake is visible only as a jump
-#    in (wall clock - CLOCK_MONOTONIC): the monotonic clock stops while
-#    suspended, the wall clock does not. Not /proc/uptime: on kernel 5.4 (the
-#    CU7000) it is CLOCK_BOOTTIME, which counts suspended time, so no wake was
-#    ever seen there (2026-11-25: 3 suspends, 0 wake events).
+#    Wake detection: the remote's power button does not reboot. A short "off"
+#    only blanks the screen; a longer one also suspends the kernel. Either way
+#    processes survive and boot hooks do not rerun. deviced's power state,
+#    memory/pm/state (1 on, 3 screen off, 4 standby), goes 4 -> 1 in both cases
+#    (2026-11-25, CU7000: an off/on with no kernel suspend). Earlier versions
+#    looked for a jump in wall clock minus uptime, which needs a suspend, and
+#    /proc/uptime counts suspended time on kernel 5.4: no wake was ever seen there.
 
 BEGIN{
   RUN="/opt/cf_tv_daemon/state"; REQ=RUN "/req"; OUT=RUN "/out"; RC=RUN "/rc"
@@ -33,7 +34,7 @@ BEGIN{
   DAEMONLOG="/opt/cf_tv_daemon.log"
   LOCK=RUN "/.lock"; PIDF=RUN "/daemon.pid"; BOOTF=RUN "/boot_id"
   HOOKS="/opt/cf_tv_daemon/cf_tv_hooks.sh"
-  WAKE_JUMP=3    # seconds suspended that count as a wake; both clocks are read in whole seconds
+  PM_EVERY=10    # loops (of 0.2 s) between power-state reads; one buxton2ctl read is ~26 ms
 
   system("mkdir -p " REQ " " OUT " " RC " " STAGE " " LOCKS)
   # Under systemd-run there is no shell to redirect output, so open the log here.
@@ -87,7 +88,7 @@ BEGIN{
   # a boot, so years of boots. Plain text on purpose: /opt has ~500 MB free.
   system("[ \"$(wc -c < " DAEMONLOG ")\" -gt 262144 ] && tail -c 131072 " DAEMONLOG " > " DAEMONLOG ".tmp && mv " DAEMONLOG ".tmp " DAEMONLOG)
 
-  last = offset()
+  pm = power_state(); loops = 0
   while (1) {
     system("ls " REQ " > " RUN "/.list 2>/dev/null")
     while ((getline name < (RUN "/.list")) > 0) {
@@ -110,15 +111,14 @@ BEGIN{
     close(RUN "/.list")
     system("rm -f " RUN "/.list")
 
-    # At boot the clock reads 1969 until time sync; that jump is the clock
-    # being set, not a suspend (observed: "suspended ~1792805790s").
-    off = offset()
-    if (last < 1000000000 && off >= 1000000000) note("clock set")
-    else if (off - last > WAKE_JUMP) {
-      note("wake, suspended ~" (off - last) "s")
-      event("wake")
+    if (++loops % PM_EVERY == 0) {
+      now = power_state()
+      if (now == 1 && (pm == 3 || pm == 4)) {
+        note("wake, power state " pm " -> 1")
+        event("wake")
+      }
+      if (now != "") pm = now
     }
-    last = off
 
     # Heartbeat. Clients cannot rely on the pid file or the directory existing:
     # both survive a reboot, so their presence does NOT mean a daemon is alive.
@@ -135,18 +135,12 @@ function event(name) {
   system("( CF_EVENT=" name "; eval \"$(< " HOOKS ")\" ) >/dev/null 2>&1 &")
 }
 
-# CLOCK_MONOTONIC in whole seconds: the `now at <ns> nsecs` line of
-# /proc/timer_list, on kernels 4.1 and 5.4 alike (~0.7 ms a read on the CU7000).
-function monotonic(   line, f) {
-  while ((getline line < "/proc/timer_list") > 0)
-    if (line ~ /^now at /) { split(line, f, " "); break }
-  close("/proc/timer_list")
-  return int(f[3] / 1000000000)
-}
-
-# Wall clock minus monotonic. Constant while running, grows by the time suspended.
-function offset() {
-  return systime() - monotonic()
+# deviced's power state: 1 on, 3 screen off, 4 standby; "" if unreadable.
+function power_state(   cmd, line, n, f) {
+  cmd = "buxton2ctl get memory memory/pm/state 2>/dev/null"
+  line = ""; cmd | getline line; close(cmd)
+  n = split(line, f, " ")
+  return (n && f[n] ~ /^[0-9]+$/) ? f[n] + 0 : ""
 }
 
 function note(msg) {

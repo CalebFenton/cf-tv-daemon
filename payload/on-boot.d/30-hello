@@ -29,7 +29,7 @@ if [ "$CF_EVENT" = boot ]; then
 fi
 sleep 2
 
-if ! cmp -s "$hello" "$media"; then
+if [ "$(md5sum < "$hello")" != "$(md5sum < "$media" 2>/dev/null)" ]; then  # no cmp on the TV
   mkdir -p "$q/media" && cp "$hello" "$media" &&
     chown 5001:5001 "$media" && chmod 644 "$media" && chsmack -a "User::Pkg::$app" "$media"
 fi

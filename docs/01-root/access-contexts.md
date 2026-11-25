@@ -132,7 +132,7 @@ Fixed 2026-10-24; such an exit is now logged in `/opt/cf_tv_daemon.log`.
 | event | raised |
 |---|---|
 | `boot` | once per boot: the daemon compares `/proc/sys/kernel/random/boot_id` with `/opt/cf_tv_daemon/state/boot_id`, so a daemon restart (e.g. by `boot install`) does not rerun boot hooks |
-| `wake` | when (wall clock − CLOCK_MONOTONIC, read from `/proc/timer_list`) grows by more than 3 s between two loops (§5). Not `/proc/uptime`: on kernel 5.4 (CU7000) that counts suspended time, so wakes went unseen until 2026-11-25. The jump when the clock is first set after boot (1969 → real time) is logged as `clock set`, not as a wake |
+| `wake` | when deviced's power state `memory/pm/state` goes from 3 (screen off) or 4 (standby) to 1 (on), read every 2 s with `buxton2ctl` (~26 ms a read). Until 2026-11-25 this was a jump in wall clock minus uptime, which needs a kernel suspend: a short off/on blanks the screen without one, and on kernel 5.4 (CU7000) `/proc/uptime` counts suspended time anyway, so no wake was ever seen there |
 
 On an event the daemon runs the hook runner `/opt/cf_tv_daemon/cf_tv_hooks.sh`
 detached, which runs the files in `/opt/cf_tv_daemon/on-boot.d/` or `on-wake.d/`
@@ -193,11 +193,12 @@ tv/root.py boot restore   # vendor parseinfo.sh back; run before a firmware upda
 
 ## 5. Suspend, not shutdown
 
-With `db/boot/instant_on = 1`, the remote's power button **suspends** the kernel
-(`/sys/power/state`: `freeze mem`). Processes, including the daemon, survive.
-Boot hooks run only after a real power loss or reboot; anything meant to happen
-"when the TV turns on" needs a wake trigger: the daemon's `wake` event (§3),
-detected as a jump in wall-clock minus the monotonic clock.
+With `db/boot/instant_on = 1`, the remote's power button does not shut down. A
+short "off" only blanks the screen (`memory/pm/state` 1 → 4, kernel still
+running; CU7000 2026-11-25); a longer standby also suspends the kernel
+(`/sys/power/state`: `freeze mem`). Either way processes, including the daemon,
+survive. Boot hooks run only after a real power loss or reboot; anything meant
+to happen "when the TV turns on" needs the daemon's `wake` event (§3).
 
 Related clock facts:
 - The wall clock reads 1969 at boot until time sync.
