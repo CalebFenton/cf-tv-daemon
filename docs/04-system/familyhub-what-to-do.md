@@ -123,3 +123,90 @@ Only two things, and only one is physical:
 Item 2 decides whether the last three hours of "no response" is a property of the
 fridge or of this machine. Until it is settled, every conclusion about the
 fridge's silence is provisional, and I should stop building on it.
+
+## 5. Why this host is not the problem — measured, not argued
+
+I had hypothesised that this machine's Docker bridges might be dropping the
+reply. **That is now disproved**, by three tests.
+
+**Test 1 — a UDP round trip to the device works.** The fridge's own Spotify eSDK
+on TCP 17654 answers, and ICMP to the host succeeds. The path is fine.
+
+**Test 2 — closed ports generate ICMP port-unreachable.** If a firewall were
+dropping UDP, every port would look silent. It does not:
+
+| port | response |
+|---|---|
+| 21, 123, 1900, 5355, 9999, 17654 | `ICMP port-unreachable` → closed, host reachable |
+| 49152, 49154, 49155, 49160 | `ICMP port-unreachable` → closed |
+| **53, 5353, 5683, 5684** | **silent** |
+
+So the kernel on the device is replying to unreachable ports normally. Only four
+specific ports are silent.
+
+**Test 3 — it reproduces.** Three trials, same answer every time:
+
+```
+5683 : ['SILENT','SILENT','SILENT']
+5353 : ['SILENT','SILENT','SILENT']
+49154: ['closed','closed','closed']
+```
+
+Not a rate-limit artifact — the #213 thread explicitly warned that `open|filtered`
+results on these appliances are often an ICMP rate-limit artefact, which is why
+this was repeated rather than accepted on one pass.
+
+## 6. What that means
+
+The four silent ports are **53 (DNS), 5353 (mDNS), 5683 and 5684 (CoAP)**. That
+is not a firewall rule on this host — it is a coherent set of UDP services, and
+it is exactly the set a device would drop *if those services are not running* but
+something still swallows the packet instead of refusing it.
+
+Two readings:
+
+1. The device has a netfilter rule dropping those four ports specifically
+   (plausible: mDNS and CoAP are disabled on this build).
+2. The device is not the one answering on this address for those protocols —
+   e.g. an internal relay.
+
+Either way: **the silence is a property of the device, not of this machine.** My
+earlier advice to re-probe from another host was wrong, and the measurements
+above are why.
+
+## 7. Why most people cannot get the answer
+
+Not because of the rooted phone. The phone is one route among several, and it is
+not the common blocker. Three separate reasons, in order of how often they bite:
+
+**1. Most Family Hubs refuse the certificate.** `docs/appliance-compatibility.md`
+is explicit that a reachable endpoint is not the same as an accepted credential.
+Reported results on the same LAN, same tool:
+
+| appliance | result |
+|---|---|
+| garage fridge `TP1X_REF_21K` | self-signed leaf **accepted**, 32 entities |
+| kitchen Family Hub `26K_REF_LCD_FHUB11.0` | **`unknown_ca`** |
+
+So half the Family Hub population gets a clean "rejected" and stops there. There
+is no working client credential for that class.
+
+**2. The PSK route needs inputs nobody has published how to get.** `doxm` reports
+`oxms` and `oxmsel`, which say ownership *could* be transferred — but the key
+derivation needs the appliance's **registration serial** from the QR label and
+the **SmartThings account user ID**. Those are the private one-time inputs. The
+researcher who built this says so in the thread: *"acquisition of that input is
+still a prerequisite; the formulas below do not conjure it from public OCF data."*
+
+**3. Acquisition is deliberately out of scope for the tool.** From #435's
+decisions: *"Acquisition stays out of LocalThings, for now. We import an
+already-provisioned credential. No OTM, no ownership transitions, no
+`/oic/sec/*` writes."* That is a product decision, so the integration does not
+even attempt it. The people who have done it did it with private tooling.
+
+The README states the result plainly: **"An existing OCF credential is required;
+most owners cannot acquire one yet."**
+
+So the phone is not the barrier. The barrier is that the fridge either refuses
+the public certificate class, or requires an ownership transfer whose inputs and
+envelope are model-specific and unpublished.
