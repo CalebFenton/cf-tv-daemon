@@ -123,3 +123,67 @@ discover it after another confident wrong claim.
 > exFAT defect survives into 5.4.x because Samsung kept its out-of-tree driver.
 > See `familyhub-exfat-crosscheck.md`. The route is not blocked by the kernel
 > version; it is blocked by not having the firmware archive.
+
+## Appendix: the device's full network map, re-measured
+
+Re-measured 2026-11-26 after the user pointed out I kept tunnel-visioning on one
+CVE family instead of mapping the device.
+
+| probe | result |
+|---|---|
+| full TCP 1–65535 | **only 17654** |
+| TCP 9495, 8766, 8080, 443, 80, 8443, 49152–4, 1883, 6668, 6669, 7777, 9999, 10000 | all closed |
+| UDP 1900 (SSDP) | no answer |
+| UDP 5683 (CoAP) | no answer |
+| UDP 5355 (LLMNR) | no answer |
+| ICMP | replies, ~26 ms |
+
+Two conclusions:
+
+1. **`SmartThings` hub ports are not exposed.** The Family Hub is documented to
+   contain a SmartThings hub with Zigbee/Z-Wave radios (`/hub/data/hubcore`,
+   hubCore over ports 443/8080/8766/9495), and that stack has public CVEs
+   (CVE-2018-3926 and the Talos 20-vuln set). None of those ports answer here.
+   Whether the radio exists but is firewalled, or the appliance uses a different
+   integration, is unknown — but it is not a network-accessible surface today.
+2. The **only** remote surface remains 17654, the Spotify eSDK, which exposes
+   nothing beyond Spotify Connect.
+
+So the search should stop looking for a network entry point. There is one, and
+it is a music player.
+
+## The `Tizen Store Server` menu item, and why it is probably the entry point
+
+Developer Mode on this panel lists an item the TV equivalent does not have by
+that name: **`Tizen Store Server`**, alongside `SES Update Client`, `Cloud
+Service` and `FKP Server`. Every one of those is a URL or endpoint setting.
+
+That matters because the panel is a Tizen device with an app installer. On TVs,
+the chain that makes third-party apps installable is: developer mode + a host PC
+IP + a distributor certificate containing the device's DUID + `tizen install`.
+The Web View here has no such dialog — but a menu that lets an operator repoint
+the **store server** is the same capability expressed differently. If the panel
+will fetch and install a package from a server you name, the signing gate is the
+only thing left, and signing is a local operation given the DUID.
+
+This is a lead, not a finding. What is unknown:
+
+- whether `Tizen Store Server` accepts a URL and actually installs from it;
+- whether it checks a Samsung signature we cannot produce;
+- whether the panel's installer accepts a `.wgt`, `.tpk`, or only a vendor format.
+
+It is cheap to test and needs no exploit: change the value, watch whether the
+panel makes an outbound request we can see. Our harness already runs an HTTP
+server on this host, so a request to it would be visible in its log.
+
+## What the device is not
+
+Recorded so the search does not repeat itself:
+
+- No SmartThings hub surface (9495/8766/8080/443 all closed; no SSDP, no CoAP).
+- No SDB, in or out of Developer Mode.
+- No loopback or `file://` access from the Web View.
+- No OCF.
+- The only open port, 17654, is Spotify's eSDK.
+
+The network is not the way in. The menus and the USB port are.
