@@ -68,6 +68,7 @@ class State:
         self.tasks: list[Task] = []
         self.next_id = 1
         self.log: list[dict] = []
+        self.last_poll: dict[str, float] = {}
         self.load()
 
     # -- persistence
@@ -111,6 +112,7 @@ class State:
     def claim(self, session: str) -> Task | None:
         """Hand out the next task. Re-serves one whose session vanished (crash)."""
         with self.lock:
+            self.last_poll[session] = time.time()
             for task in self.tasks:
                 if task.status == "pending":
                     task.status = "running"
@@ -146,6 +148,17 @@ class State:
             self._log(task, value if ok else error)
             self.save()
 
+    def timeout(self, task_id: int, error: str | None) -> None:
+        with self.lock:
+            task = next((t for t in self.tasks if t.id == task_id), None)
+            if task is None:
+                return
+            task.status = "timeout"
+            task.error = error
+            task.finished = time.time()
+            self._log(task, error)
+            self.save()
+
     def _log(self, task: Task, text: str | None) -> None:
         head = f"#{task.id}"
         if task.label:
@@ -170,17 +183,52 @@ PAGE = r"""<!doctype html>
  body{font:13px/1.45 ui-monospace,Menlo,monospace;background:#0d1117;color:#c9d1d9;padding:1em}
  h1{font-size:1em;color:#58a6ff;margin:.2em 0}
  #log div{padding:.12em 0;border-bottom:1px solid #161b22;white-space:pre-wrap;word-break:break-word}
- .ok{color:#3fb950}.error{color:#f85149}.crashed{color:#d29922}
+ .ok{color:#3fb950}.error{color:#f85149}.crashed{color:#d29922}.timeout{color:#d29922}
  .muted{color:#6e7681}
 </style>
 <h1>harness <span id="st" class="muted">connecting</span></h1>
 <div id="log"></div>
 <script>
 "use strict";
-const SESSION = (crypto.getRandomValues(new Uint32Array(2)).join('-'));
+// Every task runs in a fresh Worker with a hard deadline. This is not optional:
+// a synchronous infinite loop in a payload blocks the page's only renderer
+// thread, so no in-page watchdog can ever fire. A worker can be terminated from
+// outside no matter what it is doing.
+//
+// The worker's own result is posted back; if it does not arrive before the
+// deadline, the page kills it, reports the task as timed-out, and asks for the
+// next one. A hung payload therefore costs one deadline, not the session.
+
+const SESSION = crypto.getRandomValues(new Uint32Array(2)).join('-');
 const CURSOR_KEY = 'harness.cursor';
 let cursor = Number(localStorage.getItem(CURSOR_KEY) || 0);
 const st = document.getElementById('st');
+const TASK_TIMEOUT_MS = 20000;
+
+// The worker body. Built as a string so it can be instantiated per task without
+// a second file, and so a task cannot redefine it.
+const WORKER_SRC = `
+"use strict";
+self.onmessage = async (ev) => {
+  const {js} = ev.data;
+  const t0 = performance.now();
+  let ok = true, value = null, error = null;
+  try {
+    let fn;
+    try { fn = new Function('return (async () => (' + js + '))()'); }
+    catch (e) { fn = new Function('return (async () => { ' + js + '\\n })()'); }
+    let out = await fn();
+    if (out !== undefined) {
+      try { out = JSON.stringify(out); } catch (e) { out = String(out); }
+    } else { out = 'undefined'; }
+    value = out;
+  } catch (e) {
+    ok = false;
+    error = (e && e.stack) ? String(e.stack) : String(e);
+  }
+  self.postMessage({ok, value, error, ms: Math.round(performance.now() - t0)});
+};
+`;
 
 function render(entry) {
   const d = document.createElement('div');
@@ -197,30 +245,50 @@ async function post(path, body) {
                       body: JSON.stringify(body)});
 }
 
-// The task source is a string evaluated in page scope. It may return a value or
-// a promise; anything returned is formatted and shipped back.
+// Run one task in a terminator-controlled worker.
+function runIsolated(js) {
+  return new Promise((resolve) => {
+    let worker;
+    let settled = false;
+    const finish = (result) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try { worker.terminate(); } catch (e) {}
+      resolve(result);
+    };
+    const timer = setTimeout(() => {
+      finish({ok: false, timeout: true, value: null,
+              error: 'timed out after ' + TASK_TIMEOUT_MS + 'ms (worker terminated)',
+              ms: TASK_TIMEOUT_MS});
+    }, TASK_TIMEOUT_MS);
+
+    try {
+      const blob = new Blob([WORKER_SRC], {type: 'application/javascript'});
+      worker = new Worker(URL.createObjectURL(blob));
+    } catch (e) {
+      // No worker support: fail closed rather than risk hanging the page.
+      finish({ok: false, value: null, error: 'worker unavailable: ' + e.message, ms: 0});
+      return;
+    }
+    worker.onmessage = (ev) => finish(ev.data);
+    worker.onerror = (ev) => finish({ok: false, value: null,
+                                     error: 'worker error: ' + (ev.message || 'unknown'),
+                                     ms: 0});
+    worker.postMessage({js});
+  });
+}
+
 async function run(task) {
-  const t0 = performance.now();
-  let out, ok = true, err = null;
+  const res = await runIsolated(task.js);
+  render({status: res.timeout ? 'timeout' : (res.ok ? 'ok' : 'error'),
+          head: '#' + task.id + ' ' + (res.ms || 0) + 'ms',
+          line: res.ok ? res.value : res.error});
   try {
-    let fn;
-    try { fn = new Function('return (async () => (' + task.js + '))()'); }
-    catch (e) { fn = new Function('return (async () => { ' + task.js + '\n })()'); }
-    out = await fn();
-    if (out !== undefined) {
-      try { out = JSON.stringify(out); } catch (e) { out = String(out); }
-    } else { out = 'undefined'; }
-  } catch (e) {
-    ok = false;
-    err = (e && e.stack) ? String(e.stack) : String(e);
-    out = null;
-  }
-  const ms = Math.round(performance.now() - t0);
-  // Show it immediately: a later task may kill the page before this is read.
-  render({status: ok ? 'ok' : 'error', head: '#' + task.id + ' ' + ms + 'ms',
-          line: ok ? out : err.split('\n')[0]});
-  try { await post('/report', {id: task.id, ok, value: out, error: err, ms}); }
-  catch (e) { /* server down; task stays running and will be re-served */ }
+    await post('/report', {id: task.id, ok: res.ok, value: res.value,
+                           error: res.error, ms: res.ms,
+                           timeout: !!res.timeout});
+  } catch (e) { /* server down; the task stays running and is re-served */ }
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -236,8 +304,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       backoff = 400;
       if (t.id) {
         cursor = t.id;
-        // Persist before running: if this task crashes the renderer, the next
-        // load asks for the one after it, not the whole queue again.
+        // Persist before running: if this task kills the renderer, the next
+        // load asks for the one after it rather than replaying the queue.
         localStorage.setItem(CURSOR_KEY, String(cursor));
         await run(t);
       } else {
@@ -294,7 +362,17 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self._json(STATE.log[-200:])
             return
         if path == "/health":
-            self._json({"ok": True, "tasks": len(STATE.tasks)})
+            now = time.time()
+            alive = [s for s, t in STATE.last_poll.items() if now - t < 15]
+            running = [t for t in STATE.tasks if t.status == "running"]
+            self._json({
+                "ok": True,
+                "tasks": len(STATE.tasks),
+                "page_alive": bool(alive),
+                "sessions_alive": len(alive),
+                "running": [{"id": t.id, "label": t.label, "attempts": t.attempts}
+                            for t in running],
+            })
             return
         self._send(404, b"{}")
 
@@ -320,8 +398,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             except json.JSONDecodeError:
                 self._json({"ok": False}, 400)
                 return
-            STATE.finish(int(body.get("id", 0)), bool(body.get("ok")),
-                         body.get("value"), body.get("error"), body.get("ms"))
+            if body.get("timeout"):
+                # A hung payload is not a failed one: mark it so the queue moves
+                # on and the label stays visible as a known hang.
+                STATE.timeout(int(body.get("id", 0)), body.get("error"))
+            else:
+                STATE.finish(int(body.get("id", 0)), bool(body.get("ok")),
+                             body.get("value"), body.get("error"), body.get("ms"))
             entry = STATE.log[-1] if STATE.log else {}
             print(f"[{entry.get('t', now())}] {entry.get('status', '?'):7} "
                   f"{entry.get('head', '')}  {entry.get('line', '')}", flush=True)
