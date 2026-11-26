@@ -47,6 +47,7 @@ records and may be out of date.
 | `device-familyhub.md` | third Tizen device, a Family Hub fridge on Tizen 7.2.1: one open port, service menus, the public browser→driver root chain vs the hardware route, why no repo code applies |
 | `familyhub-browser.md` | the panel's engine measured from the panel: Chromium 105 exactly, exposed to every V8/Wasm fix from M106 on; the UA is a configurable lie; no loopback or `file://` reads |
 | `familyhub-prior-art.md` | who has published this work, what the eMMC partition map proves (TV platform, not 2017 fridge), and a five-gate build-from-scratch order |
+| `familyhub-what-to-do.md` | **start here**: the blunt answer that there is no published recipe for this model, what is blocked vs unknown, and the two things to do next |
 | `familyhub-the-working-path.md` | the working route, from issue #435: fridge done as a pairwise peer, exact wire proofs, serial+account prerequisites, and per-model `oxms` measurements |
 | `familyhub-how-people-get-in.md` | the actual state of the art: nobody exploits the panel; the live work is performing OCF ownership transfer to derive the OwnerPSK, and the four conditions for it |
 | `familyhub-mainboard.md` | the fridge is two computers: the panel (Tizen 7.2.1) and a TizenRT/MediaTek main board with an unauthenticated file-transfer OCF resource |
