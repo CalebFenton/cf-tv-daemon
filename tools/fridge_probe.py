@@ -207,9 +207,9 @@ async function probeUrl(t, label, url, opts) {
 class Handler(http.server.BaseHTTPRequestHandler):
     server_version = "probe/1"
 
-    def log_message(self, format: str, *args: object) -> None:
+    def log_message(self, fmt: str, *args: object) -> None:
         stamp = datetime.now().strftime("%H:%M:%S")
-        print(f"[{stamp}] {self.client_address[0]} {format % args}", flush=True)
+        print(f"[{stamp}] {self.client_address[0]} {fmt % args}", flush=True)
 
     def _send(self, code: int, body: bytes, ctype: str = "text/html; charset=utf-8"):
         self.send_response(code)

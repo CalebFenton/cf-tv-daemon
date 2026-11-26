@@ -199,3 +199,24 @@ writable `/opt`. §8 says that partition exists here.
 
 The honest estimate: steps 1 and 2 are a port of published ARM32 work; step 3 is
 a coin flip that decides everything; step 4 is measurement, not research.
+
+## 10. Port status
+
+The ARM32 port is scaffolded, not working. Current state:
+
+| piece | where | state |
+|---|---|---|
+| test harness | `tools/fridge_harness.py` | **works** — crash-safe queue, verified against a simulated client including the crash path |
+| V8 fingerprint | `tools/payloads/fingerprint.js` | written, runs under Node, not yet run on the panel |
+| primitive layer | `tools/payloads/arm32_chain.js` | scaffold: layout probes and GC-flush probe only; the confusion itself is not wired |
+| escalation | — | not started; blocked on a working primitive |
+
+`tools/payloads/arm32_chain.js` records the three differences that make the
+ARM32 port easier than the x64 original: no pointer-compression cage, 32-bit
+tagged values instead of 64-bit slots, and object offsets that must be measured
+per build rather than assumed.
+
+The order from §9 still holds. The immediate unknown is the panel's exact V8
+build: `WebEngine Version` gives a Chromium number that we already know is a
+stale constant, so the V8 version has to come from behaviour. That is what
+`fingerprint.js` asks for.
