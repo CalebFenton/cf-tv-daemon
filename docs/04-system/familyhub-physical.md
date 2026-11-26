@@ -115,3 +115,11 @@ whether the USB route is a port or a research project, and it costs nothing.
 
 Everything past that is conditional, and I would rather write that down now than
 discover it after another confident wrong claim.
+
+> **Correction (2026-11-26).** Section 2 above says the kernel is "plausibly
+> 5.4.x" and treats that as fatal to the USB route. That reasoning was wrong.
+> `Luminger/samsung-tv-usb-root`'s compatibility document classifies
+> `T-PTMAKUC` (2022, **kernel 5.4.77**) as *vulnerable, chain incomplete*: the
+> exFAT defect survives into 5.4.x because Samsung kept its out-of-tree driver.
+> See `familyhub-exfat-crosscheck.md`. The route is not blocked by the kernel
+> version; it is blocked by not having the firmware archive.
