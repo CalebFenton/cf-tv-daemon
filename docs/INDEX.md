@@ -47,6 +47,7 @@ records and may be out of date.
 | `device-familyhub.md` | third Tizen device, a Family Hub fridge on Tizen 7.2.1: one open port, service menus, the public browser→driver root chain vs the hardware route, why no repo code applies |
 | `familyhub-browser.md` | the panel's engine measured from the panel: Chromium 105 exactly, exposed to every V8/Wasm fix from M106 on; the UA is a configurable lie; no loopback or `file://` reads |
 | `familyhub-prior-art.md` | who has published this work, what the eMMC partition map proves (TV platform, not 2017 fridge), and a five-gate build-from-scratch order |
+| `familyhub-root-path.md` | **root**: the AT-HUB/parseinfo chain proven on Tizen 6.0-9.0, the read-only VDFS UEP bypass, why the fridge is plausible, and the one documented firmware where it failed |
 | `familyhub-install-apps.md` | installing your own code: the Tizen Store Server menu as an install path, DUID and distributor certificate, physical route, and a correction to my 4262 'absent' claim |
 | `familyhub-wide-search.md` | the wide survey: what the community actually does (browser kiosk), the documented AP-mode protocol, and the two Family Hub populations |
 | `familyhub-what-to-do.md` | **start here**: the blunt answer that there is no published recipe for this model, what is blocked vs unknown, and the two things to do next |
