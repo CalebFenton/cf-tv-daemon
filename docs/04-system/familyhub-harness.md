@@ -50,3 +50,50 @@ task's globals, because a crash between them loses that context.
 `8095` is the default here. Check before changing: `8096` is already taken on
 this host by jellyfin, and `8091` by hub-web. A port collision looks like a
 mysterious 404 because you are talking to somebody else's server.
+
+## Hangs, and why every task now runs in a Worker
+
+A crash and a hang are different failures, and the first version of this harness
+only handled the first.
+
+**What happened (2026-11-25).** Task #9 (`cve_2022_4262.js`) ran the reference
+exploit's feedback-slot loop on a build whose bytecode layout it was not tuned
+for. The result was not a crash: the renderer entered a synchronous loop that
+never yielded. The page's own watchdog could not fire, because it runs on the
+same single renderer thread it was watching. The Web View died and did **not**
+reload. `/health` showed `page_alive: false` and the task sat in `running`
+indefinitely.
+
+The lesson: **no in-page timeout can recover from a blocking payload.** Timers,
+`setTimeout`, `requestAnimationFrame` and `Promise` races all queue behind the
+loop that is stuck. Only something outside the thread can intervene.
+
+**The fix.** Each task now runs in a fresh `Worker`, created from a `Blob` whose
+source is built into the page. The page holds the worker handle and a 20 s timer,
+and calls `worker.terminate()`, which is the only interruption that works against
+a blocking loop. On timeout the task is reported with `timeout: true`, gets the
+status `timeout` (distinct from `error` and `crashed`), and the queue moves on.
+
+Verified without a panel, by simulating the client: a `timeout` report sets the
+status to `timeout` and clears the running entry.
+
+Two consequences worth knowing:
+
+- A hung payload costs **one deadline**, not the session.
+- A `timeout` result is evidence: it means the payload did something to the
+  engine that was not a clean exception. Treat it as a signal, not just a
+  failure.
+
+**Recovery.** If the page dies, the harness cannot bring it back: the Web View is
+driven by a person. `/health` is the signal (`page_alive: false`), and reopening
+`http://<host>:8095/` resumes the queue at the persisted cursor.
+
+## Port collisions
+
+Already taken on this host and worth avoiding: `8088`, `8091`, `8096`. A
+collision does not look like a collision; it looks like a 404 or a wrong page,
+because you are talking to somebody else's server. Check first:
+
+```sh
+ss -ltn | grep -E ':(8095|8096) '
+```
