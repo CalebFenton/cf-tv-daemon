@@ -47,6 +47,7 @@ records and may be out of date.
 | `device-familyhub.md` | third Tizen device, a Family Hub fridge on Tizen 7.2.1: one open port, service menus, the public browser→driver root chain vs the hardware route, why no repo code applies |
 | `familyhub-browser.md` | the panel's engine measured from the panel: Chromium 105 exactly, exposed to every V8/Wasm fix from M106 on; the UA is a configurable lie; no loopback or `file://` reads |
 | `familyhub-prior-art.md` | who has published this work, what the eMMC partition map proves (TV platform, not 2017 fridge), and a five-gate build-from-scratch order |
+| `familyhub-measurements.md` | what the panel actually reported: 347 MB heap, Mali-450 MP, MSE yes, camera API stripped, and the WeakRef/FinalizationRegistry answer to whether GC happens |
 | `familyhub-harness.md` | the Web View task queue: crash-safe task re-serving, localStorage cursor, payload convention, and the port 8096/jellyfin trap |
 | `devices.md` | naming several TVs, `tv/devices.py`, `devices.toml`, finding a TV after a DHCP move |
 | `control.md` | keys, the key-to-app table, volume, TTS, audio output routing, Voice Guide |
