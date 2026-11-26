@@ -102,3 +102,172 @@ answers:
 
 That single request decides whether the OCF track is open for this unit. Everything else
 in this document is downstream of it.
+
+## 8. If the phone is rooted: the concrete procedure
+
+`localthings/docs/credential-acquisition.md` documents several working routes.
+Two matter here, and the second is far less invasive.
+
+### Route A — recover the stored credential from SmartThings (rooted Android)
+
+This is the documented, repeatable one. Tested on washers, an oven, an AC and a
+TV. The credential is read out of SmartThings' persisted IoTivity security
+store, not derived by a handshake.
+
+**Prerequisites**, exactly as the doc lists them:
+
+| where | what |
+|---|---|
+| phone | rooted Android with SmartThings installed and signed into **the account that owns the appliance** |
+| phone | USB debugging on, host authorized |
+| host | Android platform-tools (`adb`) |
+| host | Frida host tools + a matching `frida-server` on the phone (tested: 17.17.0 / `frida-tools` 14.10.4) |
+| host | Node.js/npm, to build the Frida Java agent |
+| host | Python environment for the recovery helpers |
+| host | a private place for exports and a secret store (the doc used Keychain) |
+
+**The catch:** the recovery/verification helpers in that writeup are *local
+research tools* and are **not published**. The doc says so plainly. So route A
+is not a download; it is "build the equivalent."
+
+An independent implementation does exist and is public for the oven case:
+`KRZ303/locathings-oven-psk-retrieval` — scripts plus a recorded procedure with
+tested versions and limits. That is the most directly reusable artifact.
+
+### Route B — derive the OwnerPSK from OTM (no root needed, but destructive)
+
+`neoKushan/Dumbthings` does the ownership transfer itself and derives the key.
+No root and no SmartThings memory reading. Requirements: a mfg-cert OTM in
+`oxms`, a handshake that completes with no client cert, a **physical button**
+confirm, and a **factory reset** into setup mode.
+
+### What you actually get
+
+Either route yields an **OwnerPSK**: an identity UUID plus a 32- or 64-hex key.
+That is what LocalThings imports. It authenticates a CoAP-DTLS session and lets
+you read protected resources — 38 of them on one washer — and issue commands.
+
+It does **not** yield a shell, and it does not run code on the appliance.
+
+### The blocker for this fridge specifically
+
+Our panel did not answer a single CoAP probe: 30 attempts over 60 s on UDP 5683,
+zero responses. Every route above needs the appliance to answer OCF. So before
+any phone or Frida work, the fridge has to be reachable at OCF level — and right
+now it is not.
+
+The most likely reason is that it is **paired and owned in daily use**, and these
+appliances stop advertising once owned. The documented washers required
+**removal and re-registration** in SmartThings before the credential could be
+recovered, which is a change to a working setup.
+
+### What to check on the phone first, cheaply
+
+1. Does SmartThings on the rooted phone open and show this fridge under the same
+   account? If the fridge is not in that account, no route works.
+2. `adb shell su -c id` — confirm root.
+3. Look for SmartThings' IoTivity stores before building any tooling. The iOS
+   route documents the exact path (`Library/Security/oic_svr_db_client.dat`);
+   the Android equivalent is what the Frida agent targets, and finding it is the
+   first real step. On Android 13+ the AC recovery found PSK material in an
+   encrypted `<UUID>.datenc` store while the plaintext SVR stores held none.
+
+That third point is worth knowing before spending an evening on it: the storage
+format has changed across SmartThings versions, and one writeup explicitly found
+the plaintext files empty.
+
+## 9. The concrete Android procedure (rooted phone)
+
+`KRZ303/locathings-oven-psk-retrieval` (published 2026-10-03, sanitized helpers,
+offline tests included) is the most reusable public implementation. It recovered
+an oven's OwnerPSK from SmartThings on rooted Android 17 and is written as a
+procedure with tested versions and limits.
+
+### What it takes
+
+| item | value |
+|---|---|
+| phone | rooted, ARM64, tested on Android 17 / KernelSU |
+| app | `com.samsung.android.oneconnect` (SmartThings) **1.8.51.30** (code 185130010) |
+| host | ADB, Python 3.14, `frida-server` **17.21.0** + `frida-tools` 14.10.4 |
+| python | `cbor2==6.1.5`, `cryptography==50.0.2` |
+| verify | Mbed TLS 3.6.7 for a standalone DTLS test |
+
+The helper **rejects other app builds by version**, deliberately: the Java class
+names are obfuscated per build. So the SmartThings version on the phone has to
+match, or the scripts must be re-derived against that build.
+
+### The part that surprised the author, and will surprise you
+
+The obvious target file is wrong:
+
+```
+/data/user/0/com.samsung.android.oneconnect/
+  shared_prefs/iotivityKey.xml
+  files/<ACCOUNT_STORE_UUID>.datenc   <-- the credential is HERE (encrypted)
+  files/<ACCOUNT_STORE_UUID>.dat      <-- certificate-only baseline
+  files/<ACCOUNT_STORE_UUID>.db       companion provisioning database
+```
+
+On the first pass the credential was *not* in the main Core store
+(`oic_svr_db_client.dat`) nor in the live native credential list — those held ten
+certificates and no PSK. It only appeared in an **account-specific encrypted
+`.datenc` store**, and only after the appliance was removed and re-registered on
+that phone.
+
+The store UUID is neither the appliance UUID nor the PSK identity.
+
+### First steps, all cheap and non-destructive
+
+```sh
+adb devices -l
+export ANDROID_SERIAL='<serial>'
+adb -s "$ANDROID_SERIAL" shell su -c id          # must print uid=0
+adb -s "$ANDROID_SERIAL" shell dumpsys package com.samsung.android.oneconnect
+adb -s "$ANDROID_SERIAL" shell 'su -c "find /data/user/0/com.samsung.android.oneconnect/files -maxdepth 1 -type f -name \*.datenc"'
+```
+
+That last one lists candidate stores **without exporting contents**. Then:
+
+```sh
+python inspect_encrypted_store.py --serial "$ANDROID_SERIAL" --store "$STORE_UUID"
+```
+
+which reports credential **counts** by default — no keys, no identifiers.
+
+### Boundaries worth respecting
+
+- Removing an appliance can **reset its network setup and break routines/scenes**.
+- Do not clear SmartThings data, uninstall the app, or delete its keys.
+- The output JSON **is the secret**, and `0600` does not encrypt it.
+- `read-storage-key.js` prints the storage key in its `RECOVERY_KEY` message —
+  never run it in a logged terminal.
+
+### For this fridge, the order still holds
+
+None of the above helps until the appliance answers OCF. Our panel answered
+nothing on 30 probes. So the sequence is:
+
+1. confirm the fridge is visible in SmartThings **on the rooted phone's account**;
+2. find whether this model ever answers `/oic/sec/doxm` on UDP 5683 (the cheap
+   check that has, so far, failed on this unit);
+3. only then consider the store-recovery work.
+
+Step 2 is the gate. Everything in §8 and §9 is downstream of it.
+
+## 10. The probe is now a repo tool
+
+`tools/coap_doxm_probe.py` does the read described in §4 and §7:
+
+```sh
+tools/coap_doxm_probe.py <fridge-ip>              # one read of /oic/sec/doxm
+tools/coap_doxm_probe.py <fridge-ip> --watch 60   # sample for a minute
+```
+
+It prints the response code class, the payload size and the readable CBOR
+strings (which is enough to see `owned`, `oxms` and `oxmsel` without a CBOR
+dependency). A `--watch` run reports how many probes were answered and the
+payload size range, which is the state-A/state-B indicator from #213.
+
+Against this panel it currently reports **no response**, consistent with every
+other measurement so far.
