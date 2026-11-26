@@ -187,6 +187,8 @@ PAGE = r"""<!doctype html>
  .muted{color:#6e7681}
 </style>
 <h1>harness <span id="st" class="muted">connecting</span></h1>
+<div id="stats" class="muted" style="margin:.3em 0 .8em"></div>
+<h1>recent</h1>
 <div id="log"></div>
 <script>
 "use strict";
@@ -202,6 +204,8 @@ PAGE = r"""<!doctype html>
 const SESSION = crypto.getRandomValues(new Uint32Array(2)).join('-');
 const CURSOR_KEY = 'harness.cursor';
 let cursor = Number(localStorage.getItem(CURSOR_KEY) || 0);
+let polls = 0;
+let lastResult = 'none';
 const st = document.getElementById('st');
 const TASK_TIMEOUT_MS = 20000;
 
@@ -281,6 +285,7 @@ function runIsolated(js) {
 
 async function run(task) {
   const res = await runIsolated(task.js);
+  lastResult = '#' + task.id + ' ' + (res.timeout ? 'timeout' : (res.ok ? 'ok' : 'error'));
   render({status: res.timeout ? 'timeout' : (res.ok ? 'ok' : 'error'),
           head: '#' + task.id + ' ' + (res.ms || 0) + 'ms',
           line: res.ok ? res.value : res.error});
@@ -301,6 +306,10 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
                             {cache: 'no-store'});
       const t = await r.json();
       st.textContent = 'session ' + SESSION.slice(0, 8);
+      polls++;
+      document.getElementById('stats').textContent =
+        'polls ' + polls + '  |  last ' + lastResult + '  |  '
+        + (t.id ? 'task #' + t.id : 'idle');
       backoff = 400;
       if (t.id) {
         cursor = t.id;
