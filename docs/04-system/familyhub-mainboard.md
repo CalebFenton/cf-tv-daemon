@@ -109,3 +109,36 @@ different OS with a different, much more open API surface.
 
 The first step costs a network sweep. It needs no interaction with the fridge at
 all, which is why it is worth doing before anything else.
+
+## 4b. Measured: our panel does not answer CoAP at all
+
+30 probes over 60 s to UDP/5683 on the panel, with the Web View open and the
+device awake: **zero answers**. Not a sparse reply, not state B — nothing.
+
+That matters because other Family Hubs demonstrably do answer. From
+`mbillow/localthings` #213, on a `25K_REF_LCD_FHUB10.0`:
+
+- plain CoAP `GET /oic/res` on **5683** returns a CBOR directories
+- state A: **9356 bytes, 75 resources**, with `eps` advertising a secure port
+- state B: **421 bytes, 4 links**, no `eps`
+- the advertised secure port moves between states and between weeks (46060 →
+  39181 → 58551 → 46909)
+- the cheapest state indicator is the size of that response
+
+And #900 reports a `25K_REF_LCD_FHUB10.0` on **Tizen 7** — the same OS generation
+as this panel — being driven locally with 36 entities discovered and CoAP
+OBSERVE working.
+
+So the platform class can do OCF, and this unit does not answer. Possible
+reasons, none established:
+
+1. the resource tree is disabled on this model/region (`AFH-US-KTM-24`);
+2. it listens on a different address — the appliance may bind CoAP to its own
+   internal interface rather than the LAN-facing one;
+3. a firewall rule specific to this firmware;
+4. the device only enables it while unpaired, and this one is paired to
+   SmartThings.
+
+Cause 4 is the most likely and the least convenient: #213's state B and the
+`owned:true, isop:true` in its `pstat` show these appliances stop advertising
+once owned, and this fridge is in daily use with SmartThings.
