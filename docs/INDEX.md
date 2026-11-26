@@ -47,6 +47,7 @@ records and may be out of date.
 | `device-familyhub.md` | third Tizen device, a Family Hub fridge on Tizen 7.2.1: one open port, service menus, the public browser→driver root chain vs the hardware route, why no repo code applies |
 | `familyhub-browser.md` | the panel's engine measured from the panel: Chromium 105 exactly, exposed to every V8/Wasm fix from M106 on; the UA is a configurable lie; no loopback or `file://` reads |
 | `familyhub-prior-art.md` | who has published this work, what the eMMC partition map proves (TV platform, not 2017 fridge), and a five-gate build-from-scratch order |
+| `familyhub-mainboard.md` | the fridge is two computers: the panel (Tizen 7.2.1) and a TizenRT/MediaTek main board with an unauthenticated file-transfer OCF resource |
 | `familyhub-exfat-crosscheck.md` | the USB exFAT route cross-checked against both projects: CVE-2023-4273, Samsung's out-of-tree fork surviving to 5.4.x, and the firmware-archive blocker |
 | `familyhub-physical.md` | the USB route: in-door USB port, two published exFAT-exploit families, why a KTM name match is not a kernel match, and falsifiers per step |
 | `familyhub-plan.md` | the planning doc: what is measured, what is ruled out and why (including 4262 by a semantic probe), and the recommended order |
